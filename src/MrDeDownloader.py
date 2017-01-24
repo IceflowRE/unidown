@@ -61,9 +61,12 @@ def get_current_app_version():
     Downloads the version tag from github and returns as list.
     :return:
     """
-    with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as PMan:
-        ver = PMan.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
-    return ver.decode('ascii')[:-1].split('_', 2)
+    try:
+        with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as PMan:
+            ver = PMan.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
+        return ver.decode('ascii')[:-1].split('_', 2)
+    except Exception:
+        raise Exception('Check for updates failed.')
 
 
 def check_for_app_updates():
@@ -72,8 +75,11 @@ def check_for_app_updates():
     :return:
     """
     print('== CHECK FOR APPLICATION UPDATES ==')
-
-    newest_version = get_current_app_version()
+    try:
+        newest_version = get_current_app_version()
+    except Exception as ex:
+        print(ex)
+        return
     for i in range(0, 3):
         if VERSION[i] < newest_version[i]:
             print()
