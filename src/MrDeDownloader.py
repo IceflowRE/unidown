@@ -86,7 +86,8 @@ def check_for_app_updates():
             print("!!! UPDATE AVAILABLE !!!")
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
-            break
+            return True
+    return False
 
 
 def delete_dir_rec(path):
