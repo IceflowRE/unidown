@@ -20,7 +20,7 @@ setup(
     ],
     extras_require={
         'dev': [
-            'nose',
+            'nose2',
         ]
     },
     package_data={
