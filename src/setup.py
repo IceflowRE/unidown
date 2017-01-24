@@ -18,6 +18,11 @@ setup(
         'urllib3',
         'certifi',
     ],
+    extras_require={
+        'dev': [
+            'nose',
+        ]
+    },
     package_data={
         'License': ['../LICENSE'],
         'ReadMe': ['../README.md'],
