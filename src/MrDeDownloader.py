@@ -56,13 +56,24 @@ def init():
     ebook_link_dict['wikilist_date'] = 0
 
 
+def get_current_app_version():
+    """
+    Downloads the version tag from github and returns as list.
+    :return:
+    """
+    with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as PMan:
+        ver = PMan.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
+    return ver.decode('ascii')[:-1].split('_', 2)
+
+
 def check_for_app_updates():
+    """
+    Checks for updates.
+    :return:
+    """
     print('== CHECK FOR APPLICATION UPDATES ==')
 
-    https = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-
-    ver = https.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
-    newest_version = ver.decode('ascii')[:-1].split('_', 2)
+    newest_version = get_current_app_version()
     for i in range(0, 3):
         if VERSION[i] < newest_version[i]:
             print()
@@ -70,7 +81,6 @@ def check_for_app_updates():
             print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
             print()
             break
-    https.clear()
 
 
 def delete_dir_rec(path):
