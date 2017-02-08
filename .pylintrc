@@ -1,0 +1,20 @@
+[MASTER]
+load-plugins=pylint.extensions.docparams,
+    pylint.extensions.bad_builtin,
+    pylint.extensions.mccabe
+
+[MESSAGES CONTROL]
+# C0123: use type() instead of isinstance() -> not a real important warning if you know the difference between them
+# W0105: String statement has no effect -> using docstrings
+# I0011: locally disabling warning message -> anyoing not needed warning, if you dont cheat with disabling warnings ;)
+disable=C0123,
+    W0105,
+    I0011    
+
+[FORMAT]
+max-line-length=120
+indent-string='    '
+
+[REPORTS]
+reports=no
+msg-template={path}:{line}: [{msg_id} {obj}] {msg} 
