@@ -1,3 +1,6 @@
+"""
+Test for MrDeDownloader module.
+"""
 import unittest
 import MrDeDownloader as Mdd
 

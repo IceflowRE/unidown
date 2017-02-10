@@ -1,3 +1,6 @@
+"""
+Download module with all functions.
+"""
 import sys
 import functools
 import json
@@ -62,8 +65,9 @@ def get_current_app_version():
     :return:
     """
     try:
-        with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as PMan:
-            ver = PMan.urlopen('GET', 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version').data
+        with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
+            url = 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version'
+            ver = p_man.urlopen('GET', url).data
         return ver.decode('ascii')[:-1].split('_', 2)
     except Exception:
         raise Exception('Check for updates failed.')
@@ -318,7 +322,6 @@ def collect_ebook_list(job):
     :return:
     """
     global ebook_link_dict
-    global not_found_ebooks_thread
     try:
         result = job.result()
     except Exception as exception:
@@ -394,9 +397,6 @@ def ebook_download_succeed(at_id, job):
     :param job:
     :return:
     """
-    global download_succeed_list
-    global download_failed_list
-
     try:
         result = job.result()
     except Exception:
