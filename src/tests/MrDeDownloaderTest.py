@@ -14,7 +14,7 @@ class TestMrDeDownloader(unittest.TestCase):
     def setUpClass(cls):
         Mdd.init()
 
-    def test_MrDeDownloader_app_update_check(self):
+    def test_app_update_check(self):
         """
         |MrDeDownloader| check for app updates:
         """
@@ -22,7 +22,7 @@ class TestMrDeDownloader(unittest.TestCase):
         try:
             origin_version = Mdd.get_current_app_version()
         except Exception:
-            self.skipTest('Connection to Github failed.')
+            self.fail('Connection to Github failed.')
 
         # check every position of the version tag each
         # version is older - update
