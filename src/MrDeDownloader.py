@@ -1,5 +1,11 @@
 """
 Download module with all functions.
+:var ebook_link_dict: id: (name, time)
+:var ebook_link_dict_old: id: (name, time)
+:var ebook_download_list: item: (id, name)
+:var download_succeed_list: item: id
+:var download_failed_list: item: id
+:var not_found_ebooks_thread: item: thread
 """
 import sys
 import functools
@@ -37,7 +43,6 @@ done_links = 0
 def about():
     """
     About methode, displays some information.
-    :return:
     """
     print('== ABOUT ==')
     print("Version: " + VERSION[0] + '.' + VERSION[1] + '.' + VERSION[2])
@@ -49,7 +54,6 @@ def about():
 def init():
     """
     Initializes the needed global variables to proceed the installation.
-    :return:
     """
     print('== INITIALIZE APPLICATION ==')
 
@@ -62,7 +66,7 @@ def init():
 def get_current_app_version():
     """
     Downloads the version tag from github and returns as list.
-    :return:
+    :return: [major, minor, bug] version list
     """
     try:
         with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
@@ -76,7 +80,7 @@ def get_current_app_version():
 def check_for_app_updates():
     """
     Checks for updates.
-    :return:
+    :return: boolean: if an update is available
     """
     print('== CHECK FOR APPLICATION UPDATES ==')
     try:
@@ -97,7 +101,6 @@ def check_for_app_updates():
 def delete_dir_rec(path):
     """
     Deletes a folder recursive.
-    :return:
     """
     for sub in path.iterdir():
         if sub.is_dir():
@@ -110,7 +113,6 @@ def delete_dir_rec(path):
 def clean_up():
     """
     Deletes temp folder.
-    :return:
     """
     print('== DELETE TEMP ==')
 
@@ -123,7 +125,6 @@ def clean_up():
 def create_needed_files():
     """
     Create all needed files.
-    :return:
     """
     if not threads_path.exists():  # create temp and threads path
         Path.mkdir(threads_path, parents=True)
@@ -137,7 +138,6 @@ def create_needed_files():
 def load_from_jsonfile():
     """
     Loads the already downloaded ebooks.
-    :return:
     """
     print("== LOAD EBOOK UPDATE FILE ==")
 
@@ -160,7 +160,6 @@ def load_from_jsonfile():
 def download_ebook_list():
     """
     Downloads the main page html with ebook list.
-    :return:
     """
     print('== DOWNLOAD EBOOK LIST ==')
 
@@ -176,7 +175,6 @@ def download_ebook_list():
 def get_ebook_threads():
     """
     Extracts the ebook threads from the wiki list.
-    :return:
     """
     print('== EXTRACT THREADS LINKS ==')
 
@@ -206,7 +204,6 @@ def download_html_as_file(url, target_path: Path):
     Downloads the given files to the goven target path.
     :param url: URL.
     :param target_path: the target file.
-    :return:
     """
     download_success = "TRUE"
 
@@ -240,7 +237,6 @@ def print_progress(full_percentage, job):
     Callback function prints a progress bar.
     :param full_percentage: The number which is 100%.
     :param job: The multi processing job result.
-    :return:
     """
     global done_links
     done_links += 1
@@ -254,7 +250,6 @@ def print_progress(full_percentage, job):
 def download_ebook_threads():
     """
     Download the extracted threads.
-    :return:
     """
     print('== DOWNLOAD EBOOK THREADS ==')
 
@@ -273,8 +268,6 @@ def download_ebook_threads():
 def exist_thread(thread):
     """
     Checks if an thread exist as html in temp/threads.
-    :param thread:
-    :return:
     """
     path = threads_path.joinpath(thread.replace('?', '_').replace('/', '%') + '.html')
     if not path.is_file():
@@ -286,7 +279,6 @@ def exist_thread(thread):
 def check_downloaded_threads():
     """
     Check for not downloaded threads and removes them from the thread list too.
-    :return:
     """
     global thread_list
 
@@ -296,8 +288,6 @@ def check_downloaded_threads():
 def get_ebook_links_from_file(path: Path):
     """
     Extracts the ebook attachment links from given file.
-    :param path:
-    :return:
     """
     parser = ThreadHTMLParser.ThreadHTMLParser(path)
     try:
@@ -319,7 +309,6 @@ def collect_ebook_list(job):
     """
     Callback function collects and puts all ebook links together.
     :param job: (thread_ebook_dict <dict>, not_found <dict>)
-    :return:
     """
     global ebook_link_dict
     try:
@@ -337,7 +326,6 @@ def collect_ebook_list(job):
 def get_ebook_links():
     """
     The main methode which get all ebook links with multi processing.
-    :return:
     """
     print('== GET EBOOK LINKS ==')
 
@@ -366,7 +354,6 @@ def get_ebook_links():
 def check_for_updates():
     """
     Extracts the new, needed ebook links from the already downloaded files.
-    :return:
     """
     print("== GENERATE DONWLOAD LIST ==")
 
@@ -393,9 +380,7 @@ def ebook_download_succeed(at_id, job):
     """
     Callback function for checking if the download was succeed.
     ONLY for ebook downloading!
-    :param at_id:
-    :param job:
-    :return:
+    :param at_id: thread id
     """
     try:
         result = job.result()
@@ -420,7 +405,6 @@ def ebook_download_succeed(at_id, job):
 def download_ebooks():
     """
     Main methode for downloading the ebooks with multi processing.
-    :return:
     """
     print("== DOWNLOAD EBOOKS ==")
 
@@ -440,7 +424,6 @@ def download_ebooks():
 def update_jsonfile():
     """
     Updates the already downloaded ebook update file.
-    :return:
     """
     print("== UPDATE EBOOK UPDATE FILE ==")
 
@@ -458,7 +441,6 @@ def update_jsonfile():
 def write_no_ebook_founds():
     """
     More a debug function, writes all forum threads which are on the wiki list and do not contain an ebook.
-    :return:
     """
     with Path("./noEbookFound.txt").open(mode='w', encoding="utf8") as writer:
         for item in not_found_ebooks_thread:
@@ -468,7 +450,6 @@ def write_no_ebook_founds():
 def write_failed_downloads():
     """
     Writes the failed downloads to a file.
-    :return:
     """
     with Path("downloadFailed.txt").open(mode='w', encoding="utf8") as writer:
         for at_id in download_failed_list:
@@ -478,6 +459,5 @@ def write_failed_downloads():
 def close_downloader():
     """
     Closes the downloader.
-    :return:
     """
     downloader.close()

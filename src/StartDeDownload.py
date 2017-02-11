@@ -1,3 +1,6 @@
+"""
+Ebook download execution.
+"""
 import MrDeDownloader
 
 

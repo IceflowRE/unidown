@@ -6,6 +6,10 @@ import re
 
 
 class ListHTMLParser(HTMLParser):
+    """
+    :ivar thread_list: items: link
+    :ivar wiki_list_date: update time of the wiki list
+    """
     def __init__(self, format_list):
         # initialize the base class
         HTMLParser.__init__(self)
@@ -20,9 +24,6 @@ class ListHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         """
         Gets the last updated date of the wiki list and last possible thread link.
-        :param tag:
-        :param attrs:
-        :return:
         """
         # a valid link must be inside of an 'a' tag
         if (tag != 'a') and (tag != 'span'):
@@ -40,8 +41,6 @@ class ListHTMLParser(HTMLParser):
     def handle_endtag(self, tag):
         """
         Resets the last possible thread link if leaving the a tag.
-        :param tag:
-        :return:
         """
         # last_link is empty if outside of an 'a' tag
         if tag == 'a':
@@ -50,8 +49,6 @@ class ListHTMLParser(HTMLParser):
     def handle_data(self, data):
         """
         Checks for legal thread link and append them.
-        :param data:
-        :return:
         """
         # a valid link must be inside an 'a' tag and data must be a valid format
         # last_link is empty if outside of an 'a' tag

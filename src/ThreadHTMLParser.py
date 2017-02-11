@@ -8,9 +8,9 @@ import re
 
 class ThreadHTMLParser(HTMLParser):
     """
-    Links stored in a dict:
-    key = link
-    value = (name, last updated time)
+    Data is stored in a list:
+    :ivar link_data_list: items: (id, name)
+    :ivar time: time of last editing
     """
     def __init__(self, path):
         # initialize the base class
@@ -31,8 +31,6 @@ class ThreadHTMLParser(HTMLParser):
     def handle_comment(self, data):
         """
         Check if in an edit sector and counts the post.
-        :param data:
-        :return:
         """
         if not self.in_posts:
             return
@@ -50,9 +48,6 @@ class ThreadHTMLParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         """
         Check if in edit part or post sector and get the last possible ebook link too.
-        :param tag:
-        :param attrs:
-        :return:
         """
         # set if in post sector
         if tag == 'div':
@@ -78,8 +73,6 @@ class ThreadHTMLParser(HTMLParser):
     def handle_endtag(self, tag):
         """
         Check if in edit part or post sector or if outside of an a tag, reset the last possible ebook link.
-        :param tag:
-        :return:
         """
         if (self.in_container > 1) or (not self.in_posts):  # if not in post sector and if not in a post
             return
@@ -94,8 +87,6 @@ class ThreadHTMLParser(HTMLParser):
     def handle_data(self, data):
         """
         Check for legal ebook links and gets a possible edit time.
-        :param data:
-        :return:
         """
         if (self.in_container > 1) or (not self.in_posts):  # if not in post sector and if not in a post
             return

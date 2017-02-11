@@ -6,6 +6,9 @@ import MrDeDownloader as Mdd
 
 
 class TestMrDeDownloader(unittest.TestCase):
+    """
+    Tests for MrDeDownloader.
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -14,7 +17,6 @@ class TestMrDeDownloader(unittest.TestCase):
     def test_MrDeDownloader_app_update_check(self):
         """
         |MrDeDownloader| check for app updates:
-        :return:
         """
         # check if github is up
         try:
