@@ -1,0 +1,25 @@
+allow-shorthand: true
+
+output-format: pylint
+
+strictness: veryhigh
+test-warnings: true
+member-warnings: true
+
+pep257:
+  run: true
+
+pyroma:
+  run: true
+
+vulture:
+  run: true
+
+pep8: 
+  full: true
+
+pylint:
+  run: false
+
+mccabe:
+  run: true
