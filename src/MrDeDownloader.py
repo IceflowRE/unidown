@@ -57,7 +57,7 @@ def init():
     """
     print('== INITIALIZE APPLICATION ==')
 
-    if sys.version_info <= (3, 6):
+    if sys.version_info[0] < 3 or sys.version_info[1] < 6:
         sys.exit('Only Python 3.6 or greater is supported. You are using:' + str(sys.version_info))
 
     ebook_link_dict['wikilist_date'] = 0
