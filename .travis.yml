@@ -7,7 +7,6 @@ script:
   - pip install urllib3[secure]
   - pip install prospector[with_everything]
   - nose2 -c setup.cfg
-  - prospector --profile-path ./ -P .prospector.yaml --pylint-config-file ./.pylintrc ./src
 branches:
   only:
   - master
