@@ -1,25 +1,44 @@
-allow-shorthand: true
-
 output-format: pylint
 
 strictness: veryhigh
 test-warnings: true
+doc-warnings: true
 member-warnings: true
 
-pep257:
-  run: true
+uses:
+    - django
+    - celery
+    - flask
 
-pyroma:
-  run: true
+dodgy:
+    run: true
 
-vulture:
-  run: true
-
-pep8: 
-  full: true
-
-pylint:
-  run: false
+frosted:
+    run: true
 
 mccabe:
-  run: true
+    run: true
+
+pep257:
+    run: true
+    disable:
+        - D200 # One-line docstrings can fit into more lines
+
+pep8:
+    run: true
+    full: true 
+
+profile-validator:
+    run: true
+
+pyflakes:
+    run: true
+
+pylint:
+    run: true
+
+pyroma:
+    run: true
+
+vulture:
+    run: true
