@@ -5,7 +5,6 @@ python:
 script:
   - pip install nose2
   - pip install urllib3[secure]
-  - pip install prospector[with_everything]
   - nose2 -c setup.cfg
 branches:
   only:
