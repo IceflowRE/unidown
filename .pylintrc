@@ -9,7 +9,7 @@ load-plugins=pylint.extensions.docparams,
 # I0011: locally disabling warning message -> anyoing not needed warning, if you dont cheat with disabling warnings ;)
 disable=C0123,
     W0105,
-    I0011    
+    I0011
 
 [FORMAT]
 max-line-length=120

@@ -22,7 +22,8 @@ mccabe:
 pep257:
     run: true
     disable:
-        - D200 # One-line docstrings can fit into more lines
+        - D200 # One-line docstrings can not fit into more lines
+        - D205 # blank line required before class docstring
 
 pep8:
     run: true
