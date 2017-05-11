@@ -8,7 +8,7 @@ import re
 
 class ThreadHTMLParser(HTMLParser):
     """
-    Data is stored in a list:
+    Data is stored in a list.
     :ivar link_data_list: items: (id, name)
     :ivar time: time of last editing
     """
@@ -25,6 +25,11 @@ class ThreadHTMLParser(HTMLParser):
         self.time = 0
 
     def error(self, message):
+        """
+        Overwrite error.
+        :param message: 
+        :return: 
+        """
         # print('ERROR in ' + self.path)  # debug proposes
         return
 

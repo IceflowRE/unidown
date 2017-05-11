@@ -7,10 +7,15 @@ import re
 
 class ListHTMLParser(HTMLParser):
     """
+    Extractor for the forum threads from the wiki list.
     :ivar thread_list: items: link
     :ivar wiki_list_date: update time of the wiki list
     """
     def __init__(self, format_list):
+        """
+        Initialize.
+        :param format_list: 
+        """
         # initialize the base class
         HTMLParser.__init__(self)
         self.format_list = format_list
@@ -19,6 +24,11 @@ class ListHTMLParser(HTMLParser):
         self.wiki_list_date = 0
 
     def error(self, message):
+        """
+        Overwrite error.
+        :param message: 
+        :return: 
+        """
         print('ERROR:')
 
     def handle_starttag(self, tag, attrs):
@@ -40,7 +50,7 @@ class ListHTMLParser(HTMLParser):
 
     def handle_endtag(self, tag):
         """
-        Resets the last possible thread link if leaving the a tag.
+        Reset the last possible thread link if leaving the a tag.
         """
         # last_link is empty if outside of an 'a' tag
         if tag == 'a':
@@ -48,7 +58,7 @@ class ListHTMLParser(HTMLParser):
 
     def handle_data(self, data):
         """
-        Checks for legal thread link and append them.
+        Check for legal thread link and append them.
         """
         # a valid link must be inside an 'a' tag and data must be a valid format
         # last_link is empty if outside of an 'a' tag

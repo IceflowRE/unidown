@@ -16,7 +16,7 @@ class TestMrDeDownloader(unittest.TestCase):
 
     def test_app_update_check(self):
         """
-        |MrDeDownloader| check for app updates:
+        |MrDeDownloader| check for app updates.
         """
         # check if github is up
         try:

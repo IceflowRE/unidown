@@ -53,7 +53,7 @@ def about():
 
 def init():
     """
-    Initializes the needed global variables to proceed the installation.
+    Initialize the needed global variables to proceed the installation.
     """
     print('== INITIALIZE APPLICATION ==')
 
@@ -65,7 +65,7 @@ def init():
 
 def get_current_app_version():
     """
-    Downloads the version tag from github and returns as list.
+    Download the version tag from github and returns as list.
     :return: [major, minor, bug] version list
     """
     try:
@@ -79,7 +79,7 @@ def get_current_app_version():
 
 def check_for_app_updates():
     """
-    Checks for updates.
+    Check for updates.
     :return: boolean: if an update is available
     """
     print('== CHECK FOR APPLICATION UPDATES ==')
@@ -100,7 +100,7 @@ def check_for_app_updates():
 
 def delete_dir_rec(path):
     """
-    Deletes a folder recursive.
+    Delete a folder recursive.
     """
     for sub in path.iterdir():
         if sub.is_dir():
@@ -112,7 +112,7 @@ def delete_dir_rec(path):
 
 def clean_up():
     """
-    Deletes temp folder.
+    Delete temp folder.
     """
     print('== DELETE TEMP ==')
 
@@ -137,7 +137,7 @@ def create_needed_files():
 
 def load_from_jsonfile():
     """
-    Loads the already downloaded ebooks.
+    Load the already downloaded ebooks.
     """
     print("== LOAD EBOOK UPDATE FILE ==")
 
@@ -159,7 +159,7 @@ def load_from_jsonfile():
 
 def download_ebook_list():
     """
-    Downloads the main page html with ebook list.
+    Download the main page html with ebook list.
     """
     print('== DOWNLOAD EBOOK LIST ==')
 
@@ -174,7 +174,7 @@ def download_ebook_list():
 
 def get_ebook_threads():
     """
-    Extracts the ebook threads from the wiki list.
+    Extract the ebook threads from the wiki list.
     """
     print('== EXTRACT THREADS LINKS ==')
 
@@ -201,7 +201,7 @@ def get_ebook_threads():
 
 def download_html_as_file(url, target_path: Path):
     """
-    Downloads the given files to the goven target path.
+    Download the given files to the goven target path.
     :param url: URL.
     :param target_path: the target file.
     """
@@ -225,7 +225,7 @@ def download_html_as_file(url, target_path: Path):
 
 def reset_progress():
     """
-    Resets the progress bar to 0.
+    Reset the progress bar to 0.
     :return:
     """
     global done_links
@@ -267,7 +267,7 @@ def download_ebook_threads():
 
 def exist_thread(thread):
     """
-    Checks if an thread exist as html in temp/threads.
+    Check if an thread exist as html in temp/threads.
     """
     path = threads_path.joinpath(thread.replace('?', '_').replace('/', '%') + '.html')
     if not path.is_file():
@@ -287,7 +287,7 @@ def check_downloaded_threads():
 
 def get_ebook_links_from_file(path: Path):
     """
-    Extracts the ebook attachment links from given file.
+    Extract the ebook attachment links from given file.
     """
     parser = ThreadHTMLParser.ThreadHTMLParser(path)
     try:
@@ -353,7 +353,7 @@ def get_ebook_links():
 
 def check_for_updates():
     """
-    Extracts the new, needed ebook links from the already downloaded files.
+    Extract the new, needed ebook links from the already downloaded files.
     """
     print("== GENERATE DONWLOAD LIST ==")
 
@@ -423,7 +423,7 @@ def download_ebooks():
 
 def update_jsonfile():
     """
-    Updates the already downloaded ebook update file.
+    Update the already downloaded ebook update file.
     """
     print("== UPDATE EBOOK UPDATE FILE ==")
 
@@ -449,7 +449,7 @@ def write_no_ebook_founds():
 
 def write_failed_downloads():
     """
-    Writes the failed downloads to a file.
+    Write the failed downloads to a file.
     """
     with Path("downloadFailed.txt").open(mode='w', encoding="utf8") as writer:
         for at_id in download_failed_list:
@@ -458,6 +458,6 @@ def write_failed_downloads():
 
 def close_downloader():
     """
-    Closes the downloader.
+    Close the downloader.
     """
     downloader.close()
