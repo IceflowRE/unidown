@@ -3,9 +3,6 @@ python:
   - "3.6"
   - "3.7-dev" # 3.7 development branch
 script:
-  - pip install nose2
-  - pip install urllib3[secure]
+  - pip install urllib3[secure] nose2 cov-core codecov
   - nose2 -c setup.cfg
-branches:
-  only:
-  - master
+  - codecov
