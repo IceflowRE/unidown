@@ -98,7 +98,7 @@ def check_for_app_updates():
     return False
 
 
-def delete_dir_rec(path):
+def delete_dir_rec(path: Path):
     """
     Delete a folder recursive.
     """
