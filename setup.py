@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='MR-eBook-Downloader',
-    version='1.2.2.dev1',
+    version='1.3.0.dev',
     description='MR ebook downloader.',
     author='Iceflower S',
     author_email='iceflower@gmx.de',
