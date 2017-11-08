@@ -1,0 +1,3 @@
+"""
+Data used in AModule.
+"""

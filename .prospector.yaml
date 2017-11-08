@@ -1,9 +1,16 @@
 output-format: pylint
 
+ignore-paths:
+    - unidown/modules/data/protobuf
+    - unidown\modules\data\protobuf # for windows, see issue #203
+
 strictness: veryhigh
 test-warnings: true
 doc-warnings: true
 member-warnings: true
+
+python-targets:
+    - 3
 
 uses:
     - django
@@ -28,8 +35,10 @@ pep257:
         - D205 # 1 blank line required between summary line and description
 
 pep8:
-    run: true
-    full: true 
+    run: false # pylint will check
+    full: true
+    options:
+        max-line-length: 120
 
 profile-validator:
     run: true

@@ -1,0 +1,18 @@
+version: '{build}'
+
+environment:
+  matrix:
+    - PYTHON_DIR: "C:\\Python36-x64"
+      PY_VERSION: "py36"
+    - PYTHON_DIR: "C:\\Python36"
+      PY_VERSION: "py36"
+
+install:
+  - "%PYTHON_DIR%\\Scripts\\pip install --upgrade -e .[dev]"
+
+build_script:
+  - "%PYTHON_DIR%\\python setup.py clean --all"
+  - "%PYTHON_DIR%\\python setup.py bdist_wheel --python-tag %PY_VERSION%"
+
+test_script:
+  - "%PYTHON_DIR%\\Scripts\\nose2 -c setup.cfg -v"
