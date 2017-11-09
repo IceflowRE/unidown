@@ -30,6 +30,7 @@ setup(
         'certifi',
         'tqdm',
         'protobuf',
+        'packaging',
     ],
     extras_require={
         'dev': [
