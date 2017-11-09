@@ -16,10 +16,11 @@ import certifi
 import urllib3
 import ListHTMLParser
 import ThreadHTMLParser
+from packaging import version
 from pathlib import Path
 # import multiprocessing
 
-VERSION = ['1', '2', '1']
+VERSION = '1.2.2'
 
 temp_path = Path('./temp/')
 threads_path = Path('./temp/threads/')
@@ -45,7 +46,7 @@ def about():
     About methode, displays some information.
     """
     print('== ABOUT ==')
-    print("Version: " + VERSION[0] + '.' + VERSION[1] + '.' + VERSION[2])
+    print("Version: " + VERSION)
     print("Web: https://github.com/IceflowRE/MR-eBook-Downloader")
     print("Bitte teilt mir jeden Fehler mit! - Please report any bug!")
     print()
@@ -70,9 +71,9 @@ def get_current_app_version():
     """
     try:
         with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
-            url = 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/master/version'
-            ver = p_man.urlopen('GET', url).data
-        return ver.decode('ascii')[:-1].split('_', 2)
+            url = 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/release/version'
+            ver = p_man.urlopen('GET', url).data.decode('utf-8')
+        return ver
     except Exception:
         raise Exception('Check for updates failed.')
 
@@ -88,13 +89,12 @@ def check_for_app_updates():
     except Exception as ex:
         print(ex)
         return
-    for i in range(0, 3):
-        if VERSION[i] < newest_version[i]:
-            print()
-            print("!!! UPDATE AVAILABLE !!!")
-            print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
-            print()
-            return True
+    if version.parse(newest_version) > version.parse(version):
+        print()
+        print("!!! UPDATE AVAILABLE !!!")
+        print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
+        print()
+        return True
     return False
 
 
