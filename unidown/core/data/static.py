@@ -1,5 +1,6 @@
 """
-Static and important data which is needed by the program.
+Static and important data which is needed by the program and do not need any third party libraries. (this is important
+because it is used inside the setup.py.
 """
 
 NAME = "Universal-Downloader"
@@ -9,5 +10,3 @@ AUTHOR = 'Iceflower S'
 AUTHOR_GITHUB = 'https://github.com/IceflowRE'
 AUTHOR_EMAIL = 'iceflower@gmx.de'
 PROJECT_URL = 'https://github.com/IceflowRE/MR-eBook-Downloader'
-
-SAVE_STATE_VERSION = 1

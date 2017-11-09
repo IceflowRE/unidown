@@ -1,10 +1,12 @@
 from datetime import datetime
 
 from google.protobuf.timestamp_pb2 import Timestamp
+from packaging.version import InvalidVersion, Version
 
 from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
+from unidown.plugins.exceptions import PluginException
 from unidown.tools.tools import datetime_to_timestamp
 
 
@@ -14,17 +16,20 @@ class SaveState:
     data itself as a dict of link: LinkItem.
     """
 
-    def __init__(self, save_state_version, last_update: datetime, plugin_info: PluginInfo, link: dict):
+    def __init__(self, version: str, last_update: datetime, plugin_info: PluginInfo, link: dict):
         self.plugin_info = plugin_info
-        self.save_state_version = save_state_version
+        try:
+            self.version = Version(version)
+        except InvalidVersion:
+            raise PluginException('Plugin version is not PEP440 conform: {version}'.format(version=version))
         self.last_update = last_update
         self.link_linkitem = link
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        return self.plugin_info == other.plugin_info and self.save_state_version == other.save_state_version and \
-               self.last_update == other.last_update and self.link_linkitem == other.link_linkitem
+        return self.plugin_info == other.plugin_info and self.link_linkitem == other.link_linkitem and \
+               self.version == other.version and self.last_update == other.last_update
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -38,7 +43,7 @@ class SaveState:
         data_dict = {}
         for key, link_item in proto.data.items():
             data_dict[key] = LinkItem.from_protobuf(link_item)
-        return cls(proto.save_state_version, Timestamp.ToDatetime(proto.last_update),
+        return cls(proto.version, Timestamp.ToDatetime(proto.last_update),
                    PluginInfo.from_protobuf(proto.plugin_info), data_dict)
 
     def to_protobuf(self):
@@ -47,7 +52,7 @@ class SaveState:
         :return: protobuf
         """
         result = SaveStateProto()
-        result.save_state_version = self.save_state_version
+        result.version = str(self.version)
         result.last_update.CopyFrom(datetime_to_timestamp(self.last_update))
         result.plugin_info.CopyFrom(self.plugin_info.to_protobuf())
         for key, link_item in self.link_linkitem.items():

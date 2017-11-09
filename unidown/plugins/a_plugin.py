@@ -13,7 +13,6 @@ from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
 import unidown.core.data.dynamic as dynamic_data
-import unidown.core.data.static as static_data
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
@@ -190,7 +189,7 @@ class APlugin(ABC):
         :param link_linkitem: data
         :return: protobuf
         """
-        return SaveState(static_data.SAVE_STATE_VERSION, self.last_update, self.info, link_linkitem)
+        return SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.last_update, self.info, link_linkitem)
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
@@ -207,16 +206,14 @@ class APlugin(ABC):
         :return savestate
         """
         if not self.save_state_file.exists():
-            return SaveState(static_data.SAVE_STATE_VERSION, datetime(1970, 1, 1), self.info, {})
+            return SaveState(str(dynamic_data.SAVE_STATE_VERSION), datetime(1970, 1, 1), self.info, {})
 
         with self.save_state_file.open(mode='r', encoding="utf8") as data_file:
             savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
             save_state = SaveState.from_protobuf(savestat_proto)
             del savestat_proto
 
-        if save_state.save_state_version is None:
-            raise PluginException("Version was not found in save file.")
-        if save_state.save_state_version != static_data.SAVE_STATE_VERSION:
+        if save_state.version != dynamic_data.SAVE_STATE_VERSION:
             raise NotImplementedError("Different save state version handling is not implemented yet.")
 
         if save_state.plugin_info.version != self.info.version:

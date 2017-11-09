@@ -7,8 +7,9 @@ import unittest
 from datetime import datetime
 from pathlib import Path
 
+from packaging.version import Version
+
 import unidown.core.data.dynamic as dynamic_data
-import unidown.core.data.static as static_data
 from tests.plugins.test_a_plugin import Plugin
 from unidown.core import manager
 from unidown.plugins.data.link_item import LinkItem
@@ -73,7 +74,7 @@ class APluginTest(unittest.TestCase):
         self.assertEqual(self.plugin.name, 'test')
 
     def test_version(self):
-        self.assertEqual(self.plugin.version, '1.0.0')
+        self.assertEqual(self.plugin.version, Version('1.0.0'))
 
     def test_get_download_links(self):
         result = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
@@ -139,7 +140,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(['/IceflowRE/MR-eBook-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
-        result = SaveState(static_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info, self.eg_data)
+        result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info, self.eg_data)
         self.assertEqual(result, self.plugin._create_save_state(self.eg_data))
 
     def test_save_save_state(self):
@@ -169,34 +170,23 @@ class APluginTest(unittest.TestCase):
 
     def test_load_save_savestate(self):
         with self.subTest(desc="default return"):
-            result = SaveState(static_data.SAVE_STATE_VERSION, datetime(1970, 1, 1),
+            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), datetime(1970, 1, 1),
                                PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), {})
             self.assertEqual(result, self.plugin.load_save_state())
 
         with self.subTest(desc="load without errors"):
             self.plugin.save_save_state(self.eg_data)
             save_state = self.plugin.load_save_state()
-            result = SaveState(static_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info, self.eg_data)
+            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info, self.eg_data)
             self.assertEqual(save_state, result)
 
-        # TODO
-        """
         with self.subTest(desc="different save state version"):
             plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
-            static_data.SAVE_STATE_VERSION = static_data.SAVE_STATE_VERSION + 1
             plugin.save_save_state(self.eg_data)
-            static_data.SAVE_STATE_VERSION = static_data.SAVE_STATE_VERSION - 1
-            with self.assertRaises(ModuleException):
-                plugin.load_save_state()
-        """
-
-        with self.subTest(desc="different save state version"):
-            plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
-            static_data.SAVE_STATE_VERSION = static_data.SAVE_STATE_VERSION + 1
-            plugin.save_save_state(self.eg_data)
-            static_data.SAVE_STATE_VERSION = static_data.SAVE_STATE_VERSION - 1
+            dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
             with self.assertRaises(NotImplementedError):
                 plugin.load_save_state()
+            self.setUp()
 
         with self.subTest(desc="different plugin version"):
             plugin = Plugin(PluginInfo("test", "1.0.0", "host"))

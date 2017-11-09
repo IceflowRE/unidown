@@ -22,7 +22,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='unidown/plugins/data/protobuf/save_state.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n.unidown/plugins/data/protobuf/save_state.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a/unidown/plugins/data/protobuf/plugin_info.proto\x1a-unidown/plugins/data/protobuf/link_item.proto\"\xea\x01\n\x0eSaveStateProto\x12\x1a\n\x12save_state_version\x18\x01 \x01(\x05\x12/\n\x0blast_update\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12%\n\x0bplugin_info\x18\x03 \x01(\x0b\x32\x10.PluginInfoProto\x12\'\n\x04\x64\x61ta\x18\x04 \x03(\x0b\x32\x19.SaveStateProto.DataEntry\x1a;\n\tDataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1d\n\x05value\x18\x02 \x01(\x0b\x32\x0e.LinkItemProto:\x02\x38\x01\x62\x06proto3')
+  serialized_pb=_b('\n.unidown/plugins/data/protobuf/save_state.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a/unidown/plugins/data/protobuf/plugin_info.proto\x1a-unidown/plugins/data/protobuf/link_item.proto\"\xdf\x01\n\x0eSaveStateProto\x12\x0f\n\x07version\x18\x01 \x01(\t\x12/\n\x0blast_update\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12%\n\x0bplugin_info\x18\x03 \x01(\x0b\x32\x10.PluginInfoProto\x12\'\n\x04\x64\x61ta\x18\x04 \x03(\x0b\x32\x19.SaveStateProto.DataEntry\x1a;\n\tDataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1d\n\x05value\x18\x02 \x01(\x0b\x32\x0e.LinkItemProto:\x02\x38\x01\x62\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,unidown_dot_plugins_dot_data_dot_protobuf_dot_plugin__info__pb2.DESCRIPTOR,unidown_dot_plugins_dot_data_dot_protobuf_dot_link__item__pb2.DESCRIPTOR,])
 
@@ -62,8 +62,8 @@ _SAVESTATEPROTO_DATAENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=355,
-  serialized_end=414,
+  serialized_start=344,
+  serialized_end=403,
 )
 
 _SAVESTATEPROTO = _descriptor.Descriptor(
@@ -74,9 +74,9 @@ _SAVESTATEPROTO = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='save_state_version', full_name='SaveStateProto.save_state_version', index=0,
-      number=1, type=5, cpp_type=1, label=1,
-      has_default_value=False, default_value=0,
+      name='version', full_name='SaveStateProto.version', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -114,7 +114,7 @@ _SAVESTATEPROTO = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=180,
-  serialized_end=414,
+  serialized_end=403,
 )
 
 _SAVESTATEPROTO_DATAENTRY.fields_by_name['value'].message_type = unidown_dot_plugins_dot_data_dot_protobuf_dot_link__item__pb2._LINKITEMPROTO

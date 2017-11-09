@@ -1,7 +1,9 @@
 """
-Dynamical variables, which will be initialized and can be changed while runtime.
+Dynamical variables, which will be initialized and can be changed while runtime or needs third party libraries.
 """
 from pathlib import Path
+
+from packaging.version import Version
 
 # paths
 MAIN_DIR = Path('./')
@@ -14,6 +16,12 @@ USING_CORES = 1
 LOG_LEVEL = 'INFO'
 DISABLE_TQDM = False
 
+# == Do not change at runtime
+SAVE_STATE_VERSION = Version('1')
+
+
+# ===========================
+
 
 def init_dirs(main_dir: Path, logfilepath: Path):
     global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH
@@ -25,7 +33,8 @@ def init_dirs(main_dir: Path, logfilepath: Path):
 
 
 def reset():
-    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH, USING_CORES, LOG_LEVEL, DISABLE_TQDM
+    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH, USING_CORES, LOG_LEVEL, DISABLE_TQDM, \
+        SAVE_STATE_VERSION
     MAIN_DIR = Path('./')
     TEMP_DIR = MAIN_DIR.joinpath(Path('temp/'))
     DOWNLOAD_DIR = MAIN_DIR.joinpath(Path('downloads/'))
@@ -35,6 +44,8 @@ def reset():
     USING_CORES = 1
     LOG_LEVEL = 'INFO'
     DISABLE_TQDM = False
+
+    SAVE_STATE_VERSION = Version('1')
 
 
 def check_dirs():

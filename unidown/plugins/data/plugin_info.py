@@ -1,6 +1,9 @@
 import re
 
+from packaging.version import InvalidVersion, Version
+
 from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
+from unidown.plugins.exceptions import PluginException
 
 
 class PluginInfo:
@@ -17,20 +20,19 @@ class PluginInfo:
         :raise: ValueError
         """
         if name is None or name == "":
-            raise ValueError("Name cannot be empty.")
+            raise ValueError("Plugin name cannot be empty.")
         if re.search(r"\s", name):
-            raise ValueError("Name cannot contain spaces.")
+            raise ValueError("Plugin name cannot contain spaces.")
         self.name = name
 
         if host is None or host == "":
-            raise ValueError("Host cannot be empty.")
+            raise ValueError("Plugin host cannot be empty.")
         self.host = host
 
-        ver_split = version.split('.')
-        for item in ver_split:
-            if not item.isdigit():
-                raise ValueError("Version can only contains digits splitted by a dot.")  # TODO: allow chars
-        self.version = version
+        try:
+            self.version = Version(version)
+        except InvalidVersion:
+            raise PluginException('Plugin version is not PEP440 conform: {version}'.format(version=version))
 
     @classmethod
     def from_protobuf(cls, proto: PluginInfoProto):
@@ -49,7 +51,7 @@ class PluginInfo:
         return not self.__eq__(other)
 
     def __str__(self):
-        return self.name + " - " + self.version + " : " + self.host
+        return self.name + " - " + str(self.version) + " : " + self.host
 
     def to_protobuf(self):
         """
@@ -58,6 +60,6 @@ class PluginInfo:
         """
         proto = PluginInfoProto()
         proto.name = self.name
-        proto.version = self.version
+        proto.version = str(self.version)
         proto.host = self.host
         return proto

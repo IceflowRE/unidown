@@ -6,7 +6,7 @@ import "unidown/plugins/data/protobuf/plugin_info.proto";
 import "unidown/plugins/data/protobuf/link_item.proto";
 
 message SaveStateProto {
-    int32 save_state_version = 1;
+    string version = 1;
     google.protobuf.Timestamp last_update = 2;
     PluginInfoProto plugin_info = 3;
     map<string, LinkItemProto> data = 4;
