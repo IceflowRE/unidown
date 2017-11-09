@@ -15,8 +15,8 @@ def get_newest_app_version():
     :return: [year, month, day, ...]
     """
     with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
-        version = p_man.urlopen('GET', static_data.VERSION_URL).data.decode('utf-8')
-    return version
+        online_version = p_man.urlopen('GET', static_data.VERSION_URL).data.decode('utf-8')
+    return online_version
 
 
 def check_for_app_updates():

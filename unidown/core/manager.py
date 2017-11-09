@@ -12,7 +12,7 @@ import unidown.core.data.dynamic as dynamic_data
 import unidown.core.data.static as static_data
 from unidown.core import updater
 from unidown.plugins.a_plugin import APlugin
-from unidown.plugins.exceptions import GetDownloadLinksException, LastUpdateException, PluginException
+from unidown.plugins.exceptions import PluginException
 from unidown.tools.tdqm_option import TdqmOption
 from unidown.tools.tools import create_dir_rec
 

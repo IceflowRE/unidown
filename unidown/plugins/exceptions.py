@@ -11,21 +11,3 @@ class PluginException(Exception):
 
     def __init__(self, msg=''):
         self.msg = msg
-
-
-class LastUpdateException(PluginException):
-    """
-    If the last update of the data from a plugin could not get correctly.
-    """
-
-    def __init__(self, msg):
-        super().__init__(msg=msg)
-
-
-class GetDownloadLinksException(PluginException):
-    """
-    If something wents wrong while getting the links.
-    """
-
-    def __init__(self, msg):
-        super().__init__(msg=msg)

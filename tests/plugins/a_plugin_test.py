@@ -140,12 +140,12 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(['/IceflowRE/MR-eBook-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
-        result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info, self.eg_data)
+        result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info,
+                           self.eg_data)
         self.assertEqual(result, self.plugin._create_save_state(self.eg_data))
 
     def test_save_save_state(self):
         self.plugin.save_save_state(self.eg_data)
-        json_data = ""
         with self.plugin.save_state_file.open(mode='r', encoding="utf8") as data_file:
             json_data = data_file.read()
         regexp = re.compile(r'"data":\s{([\s\S]+"\s+}\s)')
@@ -177,7 +177,8 @@ class APluginTest(unittest.TestCase):
         with self.subTest(desc="load without errors"):
             self.plugin.save_save_state(self.eg_data)
             save_state = self.plugin.load_save_state()
-            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info, self.eg_data)
+            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info,
+                               self.eg_data)
             self.assertEqual(save_state, result)
 
         with self.subTest(desc="different save state version"):
