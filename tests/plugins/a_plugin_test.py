@@ -120,13 +120,13 @@ class APluginTest(unittest.TestCase):
         self.assertFalse(self.plugin.save_state_file.exists())
 
     def test_download_as_file(self):
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/universal_downloader/README.md',
+        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file').exists())
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/universal_downloader/README.md',
+        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file_d').exists())
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/universal_downloader/README.md',
+        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file_d_d').exists())
 
