@@ -23,12 +23,11 @@ deploy:
       repo: IceflowRE/MR-eBook-Downloader
       branch:
         - master
-        - universal_downloader
 #  - provider: script
 #    skip_cleanup: true
 #    script: twine upload -u iceflower -p $PYPI_PASSWORD dist/*
 #    on:
 #      repo: IceflowRE/MR-eBook-Downloader
-#      tags: true
+#?      tags: true
 #      branch:
-#        - stable
+#        - release
