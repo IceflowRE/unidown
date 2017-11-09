@@ -80,30 +80,22 @@ def download_from_module(mod: APlugin):
     :return: boolean if succeeded
     """
     # get last update date
-    try:
-        mod.logging.info('Get last update')
-        last_update = mod.update_last_update()
-    except LastUpdateException as ex:
-        mod.logging.error(ex.msg)
-        return False
+    mod.logging.info('Get last update')
+    last_update = mod.update_last_update()
     # load old save state
     save_state = mod.load_save_state()
     if last_update <= save_state.last_update:
         mod.logging.info('No update. Nothing to do.')
-        return True
+        return
     # get download links
-    try:
-        mod.logging.info('Get download links')
-        new_link_item_dict = mod.get_download_links()
-    except GetDownloadLinksException as ex:
-        logging.error(ex.msg)
-        return False
+    mod.logging.info('Get download links')
+    new_link_item_dict = mod.get_download_links()
     # compare with save state
     down_link_item_dict = mod.compare_old_with_new_data(save_state.link_linkitem, new_link_item_dict)
     mod.logging.info('Compared with save state: ' + str(len(new_link_item_dict)))
     if not down_link_item_dict:
         mod.logging.info('No new data. Nothing to do.')
-        return True
+        return
     # download new/updated data
     mod.logging.info('Download new {unit}s: {number}'.format(unit=mod.unit, number=len(down_link_item_dict)))
     mod.download(down_link_item_dict, mod.download_path, TdqmOption('Download new ' + mod.unit + 's', mod.unit))
@@ -117,7 +109,6 @@ def download_from_module(mod: APlugin):
     # write new savestate
     mod.logging.info('Write savestate')
     mod.save_save_state(save_state.link_linkitem)
-    return True
 
 
 def run(plugin_list):
@@ -129,30 +120,39 @@ def run(plugin_list):
         try:
             logging.info('Loading plugin: ' + plugin_name)
             cur_module = importlib.import_module('unidown.plugins.{name}.plugin'.format(name=plugin_name))
+        except ImportError:
+            msg = 'Plugin ' + plugin_name + ' was not found.'
+            logging.error(msg)
+            print(msg)
+            return
+
+        try:
             plugin_class = getattr(cur_module, 'Plugin')
             plugin = plugin_class()
+        except Exception:
+            msg = 'Plugin ' + plugin_name + ' crashed while loading.'
+            logging.exception(msg)
+            print(msg + ' Check log for more information.')
+            return
+        else:
             logging.info('Loaded plugin: ' + plugin_name)
-            result = download_from_module(plugin)
-            if result:
-                logging.info(plugin.name + ' ends without errors.')
-            else:
-                logging.error(plugin.name + ' ends with errors.')
-            # clean up
+
+        try:
+            download_from_module(plugin)
             plugin.clean_up()
             del plugin, plugin_class
         except PluginException as ex:
-            logging.exception(ex.msg)
-            print('Plugin {plugin_name} stopped working. Reason: {reason}'.format(plugin_name=plugin_name,
-                                                                                  reason='unknown' if (
-                                                                                      ex.msg == '') else ex.msg))
-        except ImportError:
-            msg = 'Plugin ' + plugin_name + ' was not found.'
+            msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
+                  "".format(plugin_name=plugin_name,
+                            reason='unknown' if (ex.msg == '') else ex.msg)
             logging.error(msg)
             print(msg)
         except Exception:
             msg = 'Plugin ' + plugin_name + ' crashed.'
             logging.exception(msg)
             print(msg + ' Check log for more information.')
+        else:
+            logging.info(plugin.name + ' ends without errors.')
 
 
 def check_update():

@@ -39,7 +39,7 @@ class APlugin(ABC):
             create_dir_rec(self.temp_path)
             create_dir_rec(self.download_path)
         except PermissionError:
-            raise PluginException()
+            raise PluginException('Can not create default plugin paths, due to a permission error.')
 
         self._last_update = datetime(1970, 1, 1)
         self.unit = 'item'
@@ -147,7 +147,7 @@ class APlugin(ABC):
                 with folder.joinpath(name).open(mode='wb') as out_file:
                     out_file.write(reader.data)
             else:
-                raise HTTPError(str(reader.status))
+                raise HTTPError("{url} | {status}".format(url=url, status=str(reader.status)))
 
         return url
 
@@ -176,10 +176,9 @@ class APlugin(ABC):
         for job in job_list:
             try:
                 download_without_errors.append(job.result())
-            except HTTPError:
-                pass  # possible extension for logging or connection lost handling
-            except Exception:
-                pass  # possible extension for logging
+            except HTTPError as ex:
+                self.logging.warning("Failed to download: " + str(ex))
+                # Todo: connection lost handling (check if the connection to the server itself is lost)
 
         return download_without_errors
 
@@ -200,12 +199,13 @@ class APlugin(ABC):
         with self.save_state_file.open(mode='w', encoding="utf8") as writer:
             writer.write(json_data)
 
-    def load_save_state(self):  # TODO: raise for everything an exception
+    def load_save_state(self):
         """
         Load the savestate of the module.
         :return savestate
         """
         if not self.save_state_file.exists():
+            self.logging.info("No savestate file found.")
             return SaveState(str(dynamic_data.SAVE_STATE_VERSION), datetime(1970, 1, 1), self.info, {})
 
         with self.save_state_file.open(mode='r', encoding="utf8") as data_file:
@@ -214,10 +214,10 @@ class APlugin(ABC):
             del savestat_proto
 
         if save_state.version != dynamic_data.SAVE_STATE_VERSION:
-            raise NotImplementedError("Different save state version handling is not implemented yet.")
+            raise PluginException("Different save state version handling is not implemented yet.")
 
         if save_state.plugin_info.version != self.info.version:
-            raise NotImplementedError("Different plugin version handling is not implemented yet.")
+            raise PluginException("Different plugin version handling is not implemented yet.")
 
         if save_state.plugin_info.name != self.name:
             raise PluginException(

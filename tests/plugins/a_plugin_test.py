@@ -184,7 +184,7 @@ class APluginTest(unittest.TestCase):
             plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
-            with self.assertRaises(NotImplementedError):
+            with self.assertRaises(PluginException):
                 plugin.load_save_state()
             self.setUp()
 
@@ -192,7 +192,7 @@ class APluginTest(unittest.TestCase):
             plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             plugin = Plugin(PluginInfo("test", "2.0.0", "host"))
-            with self.assertRaises(NotImplementedError):
+            with self.assertRaises(PluginException):
                 plugin.load_save_state()
 
         with self.subTest(desc="different plugin name"):
