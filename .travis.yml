@@ -17,7 +17,9 @@ install:
 script:
   - ./scripts/build.sh "$PY_VERSION"
   - nose2 -c setup.cfg -v
-  - codecov
+
+after_success:
+  - coverage
 
 deploy:
   - provider: script
