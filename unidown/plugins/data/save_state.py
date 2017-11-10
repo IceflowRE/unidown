@@ -38,6 +38,7 @@ class SaveState:
     def from_protobuf(cls, proto):
         """
         Constructor from protobuf.
+
         :param proto: protobuf
         """
         data_dict = {}

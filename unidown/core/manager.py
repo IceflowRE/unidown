@@ -20,6 +20,7 @@ from unidown.tools.tools import create_dir_rec
 def init(main_dir: Path, logfile_path: Path, log_level):
     """
     Init the downloader.
+
     :param main_dir: main directory
     :param logfile_path: logfile path
     :param log_level: logging level
@@ -76,6 +77,7 @@ def download_from_module(mod: APlugin):
     7. check downloads
     8. update savestate
     9. write new savestate
+
     :param mod: module
     :return: boolean if succeeded
     """
@@ -114,6 +116,7 @@ def download_from_module(mod: APlugin):
 def run(plugin_list):
     """
     Run through a list of module names, init_dirs and use the download routine each.
+
     :param plugin_list: names of modules
     """
     for plugin_name in plugin_list:

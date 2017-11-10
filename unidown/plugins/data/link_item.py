@@ -14,6 +14,7 @@ class LinkItem:
     def __init__(self, name, time: datetime):
         """
         Constructor.
+
         :param name: name
         :param time: update time
         """
@@ -24,6 +25,7 @@ class LinkItem:
     def from_protobuf(cls, proto: LinkItemProto):
         """
         Constructor from protobuf.
+
         :param proto: protobuf structure
         """
         return cls(proto.name, Timestamp.ToDatetime(proto.time))
@@ -50,6 +52,7 @@ class LinkItem:
     def to_protobuf(self):
         """
         Create protobuf item.
+
         :return: protobuf
         """
         result = LinkItemProto()

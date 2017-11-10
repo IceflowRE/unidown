@@ -16,6 +16,7 @@ from unidown.tools.tdqm_option import TdqmOption
 def progress_bar(job_list, option: TdqmOption):
     """
     Progress bar for the downloaded future objects.
+
     :param job_list: job_list which will be downloaded
     :param option: Tqdm options
     :return: progress bar
@@ -31,6 +32,7 @@ def progress_bar(job_list, option: TdqmOption):
 def delete_dir_rec(path: Path):
     """
     Delete a folder recursive.
+
     :param path: folder to deleted
     """
     if not path.exists() or not path.is_dir():
@@ -46,6 +48,7 @@ def delete_dir_rec(path: Path):
 def create_dir_rec(path: Path):
     """
     Create a folder recursive.
+
     :param path: path
     """
     if not path.exists():
@@ -55,6 +58,7 @@ def create_dir_rec(path: Path):
 def datetime_to_timestamp(time: datetime):
     """
     Convert datetime to protobuf.timestamp.
+
     :param time: time
     :return: protobuf.timestamp object
     """

@@ -6,6 +6,7 @@ class TdqmOption:
     def __init__(self, desc: str, unit: str):
         """
         Constructor.
+
         :param desc: description
         :param unit: download unit
         """

@@ -27,6 +27,12 @@ class APlugin(ABC):
     """
 
     def __init__(self, info: PluginInfo):
+        """
+
+
+        :type info: PluginInfo
+        :raises: PluginException
+        """
         self.logging = logging.getLogger(info.name)
         self.simul_downloads = dynamic_data.USING_CORES
 
@@ -56,22 +62,42 @@ class APlugin(ABC):
 
     @property
     def info(self):
+        """
+
+        :rtype: PluginInfo
+        """
         return self._info
 
     @property
     def host(self):
+        """
+
+        :rtype: str
+        """
         return self._info.host
 
     @property
     def name(self):
+        """
+
+        :rtype: str
+        """
         return self._info.name
 
     @property
     def version(self):
+        """
+
+        :rtype: ~packaging.version.Version
+        """
         return self._info.version
 
     @property
     def last_update(self):
+        """
+
+        :rtype: ~datetime.datetime
+        """
         return self._last_update
 
     @abstractmethod
@@ -79,7 +105,8 @@ class APlugin(ABC):
         """
         Get the download links in a specific format.
         Has to be implemented inside Plugins.
-        :return: links as dict[link, LinkItem].
+
+        :rtype: dict[str, LinkItem]
         """
         raise NotImplementedError
 
@@ -88,24 +115,39 @@ class APlugin(ABC):
         """
         Get the last update of the data.
         Has to be implemented inside Plugins.
-        :return: datetime
+
+        :rtype: ~datetime.datetime
         """
         raise NotImplementedError
 
     def get_download_links(self):
+        """
+
+        :rtype: dict[str, LinkItem].
+        """
         return self._create_download_links()
 
     def update_last_update(self):
+        """
+        Call this to update the latest update time.
+
+        :rtype: ~datetime.datetime
+        """
         self._last_update = self._create_last_update()
         return self._last_update
 
     def check_download(self, link_item_dict: dict, folder: Path, log=True):  # TODO: parallelize?
         """
         Checks if the download of the given dict was successful. No proving if the content of the file is correct too.
+
         :param link_item_dict: dict which to check
+        :type link_item_dict: dict[str, LinkItem]
         :param folder: folder where the download had to be downloaded
+        :type folder: ~pathlib.Path
         :param log: if lost items should be logged
+        :type log: bool
         :return: succeeded and lost dicts as dict(link, LinkItem)
+        :rtype: dict[str, LinkItem], dict[str, LinkItem]
         """
         succeed = {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
         lost = {link: item for link, item in link_item_dict.items() if link not in succeed}
@@ -133,10 +175,16 @@ class APlugin(ABC):
     def download_as_file(self, url, folder: Path, name: str):
         """
         Download the given url to the given target folder.
+
         :param url: link
+        :type url: str
         :param folder: target folder
+        :type folder: ~pathlib.Path
         :param name: target file name
+        :type name: str
         :return: url
+        :rtype: str
+        :raises: ~urllib3.exceptions.HTTPError
         """
         while folder.joinpath(name).exists():  # TODO: handle already existing files
             self.logging.warning('already exists: ' + name)
@@ -155,10 +203,14 @@ class APlugin(ABC):
         """
         Download the given LinkItem dict from the modules host, to the given path. Proceeded with multiple connections.
         After check_download is recommend.
-        :param link_item_dict: dict[link: LinkItem]
+
+        :type link_item_dict: dict[link, LinkItem]
         :param folder: target download folder
+        :type folder: ~pathlib.Path
         :param progress_bar_option: progress bar of the download
+        :type progress_bar_option: TdqmOption
         :return: list of urls of downloads without errors
+        :rtype: list[str]
         """
         # TODO: add other optional host?
         if not link_item_dict:
@@ -182,18 +234,22 @@ class APlugin(ABC):
 
         return download_without_errors
 
-    def _create_save_state(self, link_linkitem: dict):
+    def _create_save_state(self, link_item_dict: dict):
         """
         Create protobuf savestate of the module and the given data.
-        :param link_linkitem: data
+
+        :param link_item_dict: data
+        :type link_item_dict: dict[str, LinkItem]
         :return: protobuf
+        :rtype: SaveState
         """
-        return SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.last_update, self.info, link_linkitem)
+        return SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.last_update, self.info, link_item_dict)
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
         Saves meta data about the downloaded things to file.
-        :param data_dict: dict[link, LinkItem]
+
+        :type data_dict: dict[link, LinkItem]
         """
         json_data = json_format.MessageToJson(self._create_save_state(data_dict).to_protobuf())
         with self.save_state_file.open(mode='w', encoding="utf8") as writer:
@@ -202,7 +258,9 @@ class APlugin(ABC):
     def load_save_state(self):
         """
         Load the savestate of the module.
-        :return savestate
+
+        :rtype: SaveState
+        :raises: PluginException
         """
         if not self.save_state_file.exists():
             self.logging.info("No savestate file found.")
@@ -231,9 +289,13 @@ class APlugin(ABC):
     def compare_old_with_new_data(self, old_data, new_data):
         """
         Get links who needs to be downloaded by comparing old and new data.
-        :param old_data:
-        :param new_data:
-        :return: new dict[link, LinkItem]
+
+        :param old_data: Old data, mapped as link to LinkItem.
+        :type old_data: dict[str, LinkItem]
+        :param new_data: New data.
+        :type new_data: dict[str, LinkItem]
+        :return: dict[link, LinkItem]
+        :rtype: dict[str, LinkItem]
         """
         if not new_data:
             return {}
@@ -253,8 +315,10 @@ class APlugin(ABC):
     def update_dict(self, base: dict, new: dict):
         """
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
-        :param base:
-        :param new:
+        Updates the base dict.
+
+        :type base: dict[str, LinkItem]
+        :type new: dict[str, LinkItem]
         """
         if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
             for link, item in new.items():
@@ -264,6 +328,10 @@ class APlugin(ABC):
 
 
 def get_plugins():
+    """
+
+    :rtype: list[str]
+    """
     import unidown.plugins
 
     package = unidown.plugins

@@ -14,6 +14,7 @@ class PluginInfo:
     def __init__(self, name: str, version: str, host: str):
         """
         Constructor.
+
         :param name: name
         :param version: version
         :param host: host name
@@ -38,6 +39,7 @@ class PluginInfo:
     def from_protobuf(cls, proto: PluginInfoProto):
         """
         Constructor from protobuf.
+
         :param proto: protobuf
         """
         return cls(proto.name, proto.version, proto.host)
@@ -56,7 +58,8 @@ class PluginInfo:
     def to_protobuf(self):
         """
         Create protobuf item.
-        :return: protobuf
+
+        :rtype: PluginInfoProto
         """
         proto = PluginInfoProto()
         proto.name = self.name
