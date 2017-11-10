@@ -1,5 +1,7 @@
 version: '{build}'
 
+skip_tags: true
+
 environment:
   matrix:
     - PYTHON_DIR: "C:\\Python36-x64"
