@@ -31,7 +31,7 @@ class APlugin(ABC):
 
 
         :type info: PluginInfo
-        :raises: PluginException
+        :raises: :class:`~unidown.plugins.exceptions.PluginException`
         """
         self.logging = logging.getLogger(info.name)
         self.simul_downloads = dynamic_data.USING_CORES
@@ -184,7 +184,7 @@ class APlugin(ABC):
         :type name: str
         :return: url
         :rtype: str
-        :raises: ~urllib3.exceptions.HTTPError
+        :raises: :class:`~urllib3.exceptions.HTTPError`
         """
         while folder.joinpath(name).exists():  # TODO: handle already existing files
             self.logging.warning('already exists: ' + name)
@@ -260,7 +260,7 @@ class APlugin(ABC):
         Load the savestate of the module.
 
         :rtype: SaveState
-        :raises: PluginException
+        :raises: :class:`~unidown.plugins.exceptions.PluginException`
         """
         if not self.save_state_file.exists():
             self.logging.info("No savestate file found.")

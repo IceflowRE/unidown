@@ -18,4 +18,5 @@ build_script:
 
 test_script:
   - "%PYTHON_DIR%\\Scripts\\nose2 -c setup.cfg -v"
-  - "%PYTHON_DIR%\\Scripts\\sphinx-build -b html -b linkcheck ./doc/source/ ./doc/build/"
+  - "%PYTHON_DIR%\\Scripts\\sphinx-build -b html ./doc/source/ ./doc/build/hml/"
+  - "%PYTHON_DIR%\\Scripts\\sphinx-build -b linkcheck ./doc/source/ ./doc/build/linkcheck/"

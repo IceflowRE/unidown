@@ -22,8 +22,8 @@ language = None
 exclude_patterns = []
 pygments_style = 'sphinx'
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'urllib3': ('http://urllib3.readthedocs.org/en/latest', None),
+    'python': ('https://docs.python.org/3/', None),
+    'urllib3': ('https://urllib3.readthedocs.io/en/latest/', None),
     'packaging': ('https://packaging.pypa.io/en/latest/', None),
 }
 
