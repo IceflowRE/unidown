@@ -35,9 +35,10 @@ setup(
     extras_require={
         'dev': [
             'prospector[with_everything]',
-            'codecov',
             'nose2[coverage_plugin]==0.6.5',  # as long as 0.7.1 or higher is not released
+            'codecov',
             'Sphinx',
+            'sphinx_rtd_theme',
             'twine',
             'wheel',
         ],
