@@ -13,13 +13,16 @@ matrix:
 
 install:
   - pip install --upgrade -e .[dev]
+  - pip install codacy-coverage
 
 script:
   - ./scripts/build.sh "$PY_VERSION"
   - nose2 -c setup.cfg -v
 
 after_success:
-  - coverage
+  - codecov
+  - coverage xml
+  - python-codacy-coverage -r coverage.xml
 
 deploy:
   - provider: script
