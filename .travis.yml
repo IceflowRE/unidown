@@ -13,7 +13,7 @@ matrix:
 
 install:
   - pip install --upgrade -e .[dev]
-  - pip install codacy-coverage
+  - pip install codacy-coverage codecov
 
 script:
   - ./scripts/build.sh "$PY_VERSION"
