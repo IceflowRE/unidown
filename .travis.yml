@@ -22,7 +22,7 @@ script:
 after_success:
   - codecov
   - coverage xml
-  - python-codacy-coverage -r coverage.xml
+  - python-codacy-coverage -v -r coverage.xml
 
 deploy:
   - provider: script
