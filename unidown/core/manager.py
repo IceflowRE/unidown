@@ -127,7 +127,7 @@ def run(plugin_list):
             msg = 'Plugin ' + plugin_name + ' was not found.'
             logging.error(msg)
             print(msg)
-            return
+            continue
 
         try:
             plugin_class = getattr(cur_module, 'Plugin')
@@ -136,14 +136,13 @@ def run(plugin_list):
             msg = 'Plugin ' + plugin_name + ' crashed while loading.'
             logging.exception(msg)
             print(msg + ' Check log for more information.')
-            return
+            continue
         else:
             logging.info('Loaded plugin: ' + plugin_name)
 
         try:
             download_from_module(plugin)
             plugin.clean_up()
-            del plugin, plugin_class
         except PluginException as ex:
             msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
                   "".format(plugin_name=plugin_name,

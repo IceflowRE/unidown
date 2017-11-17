@@ -23,18 +23,17 @@ setup(
         # 'Environment :: X11 Applications :: Qt',
     ],
     keywords='modular downloader',
-    packages=find_packages(),
+    packages=find_packages(exclude=['doc', 'scripts', 'tests']),
     python_requires='>=3.6',
     install_requires=[
-        'urllib3',
-        'certifi',
+        'urllib3[secure]',
         'tqdm',
         'protobuf',
         'packaging',
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]',
+            'prospector[with_everything]==0.12.7',  # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
             'nose2[coverage_plugin]',
             'Sphinx',
             'sphinx_rtd_theme',
