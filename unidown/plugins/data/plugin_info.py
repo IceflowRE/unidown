@@ -9,25 +9,32 @@ from unidown.plugins.exceptions import PluginException
 class PluginInfo:
     """
     Information about the module. Those information will be saved into the save files as well.
+
+    :param name: name
+    :param version: version
+    :param host: host name
+    :raises ~unidown.plugins.exceptions.PluginException: name is empty
+    :raises ~unidown.plugins.exceptions.PluginException: name contains spaces
+    :raises ~unidown.plugins.exceptions.PluginException: host is empty
+    :raises ~unidown.plugins.exceptions.PluginException: version is not PEP440 conform
+
+    :ivar name:
+    :vartype name: str
+    :ivar host:
+    :vartype host: str
+    :ivar version:
+    :vartype version: ~packaging.version.Version
     """
 
     def __init__(self, name: str, version: str, host: str):
-        """
-        Constructor.
-
-        :param name: name
-        :param version: version
-        :param host: host name
-        :raise: ValueError
-        """
         if name is None or name == "":
-            raise ValueError("Plugin name cannot be empty.")
+            raise PluginException("Plugin name cannot be empty.")
         if re.search(r"\s", name):
-            raise ValueError("Plugin name cannot contain spaces.")
+            raise PluginException("Plugin name cannot contain spaces.")
         self.name = name
 
         if host is None or host == "":
-            raise ValueError("Plugin host cannot be empty.")
+            raise PluginException("Plugin host cannot be empty.")
         self.host = host
 
         try:
@@ -41,6 +48,8 @@ class PluginInfo:
         Constructor from protobuf.
 
         :param proto: protobuf
+        :type proto: ~unidown.plugins.data.protobuf.plugin_info_pb2.PluginInfoProto
+        :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
         """
         return cls(proto.name, proto.version, proto.host)
 
@@ -59,7 +68,7 @@ class PluginInfo:
         """
         Create protobuf item.
 
-        :rtype: PluginInfoProto
+        :rtype: ~unidown.plugins.data.protobuf.link_item_pb2.PluginInfoProto
         """
         proto = PluginInfoProto()
         proto.name = self.name

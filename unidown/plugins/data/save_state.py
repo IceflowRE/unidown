@@ -13,6 +13,12 @@ class SaveState:
     """
     Savestate of a module. Includes info about the module, savestate version, update time of the containing data and the
     data itself as a dict of link: LinkItem.
+
+    :param version: savestate version
+    :type version: ~packaging.version.Version
+    :type last_update: ~datetime.datetime
+    :type plugin_info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
     def __init__(self, version: Version, last_update: datetime, plugin_info: PluginInfo, link_item_dict: dict):
@@ -31,11 +37,13 @@ class SaveState:
         return not self.__eq__(other)
 
     @classmethod
-    def from_protobuf(cls, proto):
+    def from_protobuf(cls, proto: SaveStateProto):
         """
         Constructor from protobuf.
 
         :param proto: protobuf
+        :type proto: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
+        :rtype: ~unidown.plugins.data.save_state.SaveState
         """
         data_dict = {}
         for key, link_item in proto.data.items():
@@ -46,7 +54,9 @@ class SaveState:
     def to_protobuf(self):
         """
         Create protobuf item.
+
         :return: protobuf
+        :rtype: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
         """
         result = SaveStateProto()
         result.version = str(self.version)

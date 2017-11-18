@@ -24,15 +24,34 @@ from unidown.tools.tools import create_dir_rec, delete_dir_rec, progress_bar
 class APlugin(ABC):
     """
     Abstract class of a module. Provides all needed variables and methodes.
+
+    :param info: informations about the plugin
+    :type info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :raises PermissionError: can not create default plugin paths
+
+    :ivar _info: informations about the plugin, access with :func:`~unidown.plugins.a_plugin.APlugin.info`
+                 **| do not edit**
+    :vartype _info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :ivar log: use this for logging **| do not edit**
+    :vartype log: ~logging.Logger
+    :ivar temp_path: path where the plugin can place all temporary data **| do not edit**
+    :vartype temp_path: ~pathlib.Path
+    :ivar simul_downloads: number of simultaneous downloads
+    :vartype simul_downloads: int
+    :ivar unit: the thing which should be downloaded
+    :vartype unit: str
+    :ivar _download_path: general download path of the plugin **| do not edit**
+    :vartype _download_path: ~pathlib.Path
+    :ivar save_state_file: file which contains the latest savestate of the plugin **| do not edit**
+    :vartype save_state_file: ~pathlib.Path
+    :ivar downloader: downloader which will download the data **| do not edit**
+    :vartype downloader: ~urllib3.HTTPSConnectionPool
+    :ivar _last_update: latest update time of the referencing data, access with
+                        :func:`~unidown.plugins.a_plugin.APlugin.last_update` **| do not edit**
+    :vartype _last_update: ~datetime.datetime
     """
 
     def __init__(self, info: PluginInfo):
-        """
-
-
-        :type info: PluginInfo
-        :raises: :class:`~unidown.plugins.exceptions.PluginException`
-        """
         self.log = logging.getLogger(info.name)
         self.simul_downloads = dynamic_data.USING_CORES
 
@@ -64,7 +83,7 @@ class APlugin(ABC):
     def info(self):
         """
 
-        :rtype: PluginInfo
+        :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
         """
         return self._info
 
@@ -104,9 +123,9 @@ class APlugin(ABC):
     def _create_download_links(self):  # TODO: -> typing.Dict[str, LinkItem]: get it work
         """
         Get the download links in a specific format.
-        Has to be implemented inside Plugins.
+        **Has to be implemented inside Plugins.**
 
-        :rtype: dict[str, LinkItem]
+        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         raise NotImplementedError
 
@@ -114,7 +133,7 @@ class APlugin(ABC):
     def _create_last_update(self) -> datetime:
         """
         Get the last update of the data.
-        Has to be implemented inside Plugins.
+        **Has to be implemented inside Plugins.**
 
         :rtype: ~datetime.datetime
         """
@@ -123,7 +142,7 @@ class APlugin(ABC):
     def get_download_links(self):
         """
 
-        :rtype: dict[str, LinkItem].
+        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         return self._create_download_links()
 
@@ -141,13 +160,13 @@ class APlugin(ABC):
         Checks if the download of the given dict was successful. No proving if the content of the file is correct too.
 
         :param link_item_dict: dict which to check
-        :type link_item_dict: dict[str, LinkItem]
+        :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :param folder: folder where the download had to be downloaded
         :type folder: ~pathlib.Path
         :param log: if lost items should be logged
         :type log: bool
-        :return: succeeded and lost dicts as dict(link, LinkItem)
-        :rtype: dict[str, LinkItem], dict[str, LinkItem]
+        :return: succeeded and lost dicts as dict(link, ~unidown.plugins.data.link_item.LinkItem)
+        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem), dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         succeed = {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
         lost = {link: item for link, item in link_item_dict.items() if link not in succeed}
@@ -161,12 +180,16 @@ class APlugin(ABC):
     def clean_up(self):
         """
         Default clean up for a module.
+        Deletes :attr:`~unidown.plugins.a_plugin.APlugin.temp_path`
         """
         if self.downloader.pool is not None:  # TODO: as long as urllib3 #1279 is open
             self.downloader.close()
         delete_dir_rec(self.temp_path)
 
     def delete_data(self):
+        """
+        Deletes everything which is related to the plugin. **Do not use if you do not know what you do!**
+        """
         self.clean_up()
         delete_dir_rec(self._download_path)
         if self.save_state_file.exists():
@@ -184,7 +207,7 @@ class APlugin(ABC):
         :type name: str
         :return: url
         :rtype: str
-        :raises: :class:`~urllib3.exceptions.HTTPError`
+        :raises ~urllib3.exceptions.HTTPError: if the connection has an error
         """
         while folder.joinpath(name).exists():  # TODO: handle already existing files
             self.log.warning('already exists: ' + name)
@@ -204,11 +227,11 @@ class APlugin(ABC):
         Download the given LinkItem dict from the modules host, to the given path. Proceeded with multiple connections.
         After check_download is recommend.
 
-        :type link_item_dict: dict[link, LinkItem]
+        :type link_item_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
         :param folder: target download folder
         :type folder: ~pathlib.Path
         :param progress_bar_option: progress bar of the download
-        :type progress_bar_option: TdqmOption
+        :type progress_bar_option: ~unidown.tools.tqdm_options.TqdmOption
         :return: list of urls of downloads without errors
         :rtype: list[str]
         """
@@ -239,17 +262,17 @@ class APlugin(ABC):
         Create protobuf savestate of the module and the given data.
 
         :param link_item_dict: data
-        :type link_item_dict: dict[str, LinkItem]
+        :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :return: protobuf
-        :rtype: SaveState
+        :rtype: ~unidown.plugins.data.save_state.SaveState
         """
-        return SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.last_update, self.info, link_item_dict)
+        return SaveState(dynamic_data.SAVE_STATE_VERSION, self.last_update, self.info, link_item_dict)
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
         Saves meta data about the downloaded things to file.
 
-        :type data_dict: dict[link, LinkItem]
+        :type data_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
         """
         json_data = json_format.MessageToJson(self._create_save_state(data_dict).to_protobuf())
         with self.save_state_file.open(mode='w', encoding="utf8") as writer:
@@ -259,8 +282,10 @@ class APlugin(ABC):
         """
         Load the savestate of the module.
 
-        :rtype: SaveState
-        :raises: :class:`~unidown.plugins.exceptions.PluginException`
+        :rtype: ~unidown.plugins.data.save_state.SaveState
+        :raises ~unidown.plugins.exceptions.PluginException: different savestate versions
+        :raises ~unidown.plugins.exceptions.PluginException: different plugin versions
+        :raises ~unidown.plugins.exceptions.PluginException: different plugin names
         """
         if not self.save_state_file.exists():
             self.log.info("No savestate file found.")
@@ -291,11 +316,11 @@ class APlugin(ABC):
         Get links who needs to be downloaded by comparing old and new data.
 
         :param old_data: Old data, mapped as link to LinkItem.
-        :type old_data: dict[str, LinkItem]
+        :type old_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :param new_data: New data.
-        :type new_data: dict[str, LinkItem]
-        :return: dict[link, LinkItem]
-        :rtype: dict[str, LinkItem]
+        :type new_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :return: dict(link, LinkItem)
+        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         if not new_data:
             return {}
@@ -317,8 +342,8 @@ class APlugin(ABC):
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
         Updates the base dict.
 
-        :type base: dict[str, LinkItem]
-        :type new: dict[str, LinkItem]
+        :type base: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :type new: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
             for link, item in new.items():
