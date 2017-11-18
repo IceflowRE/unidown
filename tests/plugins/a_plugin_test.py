@@ -28,7 +28,7 @@ class APluginTest(unittest.TestCase):
         manager.init(Path('./tmp'), Path('UniDown.log'), 'INFO')
         dynamic_data.DISABLE_TQDM = True
         self.plugin = Plugin()
-        self.plugin.logging.disabled = True
+        self.plugin.log.disabled = True
         self.eg_data = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
                         '/IceflowRE/MR-eBook-Downloader/master/no_file_here':
@@ -39,7 +39,7 @@ class APluginTest(unittest.TestCase):
 
     def test_init(self):
         self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
-        self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
+        self.assertTrue(self.plugin._download_path.exists() and self.plugin._download_path.is_dir())
 
     def test_equality(self):
         with self.subTest(desc="different type"):
@@ -112,12 +112,12 @@ class APluginTest(unittest.TestCase):
 
     def test_delete_data(self):
         create_test_file(self.plugin.temp_path.joinpath('testfile'))
-        create_test_file(self.plugin.download_path.joinpath('testfile'))
+        create_test_file(self.plugin._download_path.joinpath('testfile'))
         create_test_file(self.plugin.save_state_file)
 
         self.plugin.delete_data()
         self.assertFalse(self.plugin.temp_path.exists())
-        self.assertFalse(self.plugin.download_path.exists())
+        self.assertFalse(self.plugin._download_path.exists())
         self.assertFalse(self.plugin.save_state_file.exists())
 
     def test_download_as_file(self):
@@ -140,7 +140,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(['/IceflowRE/MR-eBook-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
-        result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info,
+        result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info,
                            self.eg_data)
         self.assertEqual(result, self.plugin._create_save_state(self.eg_data))
 
@@ -170,14 +170,14 @@ class APluginTest(unittest.TestCase):
 
     def test_load_save_savestate(self):
         with self.subTest(desc="default return"):
-            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), datetime(1970, 1, 1),
+            result = SaveState(dynamic_data.SAVE_STATE_VERSION, datetime(1970, 1, 1),
                                PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), {})
             self.assertEqual(result, self.plugin.load_save_state())
 
         with self.subTest(desc="load without errors"):
             self.plugin.save_save_state(self.eg_data)
             save_state = self.plugin.load_save_state()
-            result = SaveState(str(dynamic_data.SAVE_STATE_VERSION), self.plugin.last_update, self.plugin.info,
+            result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info,
                                self.eg_data)
             self.assertEqual(save_state, result)
 

@@ -33,17 +33,17 @@ class APlugin(ABC):
         :type info: PluginInfo
         :raises: :class:`~unidown.plugins.exceptions.PluginException`
         """
-        self.logging = logging.getLogger(info.name)
+        self.log = logging.getLogger(info.name)
         self.simul_downloads = dynamic_data.USING_CORES
 
         self._info = info  # info about the module
         self.temp_path = dynamic_data.TEMP_DIR.joinpath(self.name)  # module temp path
-        self.download_path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)  # module download path
+        self._download_path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)  # module download path
         self.save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')  # module save path
 
         try:
             create_dir_rec(self.temp_path)
-            create_dir_rec(self.download_path)
+            create_dir_rec(self._download_path)
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
@@ -154,7 +154,7 @@ class APlugin(ABC):
 
         if lost and log:
             for link, item in lost.items():
-                self.logging.error('Not downloaded: {url} - {name}'.format(url=self.info.host + link, name=item.name))
+                self.log.error('Not downloaded: {url} - {name}'.format(url=self.info.host + link, name=item.name))
 
         return succeed, lost
 
@@ -162,13 +162,13 @@ class APlugin(ABC):
         """
         Default clean up for a module.
         """
-        if self.downloader.pool is not None:  # as long as urllib3 #1279 is open
+        if self.downloader.pool is not None:  # TODO: as long as urllib3 #1279 is open
             self.downloader.close()
         delete_dir_rec(self.temp_path)
 
     def delete_data(self):
         self.clean_up()
-        delete_dir_rec(self.download_path)
+        delete_dir_rec(self._download_path)
         if self.save_state_file.exists():
             self.save_state_file.unlink()
 
@@ -187,7 +187,7 @@ class APlugin(ABC):
         :raises: :class:`~urllib3.exceptions.HTTPError`
         """
         while folder.joinpath(name).exists():  # TODO: handle already existing files
-            self.logging.warning('already exists: ' + name)
+            self.log.warning('already exists: ' + name)
             name = name + '_d'
 
         with self.downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
@@ -229,7 +229,7 @@ class APlugin(ABC):
             try:
                 download_without_errors.append(job.result())
             except HTTPError as ex:
-                self.logging.warning("Failed to download: " + str(ex))
+                self.log.warning("Failed to download: " + str(ex))
                 # Todo: connection lost handling (check if the connection to the server itself is lost)
 
         return download_without_errors
@@ -263,8 +263,8 @@ class APlugin(ABC):
         :raises: :class:`~unidown.plugins.exceptions.PluginException`
         """
         if not self.save_state_file.exists():
-            self.logging.info("No savestate file found.")
-            return SaveState(str(dynamic_data.SAVE_STATE_VERSION), datetime(1970, 1, 1), self.info, {})
+            self.log.info("No savestate file found.")
+            return SaveState(dynamic_data.SAVE_STATE_VERSION, datetime(1970, 1, 1), self.info, {})
 
         with self.save_state_file.open(mode='r', encoding="utf8") as data_file:
             savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
@@ -282,7 +282,7 @@ class APlugin(ABC):
                 "Save state plugin (" + save_state.plugin_info.name + ") does not match the current (" + self.name + ").")
 
         if save_state.last_update is None:
-            self.logging.warning("update_date was not found in save file and set to 1970.01.01")
+            self.log.warning("update_date was not found in save file and set to 1970.01.01")
             save_state.last_update = datetime(1970, 1, 1)
         return save_state
 
@@ -304,7 +304,7 @@ class APlugin(ABC):
                                     ncols=100, disable=dynamic_data.DISABLE_TQDM):
             # TODO: add methode to log lost items, which are in old but not in new
             if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
-                self.logging.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
+                self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
 
             # if the new_data link does not exists in old_data or new_data time is newer
             if (link not in old_data) or (link_item.time > old_data[link].time):
@@ -323,7 +323,7 @@ class APlugin(ABC):
         if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
             for link, item in new.items():
                 if link in base:
-                    self.logging.info('Actualize item: ' + link + ' | ' + str(base[link]) + ' -> ' + str(item))
+                    self.log.info('Actualize item: ' + link + ' | ' + str(base[link]) + ' -> ' + str(item))
         base.update(new)
 
 

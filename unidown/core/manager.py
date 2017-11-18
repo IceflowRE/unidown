@@ -82,34 +82,34 @@ def download_from_module(mod: APlugin):
     :return: boolean if succeeded
     """
     # get last update date
-    mod.logging.info('Get last update')
+    mod.log.info('Get last update')
     last_update = mod.update_last_update()
     # load old save state
     save_state = mod.load_save_state()
     if last_update <= save_state.last_update:
-        mod.logging.info('No update. Nothing to do.')
+        mod.log.info('No update. Nothing to do.')
         return
     # get download links
-    mod.logging.info('Get download links')
+    mod.log.info('Get download links')
     new_link_item_dict = mod.get_download_links()
     # compare with save state
     down_link_item_dict = mod.compare_old_with_new_data(save_state.link_linkitem, new_link_item_dict)
-    mod.logging.info('Compared with save state: ' + str(len(new_link_item_dict)))
+    mod.log.info('Compared with save state: ' + str(len(new_link_item_dict)))
     if not down_link_item_dict:
-        mod.logging.info('No new data. Nothing to do.')
+        mod.log.info('No new data. Nothing to do.')
         return
     # download new/updated data
-    mod.logging.info('Download new {unit}s: {number}'.format(unit=mod.unit, number=len(down_link_item_dict)))
-    mod.download(down_link_item_dict, mod.download_path, TdqmOption('Download new ' + mod.unit + 's', mod.unit))
+    mod.log.info('Download new {unit}s: {number}'.format(unit=mod.unit, number=len(down_link_item_dict)))
+    mod.download(down_link_item_dict, mod._download_path, TdqmOption('Download new ' + mod.unit + 's', mod.unit))
     # check which downloads are succeeded
-    succeed_link_item_dict, lost_link_item_dict = mod.check_download(down_link_item_dict, mod.download_path)
-    mod.logging.info(
+    succeed_link_item_dict, lost_link_item_dict = mod.check_download(down_link_item_dict, mod._download_path)
+    mod.log.info(
         'Downloaded: {success}/{total}'.format(success=len(succeed_link_item_dict), total=len(down_link_item_dict)))
     # update savestate link_item_dict with succeeded downloads dict
-    mod.logging.info('Update savestate')
+    mod.log.info('Update savestate')
     mod.update_dict(save_state.link_linkitem, succeed_link_item_dict)
     # write new savestate
-    mod.logging.info('Write savestate')
+    mod.log.info('Write savestate')
     mod.save_save_state(save_state.link_linkitem)
 
 
