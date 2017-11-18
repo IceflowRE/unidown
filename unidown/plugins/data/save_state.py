@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from google.protobuf.timestamp_pb2 import Timestamp
-from packaging.version import Version
+from packaging.version import InvalidVersion, Version
 
 from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
@@ -48,8 +48,12 @@ class SaveState:
         data_dict = {}
         for key, link_item in proto.data.items():
             data_dict[key] = LinkItem.from_protobuf(link_item)
-        return cls(proto.version, Timestamp.ToDatetime(proto.last_update),
-                   PluginInfo.from_protobuf(proto.plugin_info), data_dict)
+        try:
+            version = Version(proto.version)
+        except InvalidVersion:
+            raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=proto.version))
+        return cls(version, Timestamp.ToDatetime(proto.last_update), PluginInfo.from_protobuf(proto.plugin_info),
+                   data_dict)
 
     def to_protobuf(self):
         """
