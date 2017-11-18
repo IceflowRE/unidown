@@ -3,7 +3,6 @@ import re
 from packaging.version import InvalidVersion, Version
 
 from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
-from unidown.plugins.exceptions import PluginException
 
 
 class PluginInfo:
@@ -13,10 +12,10 @@ class PluginInfo:
     :param name: name
     :param version: version
     :param host: host name
-    :raises ~unidown.plugins.exceptions.PluginException: name is empty
-    :raises ~unidown.plugins.exceptions.PluginException: name contains spaces
-    :raises ~unidown.plugins.exceptions.PluginException: host is empty
-    :raises ~unidown.plugins.exceptions.PluginException: version is not PEP440 conform
+    :raises ValueError: name is empty
+    :raises ValueError: name contains spaces
+    :raises ValueError: host is empty
+    :raises InvalidVersion: version is not PEP440 conform
 
     :ivar name:
     :vartype name: str
@@ -28,19 +27,19 @@ class PluginInfo:
 
     def __init__(self, name: str, version: str, host: str):
         if name is None or name == "":
-            raise PluginException("Plugin name cannot be empty.")
+            raise ValueError("Plugin name cannot be empty.")
         if re.search(r"\s", name):
-            raise PluginException("Plugin name cannot contain spaces.")
+            raise ValueError("Plugin name cannot contain spaces.")
         self.name = name
 
         if host is None or host == "":
-            raise PluginException("Plugin host cannot be empty.")
+            raise ValueError("Plugin host cannot be empty.")
         self.host = host
 
         try:
             self.version = Version(version)
         except InvalidVersion:
-            raise PluginException('Plugin version is not PEP440 conform: {version}'.format(version=version))
+            raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=version))
 
     @classmethod
     def from_protobuf(cls, proto: PluginInfoProto):
