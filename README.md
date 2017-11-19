@@ -6,7 +6,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/w7va1jx1xsagl5y4/branch/master?svg=true)](https://ci.appveyor.com/project/IceflowRE/mr-ebook-downloader/branch/master)
 [![Requirements Status](https://requires.io/github/IceflowRE/MR-eBook-Downloader/requirements.svg?branch=master)](https://requires.io/github/IceflowRE/MR-eBook-Downloader/requirements/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7783e0b9e3734ee6ab43e142b43e9663)](https://www.codacy.com/app/IceflowRE/MR-eBook-Downloader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IceflowRE/MR-eBook-Downloader&amp;utm_campaign=Badge_Grade)
-[![Code Health](https://landscape.io/github/IceflowRE/MR-eBook-Downloader/master/landscape.svg?style=flat)](https://landscape.io/github/IceflowRE/MR-eBook-Downloader/master)
 [![codecov](https://codecov.io/gh/IceflowRE/MR-eBook-Downloader/branch/master/graph/badge.svg)](https://codecov.io/gh/IceflowRE/MR-eBook-Downloader)
 ---
 
