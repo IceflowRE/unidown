@@ -118,7 +118,7 @@ class APlugin(ABC):
     @property
     def last_update(self):
         """
-        Last update time of the plugins referenced data.
+        Newest update time of the plugins referenced data.
 
         :rtype: ~datetime.datetime
         """
@@ -130,16 +130,18 @@ class APlugin(ABC):
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
 
+        :return: download links as Url to LinkItem
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         raise NotImplementedError
 
     @abstractmethod
-    def _create_last_update(self) -> datetime:
+    def _create_last_update_time(self) -> datetime:
         """
         Get the last update of the data.
         **Has to be implemented inside Plugins.**
 
+        :return: newest update time from the referencing data
         :rtype: ~datetime.datetime
         """
         raise NotImplementedError
@@ -148,6 +150,7 @@ class APlugin(ABC):
         """
         Returns the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_links`.
 
+        :return: download links as Url to LinkItem
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         return self._create_download_links()
@@ -156,9 +159,10 @@ class APlugin(ABC):
         """
         Call this to update the latest update time. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_last_update`.
 
+        :return: newest update time from the referencing data
         :rtype: ~datetime.datetime
         """
-        self._last_update = self._create_last_update()
+        self._last_update = self._create_last_update_time()
         return self._last_update
 
     def check_download(self, link_item_dict: dict, folder: Path, log=True):  # TODO: parallelize?
@@ -167,11 +171,11 @@ class APlugin(ABC):
 
         :param link_item_dict: dict which to check
         :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        :param folder: folder where the download had to be downloaded
+        :param folder: folder where the downloads are saved
         :type folder: ~pathlib.Path
-        :param log: if lost items should be logged
+        :param log: if the lost items should be logged
         :type log: bool
-        :return: succeeded and lost dicts as dict(link, ~unidown.plugins.data.link_item.LinkItem)
+        :return: succeeded and lost dicts
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem), dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         succeed = {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
@@ -230,14 +234,16 @@ class APlugin(ABC):
 
     def download(self, link_item_dict: dict, folder: Path, progress_bar_option: TdqmOption):
         """
-        Download the given LinkItem dict from the modules host, to the given path. Proceeded with multiple connections.
-        After :func:`~unidown.plugins.a_plugin.APlugin.check_download` is recommend.
+        Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
+        :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
+        :func:`~unidown.plugins.a_plugin.APlugin.check_download` is recommend.
 
-        :type link_item_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
+        :param link_item_dict: data which gets downloaded
+        :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :param folder: target download folder
         :type folder: ~pathlib.Path
-        :param progress_bar_option: progress bar of the download
-        :type progress_bar_option: ~unidown.tools.tqdm_options.TqdmOption
+        :param progress_bar_option: progress bar options of the download
+        :type progress_bar_option: unidown.tools.tqdm_options.TqdmOption  # TODO: no link generated
         :return: list of urls of downloads without errors
         :rtype: list[str]
         """
@@ -269,7 +275,6 @@ class APlugin(ABC):
 
         :param link_item_dict: data
         :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        :return: protobuf
         :rtype: ~unidown.plugins.data.save_state.SaveState
         """
         return SaveState(dynamic_data.SAVE_STATE_VERSION, self.last_update, self.info, link_item_dict)
@@ -278,6 +283,7 @@ class APlugin(ABC):
         """
         Saves meta data about the downloaded things and the plugin to file.
 
+        :param data_dict: data
         :type data_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
         """
         json_data = json_format.MessageToJson(self._create_save_state(data_dict).to_protobuf())
@@ -321,11 +327,11 @@ class APlugin(ABC):
         """
         Get links who needs to be downloaded by comparing old and new data.
 
-        :param old_data: Old data, mapped as link to LinkItem.
+        :param old_data: old data
         :type old_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        :param new_data: New data.
+        :param new_data: new data
         :type new_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        :return: dict(link, LinkItem)
+        :return: data which is newer or dont exist in the old one
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         if not new_data:
@@ -348,7 +354,9 @@ class APlugin(ABC):
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
         Updates the base dict. Basically executes `base.update(new)`.
 
+        :param base: base dict **gets overridden!**
         :type base: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :param new: data which updates the base
         :type new: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
@@ -360,7 +368,7 @@ class APlugin(ABC):
 
 def get_plugins():
     """
-    Returns all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
+    Gets all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
 
     :rtype: list[str]
     """
