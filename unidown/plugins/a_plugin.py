@@ -23,7 +23,7 @@ from unidown.tools.tools import create_dir_rec, delete_dir_rec, progress_bar
 
 class APlugin(ABC):
     """
-    Abstract class of a module. Provides all needed variables and methodes.
+    Abstract class of a plugin. Provides all needed variables and methods.
 
     :param info: informations about the plugin
     :type info: ~unidown.plugins.data.plugin_info.PluginInfo
@@ -82,6 +82,7 @@ class APlugin(ABC):
     @property
     def info(self):
         """
+        Information about the plugin.
 
         :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
         """
@@ -90,6 +91,7 @@ class APlugin(ABC):
     @property
     def host(self):
         """
+        Host url.
 
         :rtype: str
         """
@@ -98,6 +100,7 @@ class APlugin(ABC):
     @property
     def name(self):
         """
+        Plugin name, is the same as the package name.
 
         :rtype: str
         """
@@ -106,6 +109,7 @@ class APlugin(ABC):
     @property
     def version(self):
         """
+        Plugin version, PEP440 is used.
 
         :rtype: ~packaging.version.Version
         """
@@ -114,6 +118,7 @@ class APlugin(ABC):
     @property
     def last_update(self):
         """
+        Last update time of the plugins referenced data.
 
         :rtype: ~datetime.datetime
         """
@@ -141,6 +146,7 @@ class APlugin(ABC):
 
     def get_download_links(self):
         """
+        Returns the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_links`.
 
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
@@ -148,7 +154,7 @@ class APlugin(ABC):
 
     def update_last_update(self):
         """
-        Call this to update the latest update time.
+        Call this to update the latest update time. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_last_update`.
 
         :rtype: ~datetime.datetime
         """
@@ -180,7 +186,7 @@ class APlugin(ABC):
     def clean_up(self):
         """
         Default clean up for a module.
-        Deletes :attr:`~unidown.plugins.a_plugin.APlugin.temp_path`
+        Deletes :attr:`~unidown.plugins.a_plugin.APlugin.temp_path`.
         """
         if self.downloader.pool is not None:  # TODO: as long as urllib3 #1279 is open
             self.downloader.close()
@@ -225,7 +231,7 @@ class APlugin(ABC):
     def download(self, link_item_dict: dict, folder: Path, progress_bar_option: TdqmOption):
         """
         Download the given LinkItem dict from the modules host, to the given path. Proceeded with multiple connections.
-        After check_download is recommend.
+        After :func:`~unidown.plugins.a_plugin.APlugin.check_download` is recommend.
 
         :type link_item_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
         :param folder: target download folder
@@ -270,7 +276,7 @@ class APlugin(ABC):
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
-        Saves meta data about the downloaded things to file.
+        Saves meta data about the downloaded things and the plugin to file.
 
         :type data_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
         """
@@ -340,7 +346,7 @@ class APlugin(ABC):
     def update_dict(self, base: dict, new: dict):
         """
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
-        Updates the base dict.
+        Updates the base dict. Basically executes `base.update(new)`.
 
         :type base: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :type new: dict(str, ~unidown.plugins.data.link_item.LinkItem)
@@ -354,6 +360,7 @@ class APlugin(ABC):
 
 def get_plugins():
     """
+    Returns all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
 
     :rtype: list[str]
     """

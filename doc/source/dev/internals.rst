@@ -6,5 +6,6 @@ Reference material for things you probably only need to care about if you want t
 .. toctree::
     :maxdepth: 2
 
-    core
-    tools
+    internals/core
+    internals/plugins
+    internals/tools

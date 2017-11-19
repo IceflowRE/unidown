@@ -15,7 +15,7 @@ class PluginInfo:
     :raises ValueError: name is empty
     :raises ValueError: name contains spaces
     :raises ValueError: host is empty
-    :raises InvalidVersion: version is not PEP440 conform
+    :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
 
     :ivar name:
     :vartype name: str

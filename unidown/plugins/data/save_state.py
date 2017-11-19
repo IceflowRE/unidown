@@ -11,8 +11,7 @@ from unidown.tools.tools import datetime_to_timestamp
 
 class SaveState:
     """
-    Savestate of a module. Includes info about the module, savestate version, update time of the containing data and the
-    data itself as a dict of link: LinkItem.
+    Savestate of a module.
 
     :param version: savestate version
     :type version: ~packaging.version.Version

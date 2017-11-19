@@ -16,7 +16,7 @@ class LinkItem:
     :ivar _name: name of the item
     :vartype _name: str
     :ivar _time: time of the item
-    :vartype: _time: ~datetime.datetime
+    :vartype _time: ~datetime.datetime
     """
 
     def __init__(self, name, time: datetime):

@@ -19,19 +19,17 @@ Plugin Developer's Guide
     :maxdepth: 2
 
     dev/writing_plugins
-    dev/plugin_ref
 
 Developer's Guide
 =================
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   dev/internals
+    dev/internals
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
