@@ -1,8 +1,7 @@
 # Universal Downloader
 ![maintained](https://img.shields.io/badge/maintained-yes-brightgreen.svg)
 ![Programming Language](https://img.shields.io/badge/language-Python_3.6-orange.svg)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)  
 [![Build Status](https://travis-ci.org/IceflowRE/MR-eBook-Downloader.svg?branch=master)](https://travis-ci.org/IceflowRE/MR-eBook-Downloader)
 [![Build status](https://ci.appveyor.com/api/projects/status/w7va1jx1xsagl5y4/branch/master?svg=true)](https://ci.appveyor.com/project/IceflowRE/mr-ebook-downloader/branch/master)
 [![Requirements Status](https://requires.io/github/IceflowRE/MR-eBook-Downloader/requirements.svg?branch=master)](https://requires.io/github/IceflowRE/MR-eBook-Downloader/requirements/?branch=master)
