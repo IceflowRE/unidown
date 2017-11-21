@@ -1,6 +1,8 @@
 output-format: pylint
 
 ignore-paths:
+    - doc
+    - scripts
     - unidown/modules/data/protobuf
     - unidown\modules\data\protobuf # for windows, see issue #203
 
@@ -30,10 +32,12 @@ pep257:
     run: true
     disable:
         - D105 # Missing docstring in magic method
+        - D107 # Missing docstring in __init__
         - D200 # One-line docstrings can not fit into more lines
         - D203 # 1 blank line required before class docstring
         - D204 # 1 blank line required after class docstring
         - D205 # 1 blank line required between summary line and description
+        - D212 # Multi-line docstring summary should start at the first line
 
 pep8:
     run: false # pylint will check

@@ -39,7 +39,7 @@ class APluginTest(unittest.TestCase):
 
     def test_init(self):
         self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
-        self.assertTrue(self.plugin._download_path.exists() and self.plugin._download_path.is_dir())
+        self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
 
     def test_equality(self):
         with self.subTest(desc="different type"):
@@ -112,12 +112,12 @@ class APluginTest(unittest.TestCase):
 
     def test_delete_data(self):
         create_test_file(self.plugin.temp_path.joinpath('testfile'))
-        create_test_file(self.plugin._download_path.joinpath('testfile'))
+        create_test_file(self.plugin.download_path.joinpath('testfile'))
         create_test_file(self.plugin.save_state_file)
 
         self.plugin.delete_data()
         self.assertFalse(self.plugin.temp_path.exists())
-        self.assertFalse(self.plugin._download_path.exists())
+        self.assertFalse(self.plugin.download_path.exists())
         self.assertFalse(self.plugin.save_state_file.exists())
 
     def test_download_as_file(self):

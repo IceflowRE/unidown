@@ -16,4 +16,5 @@ class PluginException(Exception):
     """
 
     def __init__(self, msg=''):
+        super(PluginException, self).__init__(msg)
         self.msg = msg

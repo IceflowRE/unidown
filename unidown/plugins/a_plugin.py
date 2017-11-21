@@ -17,8 +17,8 @@ from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tqdm_option import TqdmOption
 from unidown.tools.tools import create_dir_rec, delete_dir_rec, progress_bar
+from unidown.tools.tqdm_option import TqdmOption
 
 
 class APlugin(ABC):
@@ -124,31 +124,40 @@ class APlugin(ABC):
         """
         return self._last_update
 
+    @property
+    def download_path(self):
+        """
+        General download path of the plugin.
+
+        :rtype: ~pathlib.Path
+        """
+        return self._download_path
+
     @abstractmethod
     def _create_download_links(self):  # TODO: -> typing.Dict[str, LinkItem]: get it work
         """
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
 
-        :return: download links as Url to LinkItem
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :raises NotImplementedError: abstract method
         """
         raise NotImplementedError
 
     @abstractmethod
     def _create_last_update_time(self) -> datetime:
         """
-        Get the last update of the data.
+        Get the newest update time from the referencing data.
         **Has to be implemented inside Plugins.**
 
-        :return: newest update time from the referencing data
         :rtype: ~datetime.datetime
+        :raises NotImplementedError: abstract method
         """
         raise NotImplementedError
 
     def get_download_links(self):
         """
-        Returns the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_links`.
+        Return the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_links`.
 
         :return: download links as Url to LinkItem
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
@@ -198,7 +207,7 @@ class APlugin(ABC):
 
     def delete_data(self):
         """
-        Deletes everything which is related to the plugin. **Do not use if you do not know what you do!**
+        Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
         """
         self.clean_up()
         delete_dir_rec(self._download_path)
@@ -294,6 +303,7 @@ class APlugin(ABC):
         """
         Load the savestate of the module.
 
+        :return: savestate
         :rtype: ~unidown.plugins.data.save_state.SaveState
         :raises ~unidown.plugins.exceptions.PluginException: different savestate versions
         :raises ~unidown.plugins.exceptions.PluginException: different plugin versions
@@ -315,9 +325,8 @@ class APlugin(ABC):
             raise PluginException("Different plugin version handling is not implemented yet.")
 
         if save_state.plugin_info.name != self.name:
-            raise PluginException(
-                "Save state plugin (" + save_state.plugin_info.name + ") does not match the current (" + self.name + ").")
-
+            raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
+                name=save_state.plugin_info.name, cur_name=self.name))
         if save_state.last_update is None:
             self.log.warning("update_date was not found in save file and set to 1970.01.01")
             save_state.last_update = datetime(1970, 1, 1)

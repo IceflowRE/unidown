@@ -83,8 +83,6 @@ def download_from_module(plugin: APlugin):
 
     :param plugin: plugin
     :type plugin: ~unidown.plugins.a_plugin.APlugin
-    :return: succeeded
-    :rtype: bool
     """
     # get last update date
     plugin.log.info('Get last update')
@@ -105,9 +103,9 @@ def download_from_module(plugin: APlugin):
         return
     # download new/updated data
     plugin.log.info('Download new {unit}s: {number}'.format(unit=plugin.unit, number=len(down_link_item_dict)))
-    plugin.download(down_link_item_dict, plugin._download_path, TqdmOption('Download new ' + plugin.unit + 's', plugin.unit))
+    plugin.download(down_link_item_dict, plugin.download_path, TqdmOption('Download new ' + plugin.unit + 's', plugin.unit))
     # check which downloads are succeeded
-    succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin._download_path)
+    succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin.download_path)
     plugin.log.info(
         'Downloaded: {success}/{total}'.format(success=len(succeed_link_item_dict), total=len(down_link_item_dict)))
     # update savestate link_item_dict with succeeded downloads dict
