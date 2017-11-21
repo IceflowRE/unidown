@@ -29,14 +29,14 @@ deploy:
     skip_cleanup: true
     script: twine upload -u iceflower -p $TEST_PYPI_PASSWORD --skip-existing -c $TRAVIS_COMMIT --repository-url https://test.pypi.org/legacy/ dist/*
     on:
-      repo: IceflowRE/MR-eBook-Downloader
+      repo: IceflowRE/Universal-Downloader
       branch:
         - master
 #  - provider: script
 #    skip_cleanup: true
 #    script: twine upload -u iceflower -p $PYPI_PASSWORD dist/*
 #    on:
-#      repo: IceflowRE/MR-eBook-Downloader
+#      repo: IceflowRE/Universal-Downloader
 #?      tags: true
 #      branch:
 #        - release

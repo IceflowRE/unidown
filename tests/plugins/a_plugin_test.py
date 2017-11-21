@@ -29,9 +29,9 @@ class APluginTest(unittest.TestCase):
         dynamic_data.DISABLE_TQDM = True
         self.plugin = Plugin()
         self.plugin.log.disabled = True
-        self.eg_data = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
+        self.eg_data = {'/IceflowRE/Universal-Downloader/master/README.md':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-                        '/IceflowRE/MR-eBook-Downloader/master/no_file_here':
+                        '/IceflowRE/Universal-Downloader/master/no_file_here':
                             LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
 
     def tearDown(self):
@@ -77,9 +77,9 @@ class APluginTest(unittest.TestCase):
         self.assertEqual(self.plugin.version, Version('1.0.0'))
 
     def test_get_download_links(self):
-        result = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
+        result = {'/IceflowRE/Universal-Downloader/master/README.md':
                       LinkItem('README.md', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
-                  '/IceflowRE/MR-eBook-Downloader/master/no_file_here':
+                  '/IceflowRE/Universal-Downloader/master/no_file_here':
                       LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
                   }
         self.assertEqual(result, self.plugin.get_download_links())
@@ -98,9 +98,9 @@ class APluginTest(unittest.TestCase):
         with self.subTest(desc="one succeed, one lost"):
             create_test_file(self.plugin.temp_path.joinpath('One'))
             data = self.plugin.check_download(self.eg_data, self.plugin.temp_path)
-            succeed = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
+            succeed = {'/IceflowRE/Universal-Downloader/master/README.md':
                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            lost = {'/IceflowRE/MR-eBook-Downloader/master/no_file_here':
+            lost = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                         LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
             self.assertEqual((succeed, lost), data)
 
@@ -121,13 +121,13 @@ class APluginTest(unittest.TestCase):
         self.assertFalse(self.plugin.save_state_file.exists())
 
     def test_download_as_file(self):
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
+        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file').exists())
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
+        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file_d').exists())
-        self.plugin.download_as_file('/IceflowRE/MR-eBook-Downloader/master/README.md',
+        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.md',
                                      self.plugin.temp_path, 'file')
         self.assertTrue(self.plugin.temp_path.joinpath('file_d_d').exists())
 
@@ -137,7 +137,7 @@ class APluginTest(unittest.TestCase):
 
         with self.subTest(desc="one success, one fail"):
             data = self.plugin.download(self.eg_data, self.plugin.temp_path, TqdmOption('Down units', 'unit'))
-            self.assertEqual(['/IceflowRE/MR-eBook-Downloader/master/README.md'], data)
+            self.assertEqual(['/IceflowRE/Universal-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
         result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info,
@@ -154,11 +154,11 @@ class APluginTest(unittest.TestCase):
         except AttributeError:
             self.fail("No data part found.")
         items = [
-""""/IceflowRE/MR-eBook-Downloader/master/README.md": {
+""""/IceflowRE/Universal-Downloader/master/README.md": {
       "name": "One",
       "time": "2001-01-01T01:01:01Z"
     }""",
-""""/IceflowRE/MR-eBook-Downloader/master/no_file_here": {
+""""/IceflowRE/Universal-Downloader/master/no_file_here": {
       "name": "Two",
       "time": "2002-02-02T02:02:02Z"
     }"""]
@@ -217,14 +217,14 @@ class APluginTest(unittest.TestCase):
             self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, {}))
 
         with self.subTest(desc='filled with one item more'):
-            old_data = {'/IceflowRE/MR-eBook-Downloader/master/README.md':
+            old_data = {'/IceflowRE/Universal-Downloader/master/README.md':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            result = {'/IceflowRE/MR-eBook-Downloader/master/no_file_here':
+            result = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                           LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
             self.assertEqual(result, self.plugin.compare_old_with_new_data(old_data, self.eg_data))
 
         with self.subTest(desc='one item more with filled'):
-            new_data = {'/IceflowRE/MR-eBook-Downloader/master/no_file_here':
+            new_data = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
             self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, new_data))
 
