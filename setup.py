@@ -26,19 +26,19 @@ setup(
     packages=find_packages(exclude=['doc', 'scripts', 'tests']),
     python_requires='>=3.6',
     install_requires=[
-        'urllib3[secure]',
-        'tqdm',
-        'protobuf',
-        'packaging',
+        'urllib3[secure]==1.22',
+        'tqdm==4.19.4',
+        'protobuf==3.5.0',
+        'packaging==16.8',
     ],
     extras_require={
         'dev': [
             'prospector[with_everything]==0.12.7',  # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
-            'nose2[coverage_plugin]',
-            'Sphinx',
-            'sphinx_rtd_theme',
-            'twine',
-            'wheel',
+            'nose2[coverage_plugin]==0.7.2',
+            'Sphinx==1.6.5',
+            'sphinx_rtd_theme==0.2.5b1',
+            'twine==1.9.1',
+            'wheel==0.30.0',
         ],
     },
     package_data={
