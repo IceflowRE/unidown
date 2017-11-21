@@ -1,5 +1,5 @@
 """
-Dynamical variables, which will be initialized and can be changed while runtime or needs third party libraries. (like pathlib.Path)
+Dynamical variables, which will be initialized and can be changed while runtime or needs third party libraries (like pathlib.Path).
 """
 from pathlib import Path
 
@@ -50,7 +50,7 @@ def init_dirs(main_dir: Path, logfilepath: Path):
 
 def reset():
     """
-    Resets all dynamic variables to the default values.
+    Reset all dynamic variables to the default values.
     """
     global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH, USING_CORES, LOG_LEVEL, DISABLE_TQDM, \
         SAVE_STATE_VERSION
@@ -69,7 +69,7 @@ def reset():
 
 def check_dirs():
     """
-    Checks the directories if they exist.
+    Check the directories if they exist.
 
     :raises FileExistsError: if a file exists but is not a directory
     """

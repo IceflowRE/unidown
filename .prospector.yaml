@@ -29,6 +29,7 @@ mccabe:
 pep257:
     run: true
     disable:
+        - D105 # Missing docstring in magic method
         - D200 # One-line docstrings can not fit into more lines
         - D203 # 1 blank line required before class docstring
         - D204 # 1 blank line required after class docstring

@@ -7,20 +7,12 @@ unidown.plugins.a_plugin.APlugin
     :private-members:
     :members:
 
-unidown.plugins.data.plugin_info.PluginInfo
--------------------------------------------
-.. autoclass:: unidown.plugins.data.plugin_info.PluginInfo
-    :members:
+unidown.plugins.data
+--------------------
+.. toctree::
+    :maxdepth: 2
 
-unidown.plugins.data.link_item.LinkItem
----------------------------------------
-.. autoclass:: unidown.plugins.data.link_item.LinkItem
-    :members:
-
-unidown.plugins.data.save_state.SaveState
------------------------------------------
-.. autoclass:: unidown.plugins.data.save_state.SaveState
-    :members:
+    plugins_data.rst
 
 unidown.plugins.exceptions.PluginException
 ------------------------------------------

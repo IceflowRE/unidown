@@ -1,7 +1,7 @@
 Internals
 =========
 
-Reference material for things you probably only need to care about if you want to contribute.
+Reference material.
 
 .. toctree::
     :maxdepth: 2

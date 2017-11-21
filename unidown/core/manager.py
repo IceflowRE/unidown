@@ -12,13 +12,13 @@ import unidown.core.data.static as static_data
 from unidown.core import updater
 from unidown.plugins.a_plugin import APlugin
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tdqm_option import TdqmOption
+from unidown.tools.tqdm_option import TqdmOption
 from unidown.tools.tools import create_dir_rec
 
 
 def init(main_dir: Path, logfile_path: Path, log_level):
     """
-    Init the downloader. TODO
+    Initialize the downloader. TODO.
 
     :param main_dir: main directory
     :type main_dir: ~pathlib.Path
@@ -62,7 +62,7 @@ def init(main_dir: Path, logfile_path: Path, log_level):
 
 def shutdown():
     """
-    Closes and exit important things.
+    Close and exit important things.
     """
     logging.shutdown()
 
@@ -105,7 +105,7 @@ def download_from_module(plugin: APlugin):
         return
     # download new/updated data
     plugin.log.info('Download new {unit}s: {number}'.format(unit=plugin.unit, number=len(down_link_item_dict)))
-    plugin.download(down_link_item_dict, plugin._download_path, TdqmOption('Download new ' + plugin.unit + 's', plugin.unit))
+    plugin.download(down_link_item_dict, plugin._download_path, TqdmOption('Download new ' + plugin.unit + 's', plugin.unit))
     # check which downloads are succeeded
     succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin._download_path)
     plugin.log.info(

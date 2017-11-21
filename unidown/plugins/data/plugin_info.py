@@ -11,7 +11,7 @@ class PluginInfo:
 
     :param name: name
     :type name: str
-    :param version: version
+    :param version: version, PEP440 conform
     :type version: str
     :param host: host url of the main data
     :type host: str

@@ -11,7 +11,7 @@ import unidown.core.data.static as static_data
 
 def get_newest_app_version():
     """
-    Download the version tag from remote. TODO: versionurl
+    Download the version tag from remote. TODO: versionurl.
 
     :return: version from remote
     :rtype: str

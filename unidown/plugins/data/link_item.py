@@ -50,6 +50,7 @@ class LinkItem:
     @property
     def name(self):
         """
+        :py:attr:`~unidown.plugins.data.link_item.LinkItem._name`.
 
         :rtype: str
         """
@@ -58,6 +59,7 @@ class LinkItem:
     @property
     def time(self):
         """
+        :py:attr:`~unidown.plugins.data.link_item.LinkItem._time`.
 
         :rtype: ~datetime.datetime
         """

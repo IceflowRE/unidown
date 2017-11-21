@@ -17,7 +17,7 @@ from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tdqm_option import TdqmOption
+from unidown.tools.tqdm_option import TqdmOption
 from unidown.tools.tools import create_dir_rec, delete_dir_rec, progress_bar
 
 
@@ -25,11 +25,11 @@ class APlugin(ABC):
     """
     Abstract class of a plugin. Provides all needed variables and methods.
 
-    :param info: informations about the plugin
+    :param info: information about the plugin
     :type info: ~unidown.plugins.data.plugin_info.PluginInfo
     :raises PermissionError: can not create default plugin paths
 
-    :ivar _info: informations about the plugin, access with :func:`~unidown.plugins.a_plugin.APlugin.info`
+    :ivar _info: information about the plugin, access with :func:`~unidown.plugins.a_plugin.APlugin.info`
                  **| do not edit**
     :vartype _info: ~unidown.plugins.data.plugin_info.PluginInfo
     :ivar log: use this for logging **| do not edit**
@@ -100,7 +100,7 @@ class APlugin(ABC):
     @property
     def name(self):
         """
-        Plugin name, is the same as the package name.
+        Plugin name.
 
         :rtype: str
         """
@@ -167,7 +167,7 @@ class APlugin(ABC):
 
     def check_download(self, link_item_dict: dict, folder: Path, log=True):  # TODO: parallelize?
         """
-        Checks if the download of the given dict was successful. No proving if the content of the file is correct too.
+        Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
         :param link_item_dict: dict which to check
         :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
@@ -232,7 +232,7 @@ class APlugin(ABC):
 
         return url
 
-    def download(self, link_item_dict: dict, folder: Path, progress_bar_option: TdqmOption):
+    def download(self, link_item_dict: dict, folder: Path, progress_bar_option: TqdmOption):
         """
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
@@ -281,7 +281,7 @@ class APlugin(ABC):
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
-        Saves meta data about the downloaded things and the plugin to file.
+        Save meta data about the downloaded things and the plugin to file.
 
         :param data_dict: data
         :type data_dict: dict(link, ~unidown.plugins.data.link_item.LinkItem)
@@ -368,7 +368,7 @@ class APlugin(ABC):
 
 def get_plugins():
     """
-    Gets all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
+    Get all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
 
     :rtype: list[str]
     """
