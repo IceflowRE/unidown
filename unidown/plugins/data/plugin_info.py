@@ -10,18 +10,21 @@ class PluginInfo:
     Information about the module. Those information will be saved into the save files as well.
 
     :param name: name
+    :type name: str
     :param version: version
-    :param host: host name
+    :type version: str
+    :param host: host url of the main data
+    :type host: str
     :raises ValueError: name is empty
     :raises ValueError: name contains spaces
     :raises ValueError: host is empty
     :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
 
-    :ivar name:
+    :ivar name: name
     :vartype name: str
-    :ivar host:
+    :ivar host: host url of the main data
     :vartype host: str
-    :ivar version:
+    :ivar version: plugin version
     :vartype version: ~packaging.version.Version
     """
 
@@ -46,7 +49,7 @@ class PluginInfo:
         """
         Constructor from protobuf.
 
-        :param proto: protobuf
+        :param proto: protobuf structure
         :type proto: ~unidown.plugins.data.protobuf.plugin_info_pb2.PluginInfoProto
         :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
         """
@@ -67,6 +70,7 @@ class PluginInfo:
         """
         Create protobuf item.
 
+        :return: protobuf structure
         :rtype: ~unidown.plugins.data.protobuf.link_item_pb2.PluginInfoProto
         """
         proto = PluginInfoProto()

@@ -1,5 +1,5 @@
 """
-Entry point for the downloader.
+Entry into the program.
 """
 
 import sys
@@ -13,6 +13,9 @@ from unidown.core import manager
 
 
 def main():
+    """
+    Entry point into the program. Gets the arguments from the console and proceed them with :class:`~argparse.ArgumentParser`.
+    """
     if sys.version_info[0] < 3 or sys.version_info[1] < 6:
         sys.exit('Only Python 3.6 or greater is supported. You are using:' + sys.version)
 

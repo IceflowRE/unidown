@@ -11,7 +11,9 @@ class LinkItem:
     Item which represents the data, who need to be downloaded. Has a name and an update time.
 
     :param name: name
+    :type name: str
     :param time: update time
+    :type time: ~datetime.datetime
 
     :ivar _name: name of the item
     :vartype _name: str
@@ -65,6 +67,7 @@ class LinkItem:
         """
         Create protobuf item.
 
+        :return: protobuf structure
         :rtype: ~unidown.plugins.data.protobuf.link_item_pb2.LinkItemProto
         """
         result = LinkItemProto()

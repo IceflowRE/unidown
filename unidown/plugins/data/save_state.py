@@ -11,12 +11,15 @@ from unidown.tools.tools import datetime_to_timestamp
 
 class SaveState:
     """
-    Savestate of a module.
+    Savestate of a plugin.
 
     :param version: savestate version
     :type version: ~packaging.version.Version
+    :param last_update: last udpate time of the referenced data
     :type last_update: ~datetime.datetime
+    :param plugin_info: plugin info
     :type plugin_info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :param link_item_dict: data
     :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
@@ -40,7 +43,7 @@ class SaveState:
         """
         Constructor from protobuf.
 
-        :param proto: protobuf
+        :param proto: protobuf structure
         :type proto: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
         :rtype: ~unidown.plugins.data.save_state.SaveState
         """
@@ -58,7 +61,7 @@ class SaveState:
         """
         Create protobuf item.
 
-        :return: protobuf
+        :return: protobuf structure
         :rtype: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
         """
         result = SaveStateProto()

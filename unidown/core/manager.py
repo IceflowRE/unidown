@@ -1,7 +1,6 @@
 """
 Manager of the whole program, contains the most important functions as well as the download routine.
 """
-# TODO: more detailed description of the program and how it works.
 import importlib
 import logging
 import multiprocessing
@@ -19,11 +18,14 @@ from unidown.tools.tools import create_dir_rec
 
 def init(main_dir: Path, logfile_path: Path, log_level):
     """
-    Init the downloader.
+    Init the downloader. TODO
 
     :param main_dir: main directory
+    :type main_dir: ~pathlib.Path
     :param logfile_path: logfile path
+    :type logfile_path: ~pathlib.Path
     :param log_level: logging level
+    :type log_level: str
     """
     dynamic_data.reset()
     dynamic_data.init_dirs(main_dir, logfile_path)
@@ -65,10 +67,11 @@ def shutdown():
     logging.shutdown()
 
 
-def download_from_module(mod: APlugin):
+def download_from_module(plugin: APlugin):
     """
     Download routine.
-    1. get last update time
+
+    1. get newest update time
     2. load savestate
     3. compare last update time with savestate time
     4. get download links
@@ -78,46 +81,49 @@ def download_from_module(mod: APlugin):
     8. update savestate
     9. write new savestate
 
-    :param mod: module
-    :return: boolean if succeeded
+    :param plugin: plugin
+    :type plugin: ~unidown.plugins.a_plugin.APlugin
+    :return: succeeded
+    :rtype: bool
     """
     # get last update date
-    mod.log.info('Get last update')
-    last_update = mod.update_last_update()
+    plugin.log.info('Get last update')
+    last_update = plugin.update_last_update()
     # load old save state
-    save_state = mod.load_save_state()
+    save_state = plugin.load_save_state()
     if last_update <= save_state.last_update:
-        mod.log.info('No update. Nothing to do.')
+        plugin.log.info('No update. Nothing to do.')
         return
     # get download links
-    mod.log.info('Get download links')
-    new_link_item_dict = mod.get_download_links()
+    plugin.log.info('Get download links')
+    new_link_item_dict = plugin.get_download_links()
     # compare with save state
-    down_link_item_dict = mod.compare_old_with_new_data(save_state.link_linkitem, new_link_item_dict)
-    mod.log.info('Compared with save state: ' + str(len(new_link_item_dict)))
+    down_link_item_dict = plugin.compare_old_with_new_data(save_state.link_linkitem, new_link_item_dict)
+    plugin.log.info('Compared with save state: ' + str(len(new_link_item_dict)))
     if not down_link_item_dict:
-        mod.log.info('No new data. Nothing to do.')
+        plugin.log.info('No new data. Nothing to do.')
         return
     # download new/updated data
-    mod.log.info('Download new {unit}s: {number}'.format(unit=mod.unit, number=len(down_link_item_dict)))
-    mod.download(down_link_item_dict, mod._download_path, TdqmOption('Download new ' + mod.unit + 's', mod.unit))
+    plugin.log.info('Download new {unit}s: {number}'.format(unit=plugin.unit, number=len(down_link_item_dict)))
+    plugin.download(down_link_item_dict, plugin._download_path, TdqmOption('Download new ' + plugin.unit + 's', plugin.unit))
     # check which downloads are succeeded
-    succeed_link_item_dict, lost_link_item_dict = mod.check_download(down_link_item_dict, mod._download_path)
-    mod.log.info(
+    succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin._download_path)
+    plugin.log.info(
         'Downloaded: {success}/{total}'.format(success=len(succeed_link_item_dict), total=len(down_link_item_dict)))
     # update savestate link_item_dict with succeeded downloads dict
-    mod.log.info('Update savestate')
-    mod.update_dict(save_state.link_linkitem, succeed_link_item_dict)
+    plugin.log.info('Update savestate')
+    plugin.update_dict(save_state.link_linkitem, succeed_link_item_dict)
     # write new savestate
-    mod.log.info('Write savestate')
-    mod.save_save_state(save_state.link_linkitem)
+    plugin.log.info('Write savestate')
+    plugin.save_save_state(save_state.link_linkitem)
 
 
 def run(plugin_list):
     """
-    Run through a list of module names, init_dirs and use the download routine each.
+    Run through a list of plugin names, initialize directories and uses the download routine each.
 
     :param plugin_list: names of modules
+    :type plugin_list: list(str)
     """
     for plugin_name in plugin_list:
         try:
