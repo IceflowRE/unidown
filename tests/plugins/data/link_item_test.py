@@ -20,7 +20,7 @@ class LinkItemTest(unittest.TestCase):
 
         with self.subTest(desc="time None"):
             with self.assertRaises(ValueError):
-                LinkItem("", None)
+                LinkItem("blub", None)
 
     def test_equality(self):
         with self.subTest(desc="different type"):
