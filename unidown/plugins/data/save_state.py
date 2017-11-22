@@ -15,15 +15,15 @@ class SaveState:
 
     :param version: savestate version
     :type version: ~packaging.version.Version
-    :param last_update: last udpate time of the referenced data
-    :type last_update: ~datetime.datetime
     :param plugin_info: plugin info
     :type plugin_info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :param last_update: last udpate time of the referenced data
+    :type last_update: ~datetime.datetime
     :param link_item_dict: data
     :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
-    def __init__(self, version: Version, last_update: datetime, plugin_info: PluginInfo, link_item_dict: dict):
+    def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime, link_item_dict: dict):
         self.plugin_info = plugin_info
         self.version = version
         self.last_update = last_update
@@ -54,7 +54,7 @@ class SaveState:
             version = Version(proto.version)
         except InvalidVersion:
             raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=proto.version))
-        return cls(version, Timestamp.ToDatetime(proto.last_update), PluginInfo.from_protobuf(proto.plugin_info),
+        return cls(version, PluginInfo.from_protobuf(proto.plugin_info), Timestamp.ToDatetime(proto.last_update),
                    data_dict)
 
     def to_protobuf(self):

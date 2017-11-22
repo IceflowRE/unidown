@@ -290,7 +290,7 @@ class APlugin(ABC):
         :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :rtype: ~unidown.plugins.data.save_state.SaveState
         """
-        return SaveState(dynamic_data.SAVE_STATE_VERSION, self.last_update, self.info, link_item_dict)
+        return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, self.last_update, link_item_dict)
 
     def save_save_state(self, data_dict):  # TODO: add progressbar
         """
@@ -315,7 +315,7 @@ class APlugin(ABC):
         """
         if not self.save_state_file.exists():
             self.log.info("No savestate file found.")
-            return SaveState(dynamic_data.SAVE_STATE_VERSION, datetime(1970, 1, 1), self.info, {})
+            return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, datetime(1970, 1, 1), {})
 
         with self.save_state_file.open(mode='r', encoding="utf8") as data_file:
             savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)

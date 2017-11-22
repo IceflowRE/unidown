@@ -139,8 +139,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(['/IceflowRE/Universal-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
-        result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info,
-                           self.eg_data)
+        result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.info, self.plugin.last_update, self.eg_data)
         self.assertEqual(result, self.plugin._create_save_state(self.eg_data))
 
     def test_save_save_state(self):
@@ -169,15 +168,14 @@ class APluginTest(unittest.TestCase):
 
     def test_load_save_savestate(self):
         with self.subTest(desc="default return"):
-            result = SaveState(dynamic_data.SAVE_STATE_VERSION, datetime(1970, 1, 1),
-                               PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), {})
+            result = SaveState(dynamic_data.SAVE_STATE_VERSION,
+                               PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), datetime(1970, 1, 1), {})
             self.assertEqual(result, self.plugin.load_save_state())
 
         with self.subTest(desc="load without errors"):
             self.plugin.save_save_state(self.eg_data)
             save_state = self.plugin.load_save_state()
-            result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.last_update, self.plugin.info,
-                               self.eg_data)
+            result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.info, self.plugin.last_update, self.eg_data)
             self.assertEqual(save_state, result)
 
         with self.subTest(desc="different save state version"):
