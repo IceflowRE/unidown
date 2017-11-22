@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 from packaging.version import Version
+from unidown.plugins.a_plugin import get_plugins
 
 import unidown.core.data.dynamic as dynamic_data
 from tests.plugins.test_a_plugin import Plugin
@@ -43,27 +44,20 @@ class APluginTest(unittest.TestCase):
     def test_equality(self):
         with self.subTest(desc="different type"):
             self.assertFalse(self.plugin == "blub")
+            self.assertTrue(self.plugin != "blub")
         with self.subTest(desc="equal"):
             plugin = Plugin(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
             self.assertTrue(self.plugin == plugin)
-        with self.subTest(desc="unequal"):
-            plugin = Plugin(PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
-            self.assertFalse(self.plugin == plugin)
-            plugin = Plugin(PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
-            self.assertFalse(self.plugin == plugin)
-            plugin = Plugin(PluginInfo('test', '1.0.0', 'www.example.com'))
-            self.assertFalse(self.plugin == plugin)
-
-    def test_inequality(self):
-        with self.subTest(desc="equal"):
-            plugin = Plugin(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
             self.assertFalse(self.plugin != plugin)
         with self.subTest(desc="unequal"):
             plugin = Plugin(PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
+            self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
             plugin = Plugin(PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
+            self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
             plugin = Plugin(PluginInfo('test', '1.0.0', 'www.example.com'))
+            self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
 
     def test_host(self):
@@ -224,6 +218,9 @@ class APluginTest(unittest.TestCase):
             new_data = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
             self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, new_data))
+
+    def test_get_plugins(self):  # TODO: not completed
+        self.assertEqual([], get_plugins())
 
 
 def create_test_file(file: Path):
