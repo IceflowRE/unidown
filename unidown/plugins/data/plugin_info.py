@@ -31,8 +31,6 @@ class PluginInfo:
     def __init__(self, name: str, version: str, host: str):
         if name is None or name == "":
             raise ValueError("Plugin name cannot be empty.")
-        if re.search(r"\s", name):
-            raise ValueError("Plugin name cannot contain spaces.")
         self.name = name
 
         if host is None or host == "":
