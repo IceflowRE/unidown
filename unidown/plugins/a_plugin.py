@@ -27,7 +27,7 @@ class APlugin(ABC):
 
     :param info: information about the plugin
     :type info: ~unidown.plugins.data.plugin_info.PluginInfo
-    :raises PermissionError: can not create default plugin paths
+    :raises PluginException: can not create default plugin paths
 
     :ivar _info: information about the plugin, access with :func:`~unidown.plugins.a_plugin.APlugin.info`
                  **| do not edit**

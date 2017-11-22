@@ -66,7 +66,7 @@ def shutdown():
     logging.shutdown()
 
 
-def download_from_module(plugin: APlugin):
+def download_from_plugin(plugin: APlugin):
     """
     Download routine.
 
@@ -119,13 +119,13 @@ def run(plugin_list):
     """
     Run through a list of plugin names, initialize directories and uses the download routine each.
 
-    :param plugin_list: names of modules
+    :param plugin_list: names of plugins
     :type plugin_list: list(str)
     """
     for plugin_name in plugin_list:
         try:
             logging.info('Loading plugin: ' + plugin_name)
-            cur_module = importlib.import_module('unidown.plugins.{name}.plugin'.format(name=plugin_name))
+            cur_plugin = importlib.import_module('unidown.plugins.{name}.plugin'.format(name=plugin_name))
         except ImportError:
             msg = 'Plugin ' + plugin_name + ' was not found.'
             logging.error(msg)
@@ -133,7 +133,7 @@ def run(plugin_list):
             continue
 
         try:
-            plugin_class = getattr(cur_module, 'Plugin')
+            plugin_class = getattr(cur_plugin, 'Plugin')
             plugin = plugin_class()
         except Exception:
             msg = 'Plugin ' + plugin_name + ' crashed while loading.'
@@ -144,7 +144,7 @@ def run(plugin_list):
             logging.info('Loaded plugin: ' + plugin_name)
 
         try:
-            download_from_module(plugin)
+            download_from_plugin(plugin)
             plugin.clean_up()
         except PluginException as ex:
             msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
