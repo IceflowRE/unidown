@@ -9,6 +9,7 @@ import certifi
 import urllib3
 import urllib3.util
 from google.protobuf import json_format
+from google.protobuf.json_format import ParseError
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
@@ -305,21 +306,35 @@ class APlugin(ABC):
 
     def load_save_state(self):
         """
-        Load the savestate of the module.
+        Load the savestate of the plugin.
 
         :return: savestate
         :rtype: ~unidown.plugins.data.save_state.SaveState
+        :raises ~unidown.plugins.exceptions.PluginException: broken savestate json
         :raises ~unidown.plugins.exceptions.PluginException: different savestate versions
         :raises ~unidown.plugins.exceptions.PluginException: different plugin versions
         :raises ~unidown.plugins.exceptions.PluginException: different plugin names
+        :raises ~unidown.plugins.exceptions.PluginException: could not parse the protobuf
         """
         if not self.save_state_file.exists():
             self.log.info("No savestate file found.")
             return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, datetime(1970, 1, 1), {})
 
+        savestat_proto = ""
         with self.save_state_file.open(mode='r', encoding="utf8") as data_file:
-            savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
+            try:
+                savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
+            except ParseError:
+                raise PluginException(
+                    "Broken savestate json. Please fix or delete (you may lose data in this case) the file: {path}"
+                    "".format(path=self.save_state_file))
+
+        try:
             save_state = SaveState.from_protobuf(savestat_proto)
+        except ValueError as ex:
+            raise PluginException("Could not parse the protobuf {path}: {msg}".format(path=self.save_state_file,
+                                                                                      msg=str(ex)))
+        else:
             del savestat_proto
 
         if save_state.version != dynamic_data.SAVE_STATE_VERSION:
@@ -331,9 +346,6 @@ class APlugin(ABC):
         if save_state.plugin_info.name != self.name:
             raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
                 name=save_state.plugin_info.name, cur_name=self.name))
-        if save_state.last_update is None:
-            self.log.warning("update_date was not found in save file and set to 1970.01.01")
-            save_state.last_update = datetime(1970, 1, 1)
         return save_state
 
     def compare_old_with_new_data(self, old_data, new_data):

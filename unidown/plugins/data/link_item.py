@@ -14,6 +14,8 @@ class LinkItem:
     :type name: str
     :param time: update time
     :type time: ~datetime.datetime
+    :raises ValueError: name cannot be empty or None
+    :raises ValueError: time cannot be empty or None
 
     :ivar _name: name of the item
     :vartype _name: str
@@ -22,6 +24,10 @@ class LinkItem:
     """
 
     def __init__(self, name, time: datetime):
+        if name is None or name == '':
+            raise ValueError("name cannot be empty or None.")
+        if time is None:
+            raise ValueError("time cannot be None.")
         self._name = name
         self._time = time
 
@@ -33,7 +39,10 @@ class LinkItem:
         :param proto: protobuf structure
         :type proto: ~unidown.plugins.data.protobuf.link_item_pb2.LinkItemProto
         :rtype: ~unidown.plugins.data.link_item.LinkItem
+        :raises ValueError: name of LinkItem does not exist inside the protobuf or is empty
         """
+        if proto.name == '':
+            raise ValueError("name of LinkItem does not exist or is empty inside the protobuf.")
         return cls(proto.name, Timestamp.ToDatetime(proto.time))
 
     def __eq__(self, other):

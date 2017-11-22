@@ -16,7 +16,6 @@ class PluginInfo:
     :param host: host url of the main data
     :type host: str
     :raises ValueError: name is empty
-    :raises ValueError: name contains spaces
     :raises ValueError: host is empty
     :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
 
@@ -50,7 +49,16 @@ class PluginInfo:
         :param proto: protobuf structure
         :type proto: ~unidown.plugins.data.protobuf.plugin_info_pb2.PluginInfoProto
         :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
+        :raises ValueError: name of PluginInfo does not exist or is empty inside the protobuf
+        :raises ValueError: version of PluginInfo does not exist or is empty inside the protobuf
+        :raises ValueError: host of PluginInfo does not exist or is empty inside the protobuf
         """
+        if proto.name == "":
+            raise ValueError("name of PluginInfo does not exist or is empty inside the protobuf.")
+        elif proto.version == "":
+            raise ValueError("version of PluginInfo does not exist or is empty inside the protobuf.")
+        elif proto.host == "":
+            raise ValueError("host of PluginInfo does not exist or is empty inside the protobuf.")
         return cls(proto.name, proto.version, proto.host)
 
     def __eq__(self, other):
