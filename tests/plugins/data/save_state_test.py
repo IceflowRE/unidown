@@ -1,10 +1,11 @@
 import unittest
 from datetime import datetime
 
-from packaging.version import Version
+from packaging.version import InvalidVersion, Version
 
 from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
+from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
 
 
@@ -43,3 +44,16 @@ class SaveStateTest(unittest.TestCase):
                              {'item': LinkItem('blub', datetime(2000, 12, 4))})
             self.assertFalse(self.save == save)
             self.assertTrue(self.save != save)
+
+    def test_from_protobuf(self):
+        with self.subTest(desc="version empty"):
+            proto = SaveStateProto()
+            proto.version = ""
+            with self.assertRaises(ValueError):
+                SaveState.from_protobuf(proto)
+
+        with self.subTest(desc="version invalid"):
+            proto = SaveStateProto()
+            proto.version = "1.invalid.2"
+            with self.assertRaises(InvalidVersion):
+                SaveState.from_protobuf(proto)

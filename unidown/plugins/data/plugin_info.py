@@ -30,10 +30,9 @@ class PluginInfo:
     def __init__(self, name: str, version: str, host: str):
         if name is None or name == "":
             raise ValueError("Plugin name cannot be empty.")
-        self.name = name
-
-        if host is None or host == "":
+        elif host is None or host == "":
             raise ValueError("Plugin host cannot be empty.")
+        self.name = name
         self.host = host
 
         try:

@@ -3,6 +3,7 @@ import unittest
 from packaging.version import InvalidVersion
 
 from unidown.plugins.data.plugin_info import PluginInfo
+from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
 
 
 class PluginInfoTest(unittest.TestCase):
@@ -48,3 +49,25 @@ class PluginInfoTest(unittest.TestCase):
 
     def test_str(self):
         self.assertEqual('Blub - 1.0.0 : example.com', str(self.info))
+
+    def test_from_protobuf(self):
+        with self.subTest(desc="name empty"):
+            proto = PluginInfoProto()
+            proto.name = ""
+            with self.assertRaises(ValueError):
+                PluginInfo.from_protobuf(proto)
+
+        with self.subTest(desc="version empty"):
+            proto = PluginInfoProto()
+            proto.name = "blub"
+            proto.version = ""
+            with self.assertRaises(ValueError):
+                PluginInfo.from_protobuf(proto)
+
+        with self.subTest(desc="host empty"):
+            proto = PluginInfoProto()
+            proto.name = "blub"
+            proto.version = "1.0.0"
+            proto.host = ""
+            with self.assertRaises(ValueError):
+                PluginInfo.from_protobuf(proto)

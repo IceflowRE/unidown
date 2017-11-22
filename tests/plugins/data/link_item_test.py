@@ -1,14 +1,26 @@
 import unittest
 from datetime import datetime
 
-from packaging.version import InvalidVersion
-
 from unidown.plugins.data.link_item import LinkItem
+from unidown.plugins.data.protobuf.link_item_pb2 import LinkItemProto
 
 
 class LinkItemTest(unittest.TestCase):
     def setUp(self):
         self.item = LinkItem('blub', datetime(1996, 12, 4))
+
+    def test_init(self):
+        with self.subTest(desc="name empty"):
+            with self.assertRaises(ValueError):
+                LinkItem("", datetime(1970, 1, 1))
+
+        with self.subTest(desc="name None"):
+            with self.assertRaises(ValueError):
+                LinkItem(None, datetime(1970, 1, 1))
+
+        with self.subTest(desc="time None"):
+            with self.assertRaises(ValueError):
+                LinkItem("", None)
 
     def test_equality(self):
         with self.subTest(desc="different type"):
@@ -28,3 +40,9 @@ class LinkItemTest(unittest.TestCase):
 
     def test_str(self):
         self.assertEqual('(blub, 1996-12-04 00:00:00)', str(self.item))
+
+    def test_from_protobuf(self):
+        proto = LinkItemProto()
+        proto.name = ""
+        with self.assertRaises(ValueError):
+            LinkItem.from_protobuf(proto)

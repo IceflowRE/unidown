@@ -26,7 +26,7 @@ class LinkItem:
     def __init__(self, name, time: datetime):
         if name is None or name == '':
             raise ValueError("name cannot be empty or None.")
-        if time is None:
+        elif time is None:
             raise ValueError("time cannot be None.")
         self._name = name
         self._time = time

@@ -8,11 +8,11 @@ from datetime import datetime
 from pathlib import Path
 
 from packaging.version import Version
-from unidown.plugins.a_plugin import get_plugins
 
 import unidown.core.data.dynamic as dynamic_data
 from tests.plugins.test_a_plugin import Plugin
 from unidown.core import manager
+from unidown.plugins.a_plugin import get_plugins
 from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.save_state import SaveState
@@ -193,6 +193,17 @@ class APluginTest(unittest.TestCase):
             plugin._info.name = "different"
             with self.assertRaises(PluginException):
                 plugin.load_save_state()
+
+        with self.subTest(desc="json parse error"):
+            create_test_file(self.plugin.save_state_file)
+            with self.assertRaises(PluginException):
+                self.plugin.load_save_state()
+
+        with self.subTest(desc="json parse error"):
+            with open(self.plugin.save_state_file, 'wb') as writer:
+                writer.write(str.encode('{}'))
+            with self.assertRaises(PluginException):
+                self.plugin.load_save_state()
 
     def test_compare_old_with_new_data(self):
         with self.subTest(desc='empty with empty'):
