@@ -12,7 +12,6 @@ import unidown.core.data.static as static_data
 from unidown.core import updater
 from unidown.plugins.a_plugin import APlugin
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tqdm_option import TqdmOption
 from unidown.tools.tools import create_dir_rec
 
 
@@ -103,7 +102,7 @@ def download_from_module(plugin: APlugin):
         return
     # download new/updated data
     plugin.log.info('Download new {unit}s: {number}'.format(unit=plugin.unit, number=len(down_link_item_dict)))
-    plugin.download(down_link_item_dict, plugin.download_path, TqdmOption('Download new ' + plugin.unit + 's', plugin.unit))
+    plugin.download(down_link_item_dict, plugin.download_path, 'Download new ' + plugin.unit + 's', plugin.unit)
     # check which downloads are succeeded
     succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin.download_path)
     plugin.log.info(

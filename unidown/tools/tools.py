@@ -2,34 +2,10 @@
 Different tools.
 """
 
-from concurrent.futures import as_completed
 from datetime import datetime
 from pathlib import Path
 
 from google.protobuf.timestamp_pb2 import Timestamp
-from tqdm import tqdm
-
-import unidown.core.data.dynamic as dynamic_data
-from unidown.tools.tqdm_option import TqdmOption
-
-
-def progress_bar(job_list, option: TqdmOption):
-    """
-    Progress bar for the downloaded future objects.
-
-    :param job_list: job_list which will be downloaded
-    :type job_list: list(~concurrent.futures.Future)
-    :param option: Tqdm options
-    :type option: ~unidown.tools.tdqn_option.TqdmOption
-    :return: progress bar
-    :rtype: ~tqdm._tqdm.tqdm
-    """
-    pbar = tqdm(as_completed(job_list), total=len(job_list), desc=option.desc, unit=option.unit, leave=True,
-                mininterval=1, ncols=100, disable=dynamic_data.DISABLE_TQDM)
-    for iteration in pbar:
-        pass
-
-    return pbar
 
 
 def delete_dir_rec(path: Path):

@@ -1,7 +1,7 @@
 import logging
 import pkgutil
 from abc import ABC, abstractmethod
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -17,8 +17,7 @@ from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tools import create_dir_rec, delete_dir_rec, progress_bar
-from unidown.tools.tqdm_option import TqdmOption
+from unidown.tools.tools import create_dir_rec, delete_dir_rec
 
 
 class APlugin(ABC):
@@ -241,7 +240,7 @@ class APlugin(ABC):
 
         return url
 
-    def download(self, link_item_dict: dict, folder: Path, progress_bar_option: TqdmOption):
+    def download(self, link_item_dict: dict, folder: Path, desc, unit):
         """
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
@@ -251,8 +250,10 @@ class APlugin(ABC):
         :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :param folder: target download folder
         :type folder: ~pathlib.Path
-        :param progress_bar_option: progress bar options of the download
-        :type progress_bar_option: unidown.tools.tqdm_options.TqdmOption  # TODO: no link generated
+        :param desc: description of the progressbar
+        :type desc: str
+        :param unit: unit of the download, shown in the progressbar
+        :type unit: str
         :return: list of urls of downloads without errors
         :rtype: list[str]
         """
@@ -266,7 +267,10 @@ class APlugin(ABC):
                 job = executor.submit(self.download_as_file, link, folder, item.name)
                 job_list.append(job)
 
-            progress_bar(job_list, progress_bar_option)  # TODO: rework progress bars in plugin, add to others? remove?
+            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
+                        ncols=100, disable=dynamic_data.DISABLE_TQDM)
+            for iteration in pbar:
+                pass
 
         download_without_errors = []
         for job in job_list:

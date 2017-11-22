@@ -16,7 +16,6 @@ from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.save_state import SaveState
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tqdm_option import TqdmOption
 
 
 class APluginTest(unittest.TestCase):
@@ -133,10 +132,10 @@ class APluginTest(unittest.TestCase):
 
     def test_download(self):
         with self.subTest(desc="no item"):
-            self.plugin.download({}, self.plugin.temp_path, TqdmOption('Down units', 'unit'))
+            self.plugin.download({}, self.plugin.temp_path, 'Down units', 'unit')
 
         with self.subTest(desc="one success, one fail"):
-            data = self.plugin.download(self.eg_data, self.plugin.temp_path, TqdmOption('Down units', 'unit'))
+            data = self.plugin.download(self.eg_data, self.plugin.temp_path, 'Down units', 'unit')
             self.assertEqual(['/IceflowRE/Universal-Downloader/master/README.md'], data)
 
     def test_create_save_state(self):
