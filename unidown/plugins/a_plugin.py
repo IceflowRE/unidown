@@ -17,7 +17,7 @@ from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tools import create_dir_rec, delete_dir_rec
+from unidown.tools import create_dir_rec, delete_dir_rec
 
 
 class APlugin(ABC):

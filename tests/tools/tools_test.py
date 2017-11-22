@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from unidown.tools.tools import delete_dir_rec
+from unidown.tools import delete_dir_rec
 
 
 class ToolsTest(unittest.TestCase):

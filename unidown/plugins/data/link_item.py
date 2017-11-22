@@ -3,7 +3,7 @@ from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from unidown.plugins.data.protobuf.link_item_pb2 import LinkItemProto
-from unidown.tools.tools import datetime_to_timestamp
+from unidown.tools import datetime_to_timestamp
 
 
 class LinkItem:

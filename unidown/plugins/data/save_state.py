@@ -6,7 +6,7 @@ from packaging.version import InvalidVersion, Version
 from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
-from unidown.tools.tools import datetime_to_timestamp
+from unidown.tools import datetime_to_timestamp
 
 
 class SaveState:

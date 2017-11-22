@@ -12,7 +12,7 @@ import unidown.core.data.static as static_data
 from unidown.core import updater
 from unidown.plugins.a_plugin import APlugin
 from unidown.plugins.exceptions import PluginException
-from unidown.tools.tools import create_dir_rec
+from unidown.tools import create_dir_rec
 
 
 def init(main_dir: Path, logfile_path: Path, log_level):
