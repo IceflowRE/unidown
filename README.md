@@ -2,11 +2,11 @@
 ![maintained](https://img.shields.io/badge/maintained-yes-brightgreen.svg)
 ![Programming Language](https://img.shields.io/badge/language-Python_3.6-orange.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)  
-[![Build Status](https://travis-ci.org/IceflowRE/Universal-Downloader.svg?branch=master)](https://travis-ci.org/IceflowRE/Universal-Downloader)
-[![Build status](https://ci.appveyor.com/api/projects/status/w7va1jx1xsagl5y4/branch/master?svg=true)](https://ci.appveyor.com/project/IceflowRE/universal-downloader/branch/master)
+[![Build Status](https://img.shields.io/travis/IceflowRE/Universal-Downloader/master.svg?label=Travis%20CI)](https://travis-ci.org/IceflowRE/Universal-Downloader)
+[![Build status](https://img.shields.io/appveyor/ci/IceflowRE/universal-downloader/master.svg?label=AppVeyor%20CI)](https://ci.appveyor.com/project/IceflowRE/universal-downloader/branch/master)
 [![Requirements Status](https://requires.io/github/IceflowRE/Universal-Downloader/requirements.svg?branch=master)](https://requires.io/github/IceflowRE/Universal-Downloader/requirements/?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7783e0b9e3734ee6ab43e142b43e9663)](https://www.codacy.com/app/IceflowRE/Universal-Downloader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=IceflowRE/Universal-Downloader&amp;utm_campaign=Badge_Grade)
-[![codecov](https://codecov.io/gh/IceflowRE/Universal-Downloader/branch/master/graph/badge.svg)](https://codecov.io/gh/IceflowRE/Universal-Downloader)
+[![codecov](https://img.shields.io/codecov/c/github/IceflowRE/universal-downloader/master.svg?label=coverage)](https://codecov.io/gh/IceflowRE/Universal-Downloader)
 ---
 
 `<Description English>`    
