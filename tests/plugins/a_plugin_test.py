@@ -69,18 +69,19 @@ class APluginTest(unittest.TestCase):
     def test_version(self):
         self.assertEqual(self.plugin.version, Version('1.0.0'))
 
-    def test_get_download_links(self):
+    def test_update_download_links(self):
         result = {'/IceflowRE/Universal-Downloader/master/README.md':
                       LinkItem('README.md', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
                   '/IceflowRE/Universal-Downloader/master/no_file_here':
                       LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
                   }
-        self.assertEqual(result, self.plugin.get_download_links())
+        self.plugin.update_download_links()
+        self.assertEqual(result, self.plugin.download_data)
 
     def test_update_last_update(self):
         result = datetime(1999, 9, 9, hour=9, minute=9, second=9)
-        time = self.plugin.update_last_update()
-        self.assertEqual(time, result)
+        self.plugin.update_last_update()
+        self.assertEqual(self.plugin.last_update, result)
         self.assertEqual(result, self.plugin.last_update)
 
     def test_check_download(self):
@@ -205,30 +206,36 @@ class APluginTest(unittest.TestCase):
             with self.assertRaises(PluginException):
                 self.plugin.load_save_state()
 
-    def test_compare_old_with_new_data(self):
+    def test_get_updated_data(self):
         with self.subTest(desc='empty with empty'):
-            self.assertEqual({}, self.plugin.compare_old_with_new_data({}, {}))
+            self.plugin._download_data = {}
+            self.assertEqual({}, self.plugin.get_updated_data({}))
 
         with self.subTest(desc='filled with filled and the same'):
-            self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, self.eg_data))
+            self.plugin._download_data = self.eg_data
+            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
 
         with self.subTest(desc='empty with filled'):
-            self.assertEqual(self.eg_data, self.plugin.compare_old_with_new_data({}, self.eg_data))
+            self.plugin._download_data = self.eg_data
+            self.assertEqual(self.eg_data, self.plugin.get_updated_data({}))
 
         with self.subTest(desc='filled with empty'):
-            self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, {}))
+            self.plugin._download_data = {}
+            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
 
         with self.subTest(desc='filled with one item more'):
             old_data = {'/IceflowRE/Universal-Downloader/master/README.md':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
             result = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                           LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
-            self.assertEqual(result, self.plugin.compare_old_with_new_data(old_data, self.eg_data))
+            self.plugin._download_data = self.eg_data
+            self.assertEqual(result, self.plugin.get_updated_data(old_data))
 
         with self.subTest(desc='one item more with filled'):
             new_data = {'/IceflowRE/Universal-Downloader/master/no_file_here':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            self.assertEqual({}, self.plugin.compare_old_with_new_data(self.eg_data, new_data))
+            self.plugin._download_data = new_data
+            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
 
     def test_get_plugins(self):  # TODO: not completed
         self.assertEqual([], get_plugins())

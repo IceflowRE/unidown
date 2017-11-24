@@ -49,6 +49,9 @@ class APlugin(ABC):
     :ivar _last_update: latest update time of the referencing data, access with
                         :func:`~unidown.plugins.a_plugin.APlugin.last_update` **| do not edit**
     :vartype _last_update: ~datetime.datetime
+    :ivar _download_data: referencing data, access with :func:`~unidown.plugins.a_plugin.APlugin.download_data`
+                          **| do not edit**
+    :vartype _download_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
     def __init__(self, info: PluginInfo):
@@ -67,6 +70,7 @@ class APlugin(ABC):
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
         self._last_update = datetime(1970, 1, 1)
+        self._download_data = {}
         self.unit = 'item'
         self.downloader = urllib3.HTTPSConnectionPool(self.info.host, maxsize=self.simul_downloads,
                                                       cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
@@ -125,6 +129,15 @@ class APlugin(ABC):
         return self._last_update
 
     @property
+    def download_data(self):
+        """
+        Plugins referenced data.
+
+        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        """
+        return self._download_data
+
+    @property
     def download_path(self):
         """
         General download path of the plugin.
@@ -155,15 +168,6 @@ class APlugin(ABC):
         """
         raise NotImplementedError
 
-    def get_download_links(self):
-        """
-        Return the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_links`.
-
-        :return: download links as Url to LinkItem
-        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        """
-        return self._create_download_links()
-
     def update_last_update(self):
         """
         Call this to update the latest update time. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_last_update`.
@@ -172,7 +176,12 @@ class APlugin(ABC):
         :rtype: ~datetime.datetime
         """
         self._last_update = self._create_last_update_time()
-        return self._last_update
+
+    def update_download_links(self):
+        """
+        Update the download links. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_download_data`.
+        """
+        self._download_data = self._create_download_links()
 
     def check_download(self, link_item_dict: dict, folder: Path, log=True):  # TODO: parallelize?
         """
@@ -348,22 +357,21 @@ class APlugin(ABC):
                 name=save_state.plugin_info.name, cur_name=self.name))
         return save_state
 
-    def compare_old_with_new_data(self, old_data, new_data):
+    def get_updated_data(self, old_data):
         """
-        Get links who needs to be downloaded by comparing old and new data.
+        Get links who needs to be downloaded by comparing old and the new data
+        :func:`~unidown.plugins.a_plugin.APlugin.download_data`.
 
         :param old_data: old data
         :type old_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
-        :param new_data: new data
-        :type new_data: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :return: data which is newer or dont exist in the old one
         :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
-        if not new_data:
+        if not self.download_data:
             return {}
         new_link_item_dict = {}
-        for link, link_item in tqdm(new_data.items(), desc="Compare with save", unit="item", leave=True, mininterval=1,
-                                    ncols=100, disable=dynamic_data.DISABLE_TQDM):
+        for link, link_item in tqdm(self.download_data.items(), desc="Compare with save", unit="item", leave=True,
+                                    mininterval=1, ncols=100, disable=dynamic_data.DISABLE_TQDM):
             # TODO: add methode to log lost items, which are in old but not in new
             if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
                 self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)

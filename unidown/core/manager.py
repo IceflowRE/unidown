@@ -85,18 +85,18 @@ def download_from_plugin(plugin: APlugin):
     """
     # get last update date
     plugin.log.info('Get last update')
-    last_update = plugin.update_last_update()
+    plugin.update_last_update()
     # load old save state
     save_state = plugin.load_save_state()
-    if last_update <= save_state.last_update:
+    if plugin.last_update <= save_state.last_update:
         plugin.log.info('No update. Nothing to do.')
         return
     # get download links
     plugin.log.info('Get download links')
-    new_link_item_dict = plugin.get_download_links()
+    plugin.update_download_links()
     # compare with save state
-    down_link_item_dict = plugin.compare_old_with_new_data(save_state.link_linkitem, new_link_item_dict)
-    plugin.log.info('Compared with save state: ' + str(len(new_link_item_dict)))
+    down_link_item_dict = plugin.get_updated_data(save_state.link_linkitem)
+    plugin.log.info('Compared with save state: ' + str(len(plugin.download_data)))
     if not down_link_item_dict:
         plugin.log.info('No new data. Nothing to do.')
         return
