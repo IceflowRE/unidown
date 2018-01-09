@@ -23,7 +23,7 @@ setup(
         # 'Environment :: X11 Applications :: Qt',
     ],
     keywords='modular downloader',
-    packages=find_packages('unidown'),
+    packages=find_packages(include=['unidown']),
     python_requires='>=3.6',
     install_requires=[
         'urllib3[secure]==1.22',
