@@ -23,20 +23,20 @@ setup(
         # 'Environment :: X11 Applications :: Qt',
     ],
     keywords='modular downloader',
-    packages=find_packages(exclude=['doc', 'scripts', 'tests']),
+    packages=find_packages('unidown'),
     python_requires='>=3.6',
     install_requires=[
         'urllib3[secure]==1.22',
         'tqdm==4.19.4',
-        'protobuf==3.5.0.post1',
+        'protobuf==3.5.1',
         'packaging==16.8',
     ],
     extras_require={
         'dev': [
             'prospector[with_everything]==0.12.7',  # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
-            'nose2[coverage_plugin]==0.7.2',
-            'Sphinx==1.6.5',
-            'sphinx_rtd_theme==0.2.5b1',
+            'nose2[coverage_plugin]==0.7.3',
+            'Sphinx==1.6.6',
+            'sphinx_rtd_theme==0.2.5b2',
             'twine==1.9.1',
             'wheel==0.30.0',
         ],
