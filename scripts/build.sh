@@ -5,6 +5,7 @@ py_version="$1"
 
 ./scripts/createProtoClasses.sh
 
+echo $(python --version)
 python setup.py clean --all
 python setup.py bdist_wheel --python-tag "$py_version"
 

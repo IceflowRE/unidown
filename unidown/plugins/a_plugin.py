@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
+from time import time
 
 import certifi
 import urllib3
@@ -223,7 +224,7 @@ class APlugin(ABC):
         if self.save_state_file.exists():
             self.save_state_file.unlink()
 
-    def download_as_file(self, url, folder: Path, name: str):
+    def download_as_file(self, url, folder: Path, name: str, delay=0):
         """
         Download the given url to the given target folder.
 
@@ -248,9 +249,12 @@ class APlugin(ABC):
             else:
                 raise HTTPError("{url} | {status}".format(url=url, status=str(reader.status)))
 
+        if delay > 0:
+            time.sleep(delay)
+
         return url
 
-    def download(self, link_item_dict: dict, folder: Path, desc, unit):
+    def download(self, link_item_dict: dict, folder: Path, desc, unit, delay=0):
         """
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
@@ -264,6 +268,8 @@ class APlugin(ABC):
         :type desc: str
         :param unit: unit of the download, shown in the progressbar
         :type unit: str
+        :param delay: delay between the downloads in seconds
+        :type delay: int
         :return: list of urls of downloads without errors
         :rtype: list[str]
         """
