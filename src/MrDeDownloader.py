@@ -317,8 +317,8 @@ def collect_ebook_list(job):
         print(str(exception))
         return
 
-    if len(result[1]) == 0:
-        ebook_link_dict = ebook_link_dict.update(result[0])
+    if len(str(result[1])) == 0:
+        ebook_link_dict = {**ebook_link_dict, **result[0]}
     else:
         not_found_ebooks_thread.append(result[1])
 
