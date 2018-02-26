@@ -20,7 +20,7 @@ from packaging import version
 from pathlib import Path
 # import multiprocessing
 
-VERSION = '1.2.2'
+VERSION = '1.2.3'
 
 temp_path = Path('./temp/')
 threads_path = Path('./temp/threads/')
