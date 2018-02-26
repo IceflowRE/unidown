@@ -38,11 +38,44 @@ https://github.com/IceflowRE/Universal-Downloader
 ## Credits
 - Developer
   - Iceflower S
+    - iceflower@gmx.de
+
+### Third Party
+- nose2 *by* Jason Pellerin
+    - https://github.com/nose-devs/nose2
+    - [BSD-2-Clause](https://github.com/nose-devs/nose2/blob/master/license.txt)
+- Packaging *by* Donald Stufft and individual contributors
+    - https://github.com/pypa/packaging
+    - [BSD-3-Clause, Apache-2.0](https://github.com/pypa/packaging/blob/master/LICENSE)
+- Prospector *by* landscapeio ([landscapeio](https://github.com/landscapeio))
+    - https://github.com/landscapeio/prospector
+    - [GPL-2.0+](https://github.com/landscapeio/prospector/blob/master/LICENSE)
+- Protocol Buffers *by* Google Inc. ([Google](https://github.com/google))
+    - https://github.com/google/protobuf/tree/master/python
+    - [BSD-3-Clause](https://github.com/google/protobuf/blob/master/LICENSE)
+- Read the Docs Sphinx Theme *by* Dave Snider ([snide](https://github.com/snide))
+    - https://github.com/rtfd/sphinx_rtd_theme
+    - [MIT](https://github.com/rtfd/sphinx_rtd_theme/blob/master/LICENSE)
+- Sphinx *by* the Sphinx team ([Sphinx team](https://github.com/sphinx-doc/sphinx/blob/master/AUTHORS))
+    - https://github.com/sphinx-doc/sphinx
+    - [BSD-2-Clause](https://github.com/sphinx-doc/sphinx/blob/master/LICENSE)
+- tqdm *by* noamraph ([noamraph](https://github.com/noamraph))
+    - https://github.com/tqdm/tqdm
+    - [MIT, MPL-2.0](https://raw.githubusercontent.com/tqdm/tqdm/master/LICENCE)
+- twine *by* various authors ([authors](https://github.com/pypa/twine/blob/master/AUTHORS))
+    - https://github.com/pypa/twine
+    - [Apache-2.0](https://github.com/pypa/twine/blob/master/LICENSE)
+- urllib3 *by* Andrey Petrov and contributors ([contributors](https://github.com/shazow/urllib3/blob/master/CONTRIBUTORS.txt))
+    - https://github.com/shazow/urllib3
+    - [MIT](https://github.com/shazow/urllib3/blob/master/LICENSE.txt)
+- wheel *by* Charlie Denton ([meshy](https://github.com/meshy))
+    - https://github.com/meshy/pythonwheels
+    - [BSD-2-Clause](https://github.com/meshy/pythonwheels/blob/master/LICENSE)
 
 ## License
 ![Image of GPLv3](http://www.gnu.org/graphics/gplv3-127x51.png)
 
-Copyright  ©  Iceflower S
+Copyright  ©  2016-now Iceflower S
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.  
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  
