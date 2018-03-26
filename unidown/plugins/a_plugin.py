@@ -232,6 +232,7 @@ class APlugin(ABC):
         :param folder: target folder
         :type folder: ~pathlib.Path
         :param name: target file name
+        :param delay: after download wait in seconds
         :type name: str
         :return: url
         :rtype: str
@@ -279,7 +280,7 @@ class APlugin(ABC):
         job_list = []
         with ThreadPoolExecutor(max_workers=self.simul_downloads) as executor:
             for link, item in link_item_dict.items():
-                job = executor.submit(self.download_as_file, link, folder, item.name)
+                job = executor.submit(self.download_as_file, link, folder, item.name, delay)
                 job_list.append(job)
 
             pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
