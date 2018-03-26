@@ -27,17 +27,17 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'urllib3[secure]==1.22',
-        'tqdm==4.19.5',
-        'protobuf==3.5.1',
-        'packaging==16.8',
+        'tqdm==4.19.8',
+        'protobuf==3.5.2.post1',
+        'packaging==17.1',
     ],
     extras_require={
         'dev': [
             'prospector[with_everything]==0.12.7',  # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
-            'nose2[coverage_plugin]==0.7.3',
-            'Sphinx==1.6.6',
+            'nose2[coverage_plugin]==0.7.4',
+            'Sphinx==1.7.2',
             'sphinx_rtd_theme==0.2.5b2',
-            'twine==1.9.1',
+            'twine==1.11.0',
             'wheel==0.30.0',
         ],
     },
