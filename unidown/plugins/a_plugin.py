@@ -211,8 +211,7 @@ class APlugin(ABC):
         Default clean up for a module.
         Deletes :attr:`~unidown.plugins.a_plugin.APlugin.temp_path`.
         """
-        if self.downloader.pool is not None:  # TODO: as long as urllib3 #1279 is open
-            self.downloader.close()
+        self.downloader.close()
         delete_dir_rec(self.temp_path)
 
     def delete_data(self):
