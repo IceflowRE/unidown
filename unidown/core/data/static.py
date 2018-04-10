@@ -15,5 +15,7 @@ AUTHOR = 'Iceflower S'
 AUTHOR_GITHUB = 'https://github.com/IceflowRE'
 #: author email
 AUTHOR_EMAIL = 'iceflower@gmx.de'
+#: short description
+DESCRIPTION = 'Universal downloader, a modular extensible downloader who manage progress and updates.'
 #: project url
 PROJECT_URL = 'https://github.com/IceflowRE/Universal-Downloader'

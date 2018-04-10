@@ -6,7 +6,7 @@ import unidown.core.data.static as static_data
 setup(
     name=static_data.NAME,
     version=static_data.VERSION,
-    description='Universal downloader, a modular extensible downloader who manage progress and updates.',
+    description=static_data.DESCRIPTION,
     author=static_data.AUTHOR,
     author_email=static_data.AUTHOR_EMAIL,
     license='GPLv3',
