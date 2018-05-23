@@ -36,7 +36,7 @@ def create_dir_rec(path: Path):
         Path.mkdir(path, parents=True)
 
 
-def datetime_to_timestamp(time: datetime):
+def datetime_to_timestamp(time: datetime) -> Timestamp:
     """
     Convert datetime to protobuf.timestamp.
 

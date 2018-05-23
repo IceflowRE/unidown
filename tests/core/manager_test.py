@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-import unidown.core.data.dynamic as dynamic_data
+import unidown.dynamic_data as dynamic_data
 from unidown.core import manager
 
 

@@ -1,8 +1,7 @@
 import unittest
 from datetime import datetime
 
-from unidown.plugins.data.link_item import LinkItem
-from unidown.plugins.data.protobuf.link_item_pb2 import LinkItemProto
+from unidown.plugins.data import LinkItem, LinkItemProto
 
 
 class LinkItemTest(unittest.TestCase):

@@ -2,8 +2,7 @@ import unittest
 
 from packaging.version import InvalidVersion
 
-from unidown.plugins.data.plugin_info import PluginInfo
-from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
+from unidown.plugins.data import PluginInfo, PluginInfoProto
 
 
 class PluginInfoTest(unittest.TestCase):

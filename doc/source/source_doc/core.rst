@@ -11,12 +11,12 @@ unidown.core.updater
 .. automodule:: unidown.core.updater
     :members:
 
-unidown.core.data.dynamic
+unidown.dynamic_data
 -------------------------
-.. automodule:: unidown.core.data.dynamic
+.. automodule:: unidown.dynamic_data
     :members:
 
-unidown.core.data.static
+unidown.static_data
 ------------------------
-.. automodule:: unidown.core.data.static
+.. automodule:: unidown.static_data
     :members:

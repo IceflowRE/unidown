@@ -14,7 +14,7 @@ from google.protobuf.json_format import ParseError
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
-import unidown.core.data.dynamic as dynamic_data
+import unidown.dynamic_data as dynamic_data
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState

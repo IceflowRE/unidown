@@ -2,7 +2,7 @@
 # executed from project root
 
 py_version="$1"
-app_version=$(grep -oP "VERSION\s=\s'\K([\w\W]*)'" ./unidown/core/data/static.py)
+app_version=$(grep -oP "VERSION\s=\s'\K([\w\W]*)'" ./unidown/static_data.py)
 app_version=${app_version:: -1}
 
 ./scripts/build.sh "$py_version"
