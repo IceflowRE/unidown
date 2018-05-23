@@ -5,7 +5,7 @@ Using UniDown
 
 The program is a terminal program (yet), so it runs from the terminal.
 
-Calling with :command: `unidown`.
+Calling with :command:`unidown`.
 
 Furthermore, there are additional arguments:
 

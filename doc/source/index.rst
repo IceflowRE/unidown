@@ -2,17 +2,14 @@
 Documentation
 #############
 
-Welcome to Universal-Downloader.
+.. only:: html
+
+    .. include:: ../../README.rst
 
 .. toctree::
     :maxdepth: 2
+    :hidden:
 
     user/main
     dev_plugins/main
     source_doc/main
-
-.. only:: html
-
-    * :ref:`search`
-    * :ref:`genindex`
-    * :ref:`modindex`

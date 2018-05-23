@@ -1,31 +1,28 @@
 unidown.plugins
 ===============
 
-unidown.plugins.a_plugin.APlugin
---------------------------------
-.. autoclass:: unidown.plugins.a_plugin.APlugin
+unidown.plugins.a_plugin
+------------------------
+.. automodule:: unidown.plugins.a_plugin
     :private-members:
     :members:
 
-.. automodule:: unidown.plugins.a_plugin
+unidown.plugins.data.plugin_info
+--------------------------------
+.. automodule:: unidown.plugins.data.plugin_info
     :members:
 
-unidown.plugins.data.plugin_info.PluginInfo
--------------------------------------------
-.. autoclass:: unidown.plugins.data.plugin_info.PluginInfo
+unidown.plugins.data.link_item
+------------------------------
+.. automodule:: unidown.plugins.data.link_item
     :members:
 
-unidown.plugins.data.link_item.LinkItem
----------------------------------------
-.. autoclass:: unidown.plugins.data.link_item.LinkItem
+unidown.plugins.data.save_state
+-------------------------------
+.. automodule:: unidown.plugins.data.save_state
     :members:
 
-unidown.plugins.data.save_state.SaveState
------------------------------------------
-.. autoclass:: unidown.plugins.data.save_state.SaveState
-    :members:
-
-unidown.plugins.exceptions.PluginException
-------------------------------------------
-.. autoexception:: unidown.plugins.exceptions.PluginException
+unidown.plugins.exceptions
+--------------------------
+.. automodule:: unidown.plugins.exceptions
     :members:
