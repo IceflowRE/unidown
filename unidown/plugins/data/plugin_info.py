@@ -39,7 +39,7 @@ class PluginInfo:
             raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=version))
 
     @classmethod
-    def from_protobuf(cls, proto: PluginInfoProto):
+    def from_protobuf(cls, proto: PluginInfoProto) -> 'PluginInfo':
         """
         Constructor from protobuf.
 
@@ -58,18 +58,18 @@ class PluginInfo:
             raise ValueError("host of PluginInfo does not exist or is empty inside the protobuf.")
         return cls(proto.name, proto.version, proto.host)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return self.name == other.name and self.host == other.host and self.version == other.version
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name + " - " + str(self.version) + " : " + self.host
 
-    def to_protobuf(self):
+    def to_protobuf(self) -> PluginInfoProto:
         """
         Create protobuf item.
 

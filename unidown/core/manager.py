@@ -6,6 +6,7 @@ import logging
 import multiprocessing
 import platform
 from pathlib import Path
+from typing import List
 
 import unidown.dynamic_data as dynamic_data
 import unidown.static_data as static_data
@@ -15,7 +16,7 @@ from unidown.plugins.exceptions import PluginException
 from unidown.tools import create_dir_rec
 
 
-def init(main_dir: Path, logfile_path: Path, log_level):
+def init(main_dir: Path, logfile_path: Path, log_level: str):
     """
     Initialize the downloader. TODO.
 
@@ -95,7 +96,7 @@ def download_from_plugin(plugin: APlugin):
     plugin.log.info('Get download links')
     plugin.update_download_links()
     # compare with save state
-    down_link_item_dict = plugin.get_updated_data(save_state.link_linkitem)
+    down_link_item_dict = plugin.get_updated_data(save_state.link_item_dict)
     plugin.log.info('Compared with save state: ' + str(len(plugin.download_data)))
     if not down_link_item_dict:
         plugin.log.info('No new data. Nothing to do.')
@@ -109,13 +110,13 @@ def download_from_plugin(plugin: APlugin):
         'Downloaded: {success}/{total}'.format(success=len(succeed_link_item_dict), total=len(down_link_item_dict)))
     # update savestate link_item_dict with succeeded downloads dict
     plugin.log.info('Update savestate')
-    plugin.update_dict(save_state.link_linkitem, succeed_link_item_dict)
+    plugin.update_dict(save_state.link_item_dict, succeed_link_item_dict)
     # write new savestate
     plugin.log.info('Write savestate')
-    plugin.save_save_state(save_state.link_linkitem)
+    plugin.save_save_state(save_state.link_item_dict)
 
 
-def run(plugin_list):
+def run(plugin_list: List(str)):
     """
     Run through a list of plugin names, initialize directories and uses the download routine each.
 

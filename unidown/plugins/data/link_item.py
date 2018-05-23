@@ -23,7 +23,7 @@ class LinkItem:
     :vartype _time: ~datetime.datetime
     """
 
-    def __init__(self, name, time: datetime):
+    def __init__(self, name: str, time: datetime):
         if name is None or name == '':
             raise ValueError("name cannot be empty or None.")
         elif time is None:
@@ -32,7 +32,7 @@ class LinkItem:
         self._time = time
 
     @classmethod
-    def from_protobuf(cls, proto: LinkItemProto):
+    def from_protobuf(cls, proto: LinkItemProto) -> 'LinkItem':
         """
         Constructor from protobuf.
 
@@ -45,19 +45,19 @@ class LinkItem:
             raise ValueError("name of LinkItem does not exist or is empty inside the protobuf.")
         return cls(proto.name, Timestamp.ToDatetime(proto.time))
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return self._name == other.name and self._time == other.time
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '(' + str(self._name) + ', ' + str(self._time) + ')'
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         :py:attr:`~unidown.plugins.data.link_item.LinkItem._name`.
 
@@ -66,7 +66,7 @@ class LinkItem:
         return self._name
 
     @property
-    def time(self):
+    def time(self) -> datetime:
         """
         :py:attr:`~unidown.plugins.data.link_item.LinkItem._time`.
 
@@ -74,7 +74,7 @@ class LinkItem:
         """
         return self._time
 
-    def to_protobuf(self):
+    def to_protobuf(self) -> LinkItemProto:
         """
         Create protobuf item.
 

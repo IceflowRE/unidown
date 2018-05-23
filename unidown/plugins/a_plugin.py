@@ -5,16 +5,19 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 from time import time
+from typing import Dict, List, Tuple
 
 import certifi
 import urllib3
 import urllib3.util
 from google.protobuf import json_format
 from google.protobuf.json_format import ParseError
+from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
 import unidown.dynamic_data as dynamic_data
+from unidown.plugins.data.link_item import LinkItem
 from unidown.plugins.data.plugin_info import PluginInfo
 from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugins.data.save_state import SaveState
@@ -76,16 +79,16 @@ class APlugin(ABC):
         self.downloader = urllib3.HTTPSConnectionPool(self.info.host, maxsize=self.simul_downloads,
                                                       cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return self.info == other.info
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     @property
-    def info(self):
+    def info(self) -> PluginInfo:
         """
         Information about the plugin.
 
@@ -94,7 +97,7 @@ class APlugin(ABC):
         return self._info
 
     @property
-    def host(self):
+    def host(self) -> str:
         """
         Host url.
 
@@ -103,7 +106,7 @@ class APlugin(ABC):
         return self._info.host
 
     @property
-    def name(self):
+    def name(self) -> str:
         """
         Plugin name.
 
@@ -112,7 +115,7 @@ class APlugin(ABC):
         return self._info.name
 
     @property
-    def version(self):
+    def version(self) -> Version:
         """
         Plugin version, PEP440 is used.
 
@@ -121,7 +124,7 @@ class APlugin(ABC):
         return self._info.version
 
     @property
-    def last_update(self):
+    def last_update(self) -> datetime:
         """
         Newest update time of the plugins referenced data.
 
@@ -130,16 +133,16 @@ class APlugin(ABC):
         return self._last_update
 
     @property
-    def download_data(self):
+    def download_data(self) -> Dict(str, LinkItem):
         """
         Plugins referenced data.
 
-        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :rtype: Dict(str, ~unidown.plugins.data.link_item.LinkItem)
         """
         return self._download_data
 
     @property
-    def download_path(self):
+    def download_path(self) -> Path:
         """
         General download path of the plugin.
 
@@ -148,12 +151,12 @@ class APlugin(ABC):
         return self._download_path
 
     @abstractmethod
-    def _create_download_links(self):  # TODO: -> typing.Dict[str, LinkItem]: get it work
+    def _create_download_links(self) -> Dict(str, LinkItem):
         """
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
 
-        :rtype: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :rtype: Dict(str, ~unidown.plugins.data.link_item.LinkItem)
         :raises NotImplementedError: abstract method
         """
         raise NotImplementedError
@@ -172,9 +175,6 @@ class APlugin(ABC):
     def update_last_update(self):
         """
         Call this to update the latest update time. Calls :func:`~unidown.plugins.a_plugin.APlugin._create_last_update`.
-
-        :return: newest update time from the referencing data
-        :rtype: ~datetime.datetime
         """
         self._last_update = self._create_last_update_time()
 
@@ -184,7 +184,9 @@ class APlugin(ABC):
         """
         self._download_data = self._create_download_links()
 
-    def check_download(self, link_item_dict: dict, folder: Path, log=True):  # TODO: parallelize?
+    # TODO: parallelize?
+    def check_download(self, link_item_dict: Dict(str, LinkItem), folder: Path, log: bool = True) -> Tuple(
+        Dict(str, LinkItem), Dict(str, LinkItem)):
         """
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
@@ -224,7 +226,7 @@ class APlugin(ABC):
         if self.save_state_file.exists():
             self.save_state_file.unlink()
 
-    def download_as_file(self, url, folder: Path, name: str, delay=0):
+    def download_as_file(self, url: str, folder: Path, name: str, delay: float = 0) -> str:
         """
         Download the given url to the given target folder.
 
@@ -255,7 +257,8 @@ class APlugin(ABC):
 
         return url
 
-    def download(self, link_item_dict: dict, folder: Path, desc, unit, delay=0):
+    def download(self, link_item_dict: Dict(str, LinkItem), folder: Path, desc: str, unit: str,
+                 delay: float = 0) -> List(str):
         """
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
@@ -299,7 +302,7 @@ class APlugin(ABC):
 
         return download_without_errors
 
-    def _create_save_state(self, link_item_dict: dict):
+    def _create_save_state(self, link_item_dict: Dict(str, LinkItem)) -> SaveState:
         """
         Create protobuf savestate of the module and the given data.
 
@@ -309,7 +312,7 @@ class APlugin(ABC):
         """
         return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, self.last_update, link_item_dict)
 
-    def save_save_state(self, data_dict):  # TODO: add progressbar
+    def save_save_state(self, data_dict: Dict(str, LinkItem)):  # TODO: add progressbar
         """
         Save meta data about the downloaded things and the plugin to file.
 
@@ -320,7 +323,7 @@ class APlugin(ABC):
         with self.save_state_file.open(mode='w', encoding="utf8") as writer:
             writer.write(json_data)
 
-    def load_save_state(self):
+    def load_save_state(self) -> SaveState:
         """
         Load the savestate of the plugin.
 
@@ -364,7 +367,7 @@ class APlugin(ABC):
                 name=save_state.plugin_info.name, cur_name=self.name))
         return save_state
 
-    def get_updated_data(self, old_data):
+    def get_updated_data(self, old_data: Dict(str, LinkItem)) -> Dict(str, LinkItem):
         """
         Get links who needs to be downloaded by comparing old and the new data
         :func:`~unidown.plugins.a_plugin.APlugin.download_data`.
@@ -389,7 +392,7 @@ class APlugin(ABC):
 
         return new_link_item_dict
 
-    def update_dict(self, base: dict, new: dict):
+    def update_dict(self, base: Dict(str, LinkItem), new: Dict(str, LinkItem)):
         """
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
         Updates the base dict. Basically executes `base.update(new)`.
@@ -406,7 +409,7 @@ class APlugin(ABC):
         base.update(new)
 
 
-def get_plugins():
+def get_plugins() -> List(str):
     """
     Get all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
 

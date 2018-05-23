@@ -9,7 +9,7 @@ from packaging import version
 import unidown.static_data as static_data
 
 
-def get_newest_app_version():
+def get_newest_app_version() -> str:
     """
     Download the version tag from remote. TODO: versionurl.
 
@@ -21,7 +21,7 @@ def get_newest_app_version():
     return online_version
 
 
-def check_for_app_updates():
+def check_for_app_updates() -> bool:
     """
     Check for updates.
 

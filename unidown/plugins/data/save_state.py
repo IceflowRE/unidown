@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict
 
 from google.protobuf.timestamp_pb2 import Timestamp
 from packaging.version import InvalidVersion, Version
@@ -32,23 +33,23 @@ class SaveState:
     :vartype link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
-    def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime, link_item_dict: dict):
+    def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime, link_item_dict: Dict(str, LinkItem)):
         self.plugin_info = plugin_info
         self.version = version
         self.last_update = last_update
         self.link_item_dict = link_item_dict
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
         return self.plugin_info == other.plugin_info and self.link_item_dict == other.link_item_dict and \
                self.version == other.version and self.last_update == other.last_update
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     @classmethod
-    def from_protobuf(cls, proto: SaveStateProto):
+    def from_protobuf(cls, proto: SaveStateProto) -> 'SaveState':
         """
         Constructor from protobuf. Can raise ValueErrors from called from_protobuf() parsers.
 
@@ -70,7 +71,7 @@ class SaveState:
         return cls(version, PluginInfo.from_protobuf(proto.plugin_info), Timestamp.ToDatetime(proto.last_update),
                    data_dict)
 
-    def to_protobuf(self):
+    def to_protobuf(self) -> SaveStateProto:
         """
         Create protobuf item.
 
