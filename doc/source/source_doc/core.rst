@@ -1,11 +1,6 @@
 unidown.core
 ============
 
-unidown.core.main
------------------
-.. automodule:: unidown.core.main
-    :members:
-
 unidown.core.manager
 --------------------
 .. automodule:: unidown.core.manager
@@ -16,9 +11,12 @@ unidown.core.updater
 .. automodule:: unidown.core.updater
     :members:
 
-unidown.core.data
------------------
-.. toctree::
-    :maxdepth: 2
+unidown.core.data.dynamic
+-------------------------
+.. automodule:: unidown.core.data.dynamic
+    :members:
 
-    core_data.rst
+unidown.core.data.static
+------------------------
+.. automodule:: unidown.core.data.static
+    :members:

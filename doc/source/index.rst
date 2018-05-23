@@ -1,35 +1,18 @@
+#############
+Documentation
+#############
+
 Welcome to Universal-Downloader.
 
-User's Guide
-============
-
 .. toctree::
     :maxdepth: 2
 
-    getting_started
-    usage
-    configuration
-    plugins
-    changelog
+    user/main
+    dev_plugins/main
+    source_doc/main
 
-Plugin Developer's Guide
-========================
+.. only:: html
 
-.. toctree::
-    :maxdepth: 2
-
-    dev/writing_plugins
-
-Developer's Guide
-=================
-
-.. toctree::
-    :maxdepth: 2
-
-    dev/internals
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`search`
+    * :ref:`search`
+    * :ref:`genindex`
+    * :ref:`modindex`

@@ -19,7 +19,7 @@ def main():
     if sys.version_info[0] < 3 or sys.version_info[1] < 6:
         sys.exit('Only Python 3.6 or greater is supported. You are using:' + sys.version)
 
-    parser = ArgumentParser(prog='UniversalDownloader', description='Universal Downloader.')
+    parser = ArgumentParser(prog=static_data.SHORT_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
 
     parser.add_argument('-p', '--plugin', nargs='+', dest='plugins', required=True, type=str, metavar='name',

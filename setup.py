@@ -23,7 +23,7 @@ setup(
         # 'Environment :: X11 Applications :: Qt',
     ],
     keywords='modular downloader',
-    packages=find_packages(include=['unidown']),
+    packages=find_packages(include=['unidown', 'unidown.*']),
     python_requires='>=3.6',
     install_requires=[
         'urllib3[secure]==1.22',
@@ -33,11 +33,13 @@ setup(
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]==0.12.7',  # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
+            'prospector[with_everything]==0.12.7',
+            # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
             'nose2[coverage_plugin]==0.7.4',
             'Sphinx==1.7.2',
             'sphinx_rtd_theme==0.2.5b2',
             'twine==1.11.0',
+            'setuptools==39.0.1',
             'wheel==0.30.0',
         ],
     },
@@ -48,7 +50,7 @@ setup(
     zip_safe=True,
     entry_points={
         'console_scripts': [
-            'unidown = unidown.core.main:main',
+            'unidown = unidown.main:main',
         ],
         # 'gui_scripts': [
         #    '???',

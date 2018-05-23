@@ -1,5 +1,3 @@
-import re
-
 from packaging.version import InvalidVersion, Version
 
 from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
@@ -9,7 +7,7 @@ class PluginInfo:
     """
     Information about the module. Those information will be saved into the save files as well.
 
-    :param name: name
+    :param name: the name of the plugin
     :type name: str
     :param version: version, PEP440 conform
     :type version: str

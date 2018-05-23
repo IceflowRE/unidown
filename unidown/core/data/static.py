@@ -5,6 +5,8 @@ because it is used inside the setup.py **| do not edit**.
 
 #: name of this program
 NAME = "Universal-Downloader"
+#: short name of this program
+SHORT_NAME = "unidown"
 #: version in PEP440 format
 VERSION = '2.0.0.dev1'
 #: url to the current version

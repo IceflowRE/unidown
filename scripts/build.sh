@@ -3,11 +3,8 @@
 
 py_version="$1"
 
-./scripts/createProtoClasses.sh
+./scripts/create_proto_classes.sh
 
 echo $(python --version)
 python setup.py clean --all
 python setup.py bdist_wheel --python-tag "$py_version"
-
-sphinx-build -b html ./doc/source/ ./doc/build/html/
-sphinx-build -b linkcheck ./doc/source/ ./doc/build/linkcheck/
