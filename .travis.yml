@@ -2,14 +2,14 @@ language: python
 
 matrix:
   include:
-  -
+  - python: "3.6"
     if: tag IS blank
-    python: "3.6"
     env: PY_VERSION=py36
-  -
+  - python: "3.7-dev"
     if: tag IS blank
-    python: "3.7-dev" # 3.7 development branch
     env: PY_VERSION=py37
+  allow_failures:
+  - python: "3.7-dev"
 
 addons:
   apt:
