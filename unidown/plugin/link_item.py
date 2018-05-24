@@ -2,7 +2,7 @@ from datetime import datetime
 
 from google.protobuf.timestamp_pb2 import Timestamp
 
-from unidown.plugins.data.protobuf.link_item_pb2 import LinkItemProto
+from unidown.plugin.protobuf.link_item_pb2 import LinkItemProto
 from unidown.tools import datetime_to_timestamp
 
 
@@ -48,7 +48,7 @@ class LinkItem:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self._name == other.name and self._time == other.time
+        return self._name == other._name and self._time == other._time
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

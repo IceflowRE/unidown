@@ -17,11 +17,11 @@ from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
 import unidown.dynamic_data as dynamic_data
-from unidown.plugins.data.link_item import LinkItem
-from unidown.plugins.data.plugin_info import PluginInfo
-from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
-from unidown.plugins.data.save_state import SaveState
-from unidown.plugins.exceptions import PluginException
+from unidown.plugin.exceptions import PluginException
+from unidown.plugin.link_item import LinkItem
+from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin.protobuf.save_state_pb2 import SaveStateProto
+from unidown.plugin.save_state import SaveState
 from unidown.tools import create_dir_rec, delete_dir_rec
 
 
@@ -133,11 +133,11 @@ class APlugin(ABC):
         return self._last_update
 
     @property
-    def download_data(self) -> Dict(str, LinkItem):
+    def download_data(self) -> Dict[str, LinkItem]:
         """
         Plugins referenced data.
 
-        :rtype: Dict(str, ~unidown.plugins.data.link_item.LinkItem)
+        :rtype: Dict[str, ~unidown.plugins.data.link_item.LinkItem]
         """
         return self._download_data
 
@@ -151,7 +151,7 @@ class APlugin(ABC):
         return self._download_path
 
     @abstractmethod
-    def _create_download_links(self) -> Dict(str, LinkItem):
+    def _create_download_links(self) -> Dict[str, LinkItem]:
         """
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
@@ -185,8 +185,8 @@ class APlugin(ABC):
         self._download_data = self._create_download_links()
 
     # TODO: parallelize?
-    def check_download(self, link_item_dict: Dict(str, LinkItem), folder: Path, log: bool = True) -> Tuple(
-        Dict(str, LinkItem), Dict(str, LinkItem)):
+    def check_download(self, link_item_dict: Dict[str, LinkItem], folder: Path, log: bool = True) -> Tuple[
+        Dict[str, LinkItem], Dict[str, LinkItem]]:
         """
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
@@ -257,8 +257,8 @@ class APlugin(ABC):
 
         return url
 
-    def download(self, link_item_dict: Dict(str, LinkItem), folder: Path, desc: str, unit: str,
-                 delay: float = 0) -> List(str):
+    def download(self, link_item_dict: Dict[str, LinkItem], folder: Path, desc: str, unit: str, delay: float = 0) -> \
+            List[str]:
         """
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.a_plugin.APlugin.simul_downloads`. After
@@ -302,7 +302,7 @@ class APlugin(ABC):
 
         return download_without_errors
 
-    def _create_save_state(self, link_item_dict: Dict(str, LinkItem)) -> SaveState:
+    def _create_save_state(self, link_item_dict: Dict[str, LinkItem]) -> SaveState:
         """
         Create protobuf savestate of the module and the given data.
 
@@ -312,7 +312,7 @@ class APlugin(ABC):
         """
         return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, self.last_update, link_item_dict)
 
-    def save_save_state(self, data_dict: Dict(str, LinkItem)):  # TODO: add progressbar
+    def save_save_state(self, data_dict: Dict[str, LinkItem]):  # TODO: add progressbar
         """
         Save meta data about the downloaded things and the plugin to file.
 
@@ -367,7 +367,7 @@ class APlugin(ABC):
                 name=save_state.plugin_info.name, cur_name=self.name))
         return save_state
 
-    def get_updated_data(self, old_data: Dict(str, LinkItem)) -> Dict(str, LinkItem):
+    def get_updated_data(self, old_data: Dict[str, LinkItem]) -> Dict[str, LinkItem]:
         """
         Get links who needs to be downloaded by comparing old and the new data
         :func:`~unidown.plugins.a_plugin.APlugin.download_data`.
@@ -392,7 +392,7 @@ class APlugin(ABC):
 
         return new_link_item_dict
 
-    def update_dict(self, base: Dict(str, LinkItem), new: Dict(str, LinkItem)):
+    def update_dict(self, base: Dict[str, LinkItem], new: Dict[str, LinkItem]):
         """
         Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
         Updates the base dict. Basically executes `base.update(new)`.
@@ -409,14 +409,13 @@ class APlugin(ABC):
         base.update(new)
 
 
-def get_plugins() -> List(str):
+def get_plugins() -> List[str]:
     """
-    Get all existing plugins inside the :py:mod:`unidown.plugins`. Except :py:mod:`~unidown.plugins.data`.
+    Get all existing plugins inside the :py:mod:`unidown.plugins`.
 
     :rtype: list[str]
     """
     import unidown.plugins
 
     package = unidown.plugins
-    return [modname for _, modname, ispkg in pkgutil.iter_modules(path=package.__path__, prefix=package.__name__ + '.')
-            if ispkg and modname != 'unidown.plugins.data']
+    return [modname for _, modname, ispkg in pkgutil.iter_modules(path=package.__path__, prefix=package.__name__ + '.')]

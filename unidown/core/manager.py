@@ -11,8 +11,8 @@ from typing import List
 import unidown.dynamic_data as dynamic_data
 import unidown.static_data as static_data
 from unidown.core import updater
-from unidown.plugins.a_plugin import APlugin
-from unidown.plugins.exceptions import PluginException
+from unidown.plugin.a_plugin import APlugin
+from unidown.plugin.exceptions import PluginException
 from unidown.tools import create_dir_rec
 
 
@@ -116,7 +116,7 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_save_state(save_state.link_item_dict)
 
 
-def run(plugin_list: List(str)):
+def run(plugin_list: List[str]):
     """
     Run through a list of plugin names, initialize directories and uses the download routine each.
 

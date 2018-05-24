@@ -1,6 +1,6 @@
 from packaging.version import InvalidVersion, Version
 
-from unidown.plugins.data.protobuf.plugin_info_pb2 import PluginInfoProto
+from unidown.plugin.protobuf.plugin_info_pb2 import PluginInfoProto
 
 
 class PluginInfo:

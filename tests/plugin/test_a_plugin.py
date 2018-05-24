@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from unidown.plugins import APlugin
-from unidown.plugins.data import LinkItem, PluginInfo
+from unidown.plugin.a_plugin import APlugin
+from unidown.plugin.link_item import LinkItem
+from unidown.plugin.plugin_info import PluginInfo
 
 
 class Plugin(APlugin):

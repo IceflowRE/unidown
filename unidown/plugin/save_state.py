@@ -4,9 +4,9 @@ from typing import Dict
 from google.protobuf.timestamp_pb2 import Timestamp
 from packaging.version import InvalidVersion, Version
 
-from unidown.plugins.data.link_item import LinkItem
-from unidown.plugins.data.plugin_info import PluginInfo
-from unidown.plugins.data.protobuf.save_state_pb2 import SaveStateProto
+from unidown.plugin.link_item import LinkItem
+from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin.protobuf.save_state_pb2 import SaveStateProto
 from unidown.tools import datetime_to_timestamp
 
 
@@ -33,7 +33,8 @@ class SaveState:
     :vartype link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
     """
 
-    def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime, link_item_dict: Dict(str, LinkItem)):
+    def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime,
+                 link_item_dict: Dict[str, LinkItem]):
         self.plugin_info = plugin_info
         self.version = version
         self.last_update = last_update

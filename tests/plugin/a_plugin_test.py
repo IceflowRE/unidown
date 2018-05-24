@@ -10,10 +10,13 @@ from pathlib import Path
 from packaging.version import Version
 
 import unidown.dynamic_data as dynamic_data
-from tests.plugins.test_a_plugin import Plugin
+from tests.plugin.test_a_plugin import Plugin
 from unidown.core import manager
-from unidown.plugins import PluginException, get_plugins
-from unidown.plugins.data import LinkItem, PluginInfo, SaveState
+from unidown.plugin.a_plugin import get_plugins
+from unidown.plugin.exceptions import PluginException
+from unidown.plugin.link_item import LinkItem
+from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin.save_state import SaveState
 
 
 class APluginTest(unittest.TestCase):
@@ -32,7 +35,8 @@ class APluginTest(unittest.TestCase):
                             LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
 
     def tearDown(self):
-        self.plugin.delete_data()
+        pass
+        # self.plugin.delete_data()
 
     def test_init(self):
         self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
@@ -144,15 +148,15 @@ class APluginTest(unittest.TestCase):
         except AttributeError:
             self.fail("No data part found.")
         items = [
-            """"/IceflowRE/Universal-Downloader/master/README.rst": {
-                  "name": "One",
-                  "time": "2001-01-01T01:01:01Z"
-                }""",
-            """"/IceflowRE/Universal-Downloader/master/no_file_here": {
-                  "name": "Two",
-                  "time": "2002-02-02T02:02:02Z"
-                }"""]
-        print(data)
+            ('"/IceflowRE/Universal-Downloader/master/README.rst": {' '\n'
+             '      "name": "One",' '\n'
+             '      "time": "2001-01-01T01:01:01Z"' '\n'
+             '    }'),
+            ('"/IceflowRE/Universal-Downloader/master/no_file_here": {' '\n'
+             '      "name": "Two",' '\n'
+             '      "time": "2002-02-02T02:02:02Z"' '\n'
+             '    }')
+        ]
         for item in items:
             with self.subTest():
                 if data.find(item) == -1:

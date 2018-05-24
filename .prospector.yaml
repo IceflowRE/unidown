@@ -3,8 +3,9 @@ output-format: pylint
 ignore-paths:
     - doc
     - scripts
-    - unidown/plugins/data/protobuf
-    - unidown\plugins\data\protobuf # for windows, see issue #203
+    - tests
+    - unidown/plugin/protobuf
+    - unidown\plugin\protobuf # for windows, see issue #203
 
 strictness: veryhigh
 test-warnings: true

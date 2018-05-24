@@ -2,8 +2,8 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-import "unidown/plugins/data/protobuf/plugin_info.proto";
-import "unidown/plugins/data/protobuf/link_item.proto";
+import "unidown/plugin/protobuf/plugin_info.proto";
+import "unidown/plugin/protobuf/link_item.proto";
 
 message SaveStateProto {
     string version = 1;
