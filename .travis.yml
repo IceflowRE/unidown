@@ -11,6 +11,10 @@ matrix:
     python: "3.7-dev" # 3.7 development branch
     env: PY_VERSION=py37
 
+addons:
+  apt:
+    update: true
+
 install:
   - pip install --upgrade -e .[dev]
   - pip install codacy-coverage codecov
