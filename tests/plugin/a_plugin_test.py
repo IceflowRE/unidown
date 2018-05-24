@@ -77,6 +77,7 @@ class APluginTest(unittest.TestCase):
                       LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
                   }
         self.plugin.update_download_links()
+
         self.assertEqual(result, self.plugin.download_data)
 
     def test_update_last_update(self):
@@ -103,6 +104,7 @@ class APluginTest(unittest.TestCase):
         create_test_file(self.plugin.temp_path.joinpath('testfile'))
         self.plugin.clean_up()
 
+        self.assertEqual(self.plugin.downloader.pool, None)
         self.assertFalse(self.plugin.temp_path.exists())
 
     def test_delete_data(self):
