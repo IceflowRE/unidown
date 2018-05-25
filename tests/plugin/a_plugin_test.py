@@ -42,8 +42,9 @@ class APluginTest(unittest.TestCase):
         self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
         self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
 
+        self.assertIsInstance(self.plugin.log, logging.Logger)
         self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
-        self.assertIs(self.plugin.info, PluginInfo)
+        self.assertIsInstance(self.plugin.info, PluginInfo)
         self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
         self.assertEqual(self.plugin.name, 'test')
         self.assertEqual(self.plugin.version, Version('1.0.0'))
