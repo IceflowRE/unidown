@@ -33,7 +33,7 @@ def create_dir_rec(path: Path):
     :type path: ~pathlib.Path
     """
     if not path.exists():
-        Path.mkdir(path, parents=True)
+        Path.mkdir(path, parents=True, exist_ok=True)
 
 
 def datetime_to_timestamp(time: datetime) -> Timestamp:

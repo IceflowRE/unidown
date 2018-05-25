@@ -17,26 +17,26 @@ class SaveState:
     :param version: savestate version
     :type version: ~packaging.version.Version
     :param plugin_info: plugin info
-    :type plugin_info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :type plugin_info: ~unidown.plugin.plugin_info.PluginInfo
     :param last_update: last udpate time of the referenced data
     :type last_update: ~datetime.datetime
     :param link_item_dict: data
-    :type link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+    :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
 
     :ivar version: savestate version
     :vartype version: ~packaging.version.Version
     :ivar plugin_info: plugin info
-    :vartype plugin_info: ~unidown.plugins.data.plugin_info.PluginInfo
+    :vartype plugin_info: ~unidown.plugin.plugin_info.PluginInfo
     :ivar last_update: newest udpate time
     :vartype last_update: ~datetime.datetime
     :ivar link_item_dict: data
-    :vartype link_item_dict: dict(str, ~unidown.plugins.data.link_item.LinkItem)
+    :vartype link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
     """
 
     def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime,
                  link_item_dict: Dict[str, LinkItem]):
-        self.plugin_info = plugin_info
         self.version = version
+        self.plugin_info = plugin_info
         self.last_update = last_update
         self.link_item_dict = link_item_dict
 
@@ -55,8 +55,9 @@ class SaveState:
         Constructor from protobuf. Can raise ValueErrors from called from_protobuf() parsers.
 
         :param proto: protobuf structure
-        :type proto: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
-        :rtype: ~unidown.plugins.data.save_state.SaveState
+        :type proto: ~unidown.plugin.protobuf.save_state_pb2.SaveStateProto
+        :return: the SaveState
+        :rtype: ~unidown.plugin.save_state.SaveState
         :raises ValueError: version of SaveState does not exist or is empty inside the protobuf
         :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
         """
@@ -77,7 +78,7 @@ class SaveState:
         Create protobuf item.
 
         :return: protobuf structure
-        :rtype: ~unidown.plugins.data.protobuf.save_state_pb2.SaveStateProto
+        :rtype: ~unidown.plugin.protobuf.save_state_pb2.SaveStateProto
         """
         result = SaveStateProto()
         result.version = str(self.version)

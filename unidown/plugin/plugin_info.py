@@ -44,8 +44,9 @@ class PluginInfo:
         Constructor from protobuf.
 
         :param proto: protobuf structure
-        :type proto: ~unidown.plugins.data.protobuf.plugin_info_pb2.PluginInfoProto
-        :rtype: ~unidown.plugins.data.plugin_info.PluginInfo
+        :type proto: ~unidown.plugin.protobuf.plugin_info_pb2.PluginInfoProto
+        :return: the PluginInfo
+        :rtype: ~unidown.plugin.plugin_info.PluginInfo
         :raises ValueError: name of PluginInfo does not exist or is empty inside the protobuf
         :raises ValueError: version of PluginInfo does not exist or is empty inside the protobuf
         :raises ValueError: host of PluginInfo does not exist or is empty inside the protobuf
@@ -74,7 +75,7 @@ class PluginInfo:
         Create protobuf item.
 
         :return: protobuf structure
-        :rtype: ~unidown.plugins.data.protobuf.link_item_pb2.PluginInfoProto
+        :rtype: ~unidown.plugin.protobuf.link_item_pb2.PluginInfoProto
         """
         proto = PluginInfoProto()
         proto.name = self.name

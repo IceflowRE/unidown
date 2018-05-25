@@ -18,7 +18,7 @@ from unidown.tools import create_dir_rec
 
 def init(main_dir: Path, logfile_path: Path, log_level: str):
     """
-    Initialize the downloader. TODO.
+    Initialize the _downloader. TODO.
 
     :param main_dir: main directory
     :type main_dir: ~pathlib.Path
@@ -82,7 +82,7 @@ def download_from_plugin(plugin: APlugin):
     9. write new savestate
 
     :param plugin: plugin
-    :type plugin: ~unidown.plugins.a_plugin.APlugin
+    :type plugin: ~unidown.plugin.a_plugin.APlugin
     """
     # get last update date
     plugin.log.info('Get last update')
@@ -121,7 +121,7 @@ def run(plugin_list: List[str]):
     Run through a list of plugin names, initialize directories and uses the download routine each.
 
     :param plugin_list: names of plugins
-    :type plugin_list: list(str)
+    :type plugin_list: List[str]
     """
     for plugin_name in plugin_list:
         try:

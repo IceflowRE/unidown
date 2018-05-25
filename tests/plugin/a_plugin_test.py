@@ -1,7 +1,7 @@
 """
 Test for plugins.a_plugin.
 """
-
+import logging
 import re
 import unittest
 from datetime import datetime
@@ -39,8 +39,18 @@ class APluginTest(unittest.TestCase):
         # self.plugin.delete_data()
 
     def test_init(self):
-        self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
+        self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
         self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
+
+        self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
+        self.assertIs(self.plugin.info, PluginInfo)
+        self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
+        self.assertEqual(self.plugin.name, 'test')
+        self.assertEqual(self.plugin.version, Version('1.0.0'))
+        self.assertEqual(self.plugin.download_path, dynamic_data.DOWNLOAD_DIR.joinpath(self.plugin.name))
+        self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
+        self.assertEqual(self.plugin.download_data, {})
+        self.assertEqual(self.plugin.unit, "item")
 
     def test_equality(self):
         with self.subTest(desc="different type"):
@@ -61,15 +71,6 @@ class APluginTest(unittest.TestCase):
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
 
-    def test_host(self):
-        self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
-
-    def test_name(self):
-        self.assertEqual(self.plugin.name, 'test')
-
-    def test_version(self):
-        self.assertEqual(self.plugin.version, Version('1.0.0'))
-
     def test_update_download_links(self):
         result = {'/IceflowRE/Universal-Downloader/master/README.rst':
                       LinkItem('README.rst', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
@@ -88,12 +89,12 @@ class APluginTest(unittest.TestCase):
 
     def test_check_download(self):
         with self.subTest(desc="empty"):
-            data = self.plugin.check_download({}, self.plugin.temp_path)
+            data = self.plugin.check_download({}, self.plugin._temp_path)
             self.assertEqual(({}, {}), data)
 
         with self.subTest(desc="one succeed, one lost"):
-            create_test_file(self.plugin.temp_path.joinpath('One'))
-            data = self.plugin.check_download(self.eg_data, self.plugin.temp_path)
+            create_test_file(self.plugin._temp_path.joinpath('One'))
+            data = self.plugin.check_download(self.eg_data, self.plugin._temp_path)
             succeed = {'/IceflowRE/Universal-Downloader/master/README.rst':
                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
             lost = {'/IceflowRE/Universal-Downloader/master/no_file_here':
@@ -101,39 +102,39 @@ class APluginTest(unittest.TestCase):
             self.assertEqual((succeed, lost), data)
 
     def test_clean_up(self):
-        create_test_file(self.plugin.temp_path.joinpath('testfile'))
+        create_test_file(self.plugin._temp_path.joinpath('testfile'))
         self.plugin.clean_up()
 
-        self.assertEqual(self.plugin.downloader.pool, None)
-        self.assertFalse(self.plugin.temp_path.exists())
+        self.assertEqual(self.plugin._downloader.pool, None)
+        self.assertFalse(self.plugin._temp_path.exists())
 
     def test_delete_data(self):
-        create_test_file(self.plugin.temp_path.joinpath('testfile'))
+        create_test_file(self.plugin._temp_path.joinpath('testfile'))
         create_test_file(self.plugin.download_path.joinpath('testfile'))
-        create_test_file(self.plugin.save_state_file)
+        create_test_file(self.plugin._save_state_file)
 
         self.plugin.delete_data()
-        self.assertFalse(self.plugin.temp_path.exists())
+        self.assertFalse(self.plugin._temp_path.exists())
         self.assertFalse(self.plugin.download_path.exists())
-        self.assertFalse(self.plugin.save_state_file.exists())
+        self.assertFalse(self.plugin._save_state_file.exists())
 
     def test_download_as_file(self):
         self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
-                                     self.plugin.temp_path, 'file')
-        self.assertTrue(self.plugin.temp_path.joinpath('file').exists())
+                                     self.plugin._temp_path, 'file')
+        self.assertTrue(self.plugin._temp_path.joinpath('file').exists())
         self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
-                                     self.plugin.temp_path, 'file')
-        self.assertTrue(self.plugin.temp_path.joinpath('file_d').exists())
+                                     self.plugin._temp_path, 'file')
+        self.assertTrue(self.plugin._temp_path.joinpath('file_d').exists())
         self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
-                                     self.plugin.temp_path, 'file')
-        self.assertTrue(self.plugin.temp_path.joinpath('file_d_d').exists())
+                                     self.plugin._temp_path, 'file')
+        self.assertTrue(self.plugin._temp_path.joinpath('file_d_d').exists())
 
     def test_download(self):
         with self.subTest(desc="no item"):
-            self.plugin.download({}, self.plugin.temp_path, 'Down units', 'unit')
+            self.plugin.download({}, self.plugin._temp_path, 'Down units', 'unit')
 
         with self.subTest(desc="one success, one fail"):
-            data = self.plugin.download(self.eg_data, self.plugin.temp_path, 'Down units', 'unit')
+            data = self.plugin.download(self.eg_data, self.plugin._temp_path, 'Down units', 'unit')
             self.assertEqual(['/IceflowRE/Universal-Downloader/master/README.rst'], data)
 
     def test_create_save_state(self):
@@ -142,7 +143,7 @@ class APluginTest(unittest.TestCase):
 
     def test_save_save_state(self):
         self.plugin.save_save_state(self.eg_data)
-        with self.plugin.save_state_file.open(mode='r', encoding="utf8") as data_file:
+        with self.plugin._save_state_file.open(mode='r', encoding="utf8") as data_file:
             json_data = data_file.read()
         regexp = re.compile(r'"data":\s{([\s\S]+"\s+}\s)')
         try:
@@ -199,12 +200,12 @@ class APluginTest(unittest.TestCase):
                 plugin.load_save_state()
 
         with self.subTest(desc="json parse error"):
-            create_test_file(self.plugin.save_state_file)
+            create_test_file(self.plugin._save_state_file)
             with self.assertRaises(PluginException):
                 self.plugin.load_save_state()
 
         with self.subTest(desc="json parse error"):
-            with open(self.plugin.save_state_file, 'wb') as writer:
+            with open(self.plugin._save_state_file, 'wb') as writer:
                 writer.write(str.encode('{}'))
             with self.assertRaises(PluginException):
                 self.plugin.load_save_state()

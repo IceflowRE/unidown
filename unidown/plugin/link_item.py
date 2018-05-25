@@ -37,8 +37,9 @@ class LinkItem:
         Constructor from protobuf.
 
         :param proto: protobuf structure
-        :type proto: ~unidown.plugins.data.protobuf.link_item_pb2.LinkItemProto
-        :rtype: ~unidown.plugins.data.link_item.LinkItem
+        :type proto: ~unidown.plugin.protobuf.link_item_pb2.LinkItemProto
+        :return: the LinkItem
+        :rtype: ~unidown.plugin.link_item.LinkItem
         :raises ValueError: name of LinkItem does not exist inside the protobuf or is empty
         """
         if proto.name == '':
@@ -58,20 +59,10 @@ class LinkItem:
 
     @property
     def name(self) -> str:
-        """
-        :py:attr:`~unidown.plugins.data.link_item.LinkItem._name`.
-
-        :rtype: str
-        """
         return self._name
 
     @property
     def time(self) -> datetime:
-        """
-        :py:attr:`~unidown.plugins.data.link_item.LinkItem._time`.
-
-        :rtype: ~datetime.datetime
-        """
         return self._time
 
     def to_protobuf(self) -> LinkItemProto:
@@ -79,7 +70,7 @@ class LinkItem:
         Create protobuf item.
 
         :return: protobuf structure
-        :rtype: ~unidown.plugins.data.protobuf.link_item_pb2.LinkItemProto
+        :rtype: ~unidown.plugin.protobuf.link_item_pb2.LinkItemProto
         """
         result = LinkItemProto()
         result.name = self._name
