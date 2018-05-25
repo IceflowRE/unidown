@@ -7,12 +7,12 @@ import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
-import unidown.dynamic_data as dynamic_data
-import unidown.static_data as static_data
+from unidown import dynamic_data
+from unidown import static_data
 from unidown.core import manager
 
 
-def main():
+def main(args):
     """
     Entry point into the program. Gets the arguments from the console and proceed them with :class:`~argparse.ArgumentParser`.
     Returns if its success successful 0 else 1.
@@ -32,7 +32,7 @@ def main():
     parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         default=dynamic_data.LOG_LEVEL, help='set the logging level (default: %(default)s)')
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     try:
         manager.init(Path(args.main_dir), Path(args.logfile), args.log_level)
     except PermissionError:

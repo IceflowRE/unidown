@@ -16,4 +16,9 @@ class ToolsTest(unittest.TestCase):
             file.close()
         Path("./testtemp/temp2/").mkdir()
         delete_dir_rec(Path("./testtemp/"))
+
         self.assertFalse(Path("./testtemp/").exists())
+
+        self.assertFalse(Path("./donotexist/").exists())
+        delete_dir_rec(Path("./donotexist/"))
+        self.assertFalse(Path("./donotexist/").exists())

@@ -3,20 +3,21 @@ Test for plugins.a_plugin.
 """
 import logging
 import re
+import stat
 import unittest
 from datetime import datetime
 from pathlib import Path
 
 from packaging.version import Version
 
-import unidown.dynamic_data as dynamic_data
-from tests.plugin.test_a_plugin import Plugin
+from unidown import dynamic_data
 from unidown.core import manager
 from unidown.plugin.a_plugin import get_plugins
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
 from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.save_state import SaveState
+from unidown.plugins.test.plugin import Plugin
 
 
 class APluginTest(unittest.TestCase):
@@ -35,8 +36,7 @@ class APluginTest(unittest.TestCase):
                             LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
 
     def tearDown(self):
-        pass
-        # self.plugin.delete_data()
+        self.plugin.delete_data()
 
     def test_init(self):
         self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
@@ -242,8 +242,11 @@ class APluginTest(unittest.TestCase):
             self.plugin._download_data = new_data
             self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
 
-    def test_get_plugins(self):  # TODO: not completed
-        self.assertEqual([], get_plugins())
+    def test_get_plugins(self):
+        """
+        This test requires that the unidown package is installed.
+        """
+        self.assertIn('unidown.plugins.test', get_plugins())
 
 
 def create_test_file(file: Path):

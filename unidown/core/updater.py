@@ -6,7 +6,7 @@ import certifi
 import urllib3
 from packaging import version
 
-import unidown.static_data as static_data
+from unidown import static_data
 
 
 def get_newest_app_version() -> str:

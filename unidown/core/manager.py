@@ -8,8 +8,8 @@ import platform
 from pathlib import Path
 from typing import List
 
-import unidown.dynamic_data as dynamic_data
-import unidown.static_data as static_data
+from unidown import dynamic_data
+from unidown import static_data
 from unidown.core import updater
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException

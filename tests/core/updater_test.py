@@ -1,6 +1,7 @@
 import unittest
 
 from unidown.core import updater
+from unidown import static_data
 
 
 class UpdaterTest(unittest.TestCase):
@@ -10,5 +11,17 @@ class UpdaterTest(unittest.TestCase):
         """
         try:
             updater.get_newest_app_version()
+        except Exception:
+            self.fail('Connection to Github failed.')
+
+    def test_check_for_app_updates(self):
+        static_data.VERSION = '1.0.0'
+        try:
+            self.assertTrue(updater.check_for_app_updates())
+        except Exception:
+            self.fail('Connection to Github failed.')
+        static_data.VERSION = '100000.0.0'
+        try:
+            self.assertFalse(updater.check_for_app_updates())
         except Exception:
             self.fail('Connection to Github failed.')

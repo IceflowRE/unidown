@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-import unidown.static_data as static_data
+from unidown import static_data
 
 setup(
     name=static_data.NAME,

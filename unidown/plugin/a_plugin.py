@@ -16,7 +16,7 @@ from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
-import unidown.dynamic_data as dynamic_data
+from unidown import dynamic_data
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
 from unidown.plugin.plugin_info import PluginInfo
