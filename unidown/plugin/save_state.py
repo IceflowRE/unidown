@@ -21,7 +21,7 @@ class SaveState:
     :param last_update: last udpate time of the referenced data
     :type last_update: ~datetime.datetime
     :param link_item_dict: data
-    :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
+    :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
 
     :ivar version: savestate version
     :vartype version: ~packaging.version.Version
@@ -30,7 +30,7 @@ class SaveState:
     :ivar last_update: newest udpate time
     :vartype last_update: ~datetime.datetime
     :ivar link_item_dict: data
-    :vartype link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
+    :vartype link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
     """
 
     def __init__(self, version: Version, plugin_info: PluginInfo, last_update: datetime,

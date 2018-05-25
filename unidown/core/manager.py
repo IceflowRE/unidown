@@ -121,7 +121,7 @@ def run(plugin_list: List[str]):
     Run through a list of plugin names, initialize directories and uses the download routine each.
 
     :param plugin_list: names of plugins
-    :type plugin_list: List[str]
+    :type plugin_list: list[str]
     """
     for plugin_name in plugin_list:
         try:

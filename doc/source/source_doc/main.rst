@@ -9,4 +9,4 @@ Reference material.
 
     root
     core
-    plugins
+    plugin
