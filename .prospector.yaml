@@ -29,7 +29,7 @@ frosted:
 mccabe:
     run: true
 
-pep257:
+pydocstyle:
     run: true
     disable:
         - D105 # Missing docstring in magic method
@@ -41,7 +41,7 @@ pep257:
         - D212 # Multi-line docstring summary should start at the first line
         - F999 # Too many false positive due to type hints
 
-pep8:
+pycodestyle:
     run: false # pylint will check
     full: true
     options:

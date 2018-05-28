@@ -33,11 +33,11 @@ setup(
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]==0.12.7',
-            # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
+            'prospector[with_everything]==0.12.10',
             'nose2[coverage_plugin]==0.7.4',
             'Sphinx==1.7.4',
             'sphinx_rtd_theme==0.3.1',
+            'sphinxcontrib-svg2pdfconverter==0.1.0',
             'twine==1.11.0',
             'setuptools==39.2.0',
             'wheel==0.31.1',
