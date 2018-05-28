@@ -60,6 +60,12 @@ Sphinx
     - `the Sphinx team <https://github.com/sphinx-doc/sphinx/blob/master/AUTHORS>`_
     - https://github.com/sphinx-doc/sphinx
     - `BSD-2-Clause <https://github.com/sphinx-doc/sphinx/blob/master/LICENSE>`_
+
+sphinxcontrib-svg2pdfconverter
+    - `Missing Link Electronics, Inc. <https://github.com/missinglinkelectronics>`_
+    - https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter
+    - `BSD-2-Clause <https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter/blob/master/LICENSE.txt>`_
+
 tqdm
     - `noamraph <https://github.com/noamraph>`_
     - https://github.com/tqdm/tqdm
