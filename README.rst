@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FIceflowRE%2FUniversal-Downloader.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FIceflowRE%2FUniversal-Downloader?ref=badge_shield)
+
 ********************
 Universal Downloader
 ********************
@@ -108,3 +110,6 @@ wheel
    
 .. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/universal-downloader/master.svg?label=coverage
    :target: https://codecov.io/gh/IceflowRE/Universal-Downloader
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FIceflowRE%2FUniversal-Downloader.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FIceflowRE%2FUniversal-Downloader?ref=badge_large)
