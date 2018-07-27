@@ -3,32 +3,38 @@ Test for plugins.a_plugin.
 """
 import logging
 import re
-import stat
 import unittest
 from datetime import datetime
 from pathlib import Path
 
+import pkg_resources
 from packaging.version import Version
 
 from unidown import dynamic_data
 from unidown.core import manager
-from unidown.plugin.a_plugin import get_plugins
+from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
 from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.save_state import SaveState
-from unidown.plugins.test.plugin import Plugin
+
+
+class APluginLayer(object):
+    @classmethod
+    def setUp(cls):
+        cls.test_plugin = None
+        for entry in pkg_resources.iter_entry_points('unidown.plugins'):
+            if entry.name == "test":
+                cls.test_plugin = entry.load()
 
 
 class APluginTest(unittest.TestCase):
-    """
-    Tests for tools.Upgrade.
-    """
+    layer = APluginLayer
 
     def setUp(self):
         manager.init(Path('./tmp'), Path('UniDown.log'), 'INFO')
         dynamic_data.DISABLE_TQDM = True
-        self.plugin = Plugin()
+        self.plugin = self.layer.test_plugin()
         self.plugin.log.disabled = True
         self.eg_data = {'/IceflowRE/Universal-Downloader/master/README.rst':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
@@ -58,17 +64,17 @@ class APluginTest(unittest.TestCase):
             self.assertFalse(self.plugin == "blub")
             self.assertTrue(self.plugin != "blub")
         with self.subTest(desc="equal"):
-            plugin = Plugin(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
             self.assertTrue(self.plugin == plugin)
             self.assertFalse(self.plugin != plugin)
         with self.subTest(desc="unequal"):
-            plugin = Plugin(PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
-            plugin = Plugin(PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
-            plugin = Plugin(PluginInfo('test', '1.0.0', 'www.example.com'))
+            plugin = self.layer.test_plugin(PluginInfo('test', '1.0.0', 'www.example.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
 
@@ -179,7 +185,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(save_state, result)
 
         with self.subTest(desc="different save state version"):
-            plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
             with self.assertRaises(PluginException):
@@ -187,14 +193,14 @@ class APluginTest(unittest.TestCase):
             self.setUp()
 
         with self.subTest(desc="different plugin version"):
-            plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
-            plugin = Plugin(PluginInfo("test", "2.0.0", "host"))
+            plugin = self.layer.test_plugin(PluginInfo("test", "2.0.0", "host"))
             with self.assertRaises(PluginException):
                 plugin.load_save_state()
 
         with self.subTest(desc="different plugin name"):
-            plugin = Plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             plugin._info.name = "different"
             with self.assertRaises(PluginException):
@@ -244,9 +250,9 @@ class APluginTest(unittest.TestCase):
 
     def test_get_plugins(self):
         """
-        This test requires that the unidown package is installed.
+        This test requires that the unidown test plugin is installed.
         """
-        self.assertIn('unidown.plugins.test', get_plugins())
+        self.assertIn('test', APlugin.get_plugins())
 
 
 def create_test_file(file: Path):

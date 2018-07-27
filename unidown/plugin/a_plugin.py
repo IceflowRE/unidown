@@ -1,5 +1,4 @@
 import logging
-import pkgutil
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -8,6 +7,7 @@ from time import time
 from typing import Dict, List, Tuple
 
 import certifi
+import pkg_resources
 import urllib3
 import urllib3.util
 from google.protobuf import json_format
@@ -50,7 +50,7 @@ class APlugin(ABC):
     :ivar _unit: the thing which should be downloaded, may be displayed in the progress bar
     :vartype _unit: str
     :ivar _download_data: referencing data **| do not edit**
-    :vartype _download_data: dict[str, ~unidown.plugin.link_item.LinkItem]
+    :vartype _download_data: Dict[str, ~unidown.plugin.link_item.LinkItem]
     :ivar _downloader: downloader which will download the data **| do not edit**
     :vartype _downloader: ~urllib3.HTTPSConnectionPool
     """
@@ -130,7 +130,7 @@ class APlugin(ABC):
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
 
-        :rtype: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :rtype: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :raises NotImplementedError: abstract method
         """
         raise NotImplementedError
@@ -165,13 +165,13 @@ class APlugin(ABC):
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
         :param link_item_dict: dict which to check
-        :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :param folder: folder where the downloads are saved
         :type folder: ~pathlib.Path
         :param log: if the lost items should be logged
         :type log: bool
         :return: succeeded and lost dicts
-        :rtype: Tuple[dict[str, ~unidown.plugin.link_item.LinkItem], dict[str, ~unidown.plugin.link_item.LinkItem]]
+        :rtype: Tuple[Dict[str, ~unidown.plugin.link_item.LinkItem], Dict[str, ~unidown.plugin.link_item.LinkItem]]
         """
         succeed = {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
         lost = {link: item for link, item in link_item_dict.items() if link not in succeed}
@@ -239,7 +239,7 @@ class APlugin(ABC):
         :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommend.
 
         :param link_item_dict: data which gets downloaded
-        :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :param folder: target download folder
         :type folder: ~pathlib.Path
         :param desc: description of the progressbar
@@ -249,7 +249,7 @@ class APlugin(ABC):
         :param delay: delay between the downloads in seconds
         :type delay: float
         :return: list of urls of downloads without errors
-        :rtype: list[str]
+        :rtype: List[str]
         """
         # TODO: add other optional host?
         if not link_item_dict:
@@ -281,7 +281,7 @@ class APlugin(ABC):
         Create protobuf savestate of the module and the given data.
 
         :param link_item_dict: data
-        :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :return: the savestate
         :rtype: ~unidown.plugin.save_state.SaveState
         """
@@ -292,7 +292,7 @@ class APlugin(ABC):
         Save meta data about the downloaded things and the plugin to file.
 
         :param data_dict: data
-        :type data_dict: dict[link, ~unidown.plugin.link_item.LinkItem]
+        :type data_dict: Dict[link, ~unidown.plugin.link_item.LinkItem]
         """
         json_data = json_format.MessageToJson(self._create_save_state(data_dict).to_protobuf())
         with self._save_state_file.open(mode='w', encoding="utf8") as writer:
@@ -347,9 +347,9 @@ class APlugin(ABC):
         Get links who needs to be downloaded by comparing old and the new data.
 
         :param old_data: old data
-        :type old_data: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type old_data: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :return: data which is newer or dont exist in the old one
-        :rtype: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :rtype: Dict[str, ~unidown.plugin.link_item.LinkItem]
         """
         if not self.download_data:
             return {}
@@ -372,9 +372,9 @@ class APlugin(ABC):
         Updates the base dict. Basically executes `base.update(new)`.
 
         :param base: base dict **gets overridden!**
-        :type base: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type base: Dict[str, ~unidown.plugin.link_item.LinkItem]
         :param new: data which updates the base
-        :type new: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :type new: Dict[str, ~unidown.plugin.link_item.LinkItem]
         """
         if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
             for link, item in new.items():
@@ -382,15 +382,12 @@ class APlugin(ABC):
                     self.log.info('Actualize item: ' + link + ' | ' + str(base[link]) + ' -> ' + str(item))
         base.update(new)
 
+    @staticmethod
+    def get_plugins() -> Dict[str, pkg_resources.EntryPoint]:
+        """
+        Get all available plugins for unidown.
 
-def get_plugins() -> List[str]:
-    """
-    Get all existing plugins inside the :py:mod:`unidown.plugins`.
-
-    :return: plugin name list
-    :rtype: list[str]
-    """
-    import unidown.plugins
-
-    package = unidown.plugins
-    return [modname for _, modname, ispkg in pkgutil.iter_modules(path=package.__path__, prefix=package.__name__ + '.')]
+        :return: plugin name list
+        :rtype: Dict[str, ~pkg_resources.EntryPoint]
+        """
+        return {entry.name: entry for entry in pkg_resources.iter_entry_points('unidown.plugins')}

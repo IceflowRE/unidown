@@ -7,8 +7,7 @@ import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
-from unidown import dynamic_data
-from unidown import static_data
+from unidown import dynamic_data, static_data
 from unidown.core import manager
 
 
@@ -45,6 +44,7 @@ def main(args):
         print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
         sys.exit(1)
     manager.check_update()
-    manager.run(args.plugins)
+    for plugin_name in args.plugins:
+        manager.run(plugin_name)
     manager.shutdown()
     sys.exit(0)

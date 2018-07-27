@@ -7,3 +7,5 @@ app_version=${app_version:: -1}
 
 ./scripts/build.sh "$py_version"
 pip install --upgrade --no-cache ./dist/Universal_Downloader-"$app_version"-"$py_version"-none-any.whl[dev]
+./scripts/build_testplugin.sh "$py_version"
+pip install --upgrade --no-cache ./testplugin/dist/Unidown_test_plugin-0.1.0-"$py_version"-none-any.whl

@@ -1,15 +1,12 @@
 """
 Manager of the whole program, contains the most important functions as well as the download routine.
 """
-import importlib
 import logging
 import multiprocessing
 import platform
 from pathlib import Path
-from typing import List
 
-from unidown import dynamic_data
-from unidown import static_data
+from unidown import dynamic_data, static_data
 from unidown.core import updater
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
@@ -58,6 +55,8 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
                      logfile=str(logfile_path.resolve()), loglevel=log_level, ucores=dynamic_data.USING_CORES)
     with dynamic_data.LOGFILE_PATH.open(mode='w', encoding="utf8") as writer:
         writer.write(info)
+
+    dynamic_data.AVAIL_PLUGINS = APlugin.get_plugins()
 
 
 def shutdown():
@@ -116,49 +115,49 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_save_state(save_state.link_item_dict)
 
 
-def run(plugin_list: List[str]):
+def run(plugin_name: str) -> bool:
     """
     Run through a list of plugin names, initialize directories and uses the download routine each.
 
-    :param plugin_list: names of plugins
-    :type plugin_list: list[str]
+    :param plugin_name: name of plugin
+    :type plugin_name: str
+    :return: success
+    :rtype: bool
     """
-    for plugin_name in plugin_list:
-        try:
-            logging.info('Loading plugin: ' + plugin_name)
-            cur_plugin = importlib.import_module('unidown.plugins.{name}.plugin'.format(name=plugin_name))
-        except ImportError:
-            msg = 'Plugin ' + plugin_name + ' was not found.'
-            logging.error(msg)
-            print(msg)
-            continue
 
-        try:
-            plugin_class = getattr(cur_plugin, 'Plugin')
-            plugin = plugin_class()
-        except Exception:
-            msg = 'Plugin ' + plugin_name + ' crashed while loading.'
-            logging.exception(msg)
-            print(msg + ' Check log for more information.')
-            continue
-        else:
-            logging.info('Loaded plugin: ' + plugin_name)
+    if plugin_name not in dynamic_data.AVAIL_PLUGINS:
+        msg = 'Plugin ' + plugin_name + ' was not found.'
+        logging.error(msg)
+        print(msg)
+        return False
 
-        try:
-            download_from_plugin(plugin)
-            plugin.clean_up()
-        except PluginException as ex:
-            msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
-                  "".format(plugin_name=plugin_name,
-                            reason='unknown' if (ex.msg == '') else ex.msg)
-            logging.error(msg)
-            print(msg)
-        except Exception:
-            msg = 'Plugin ' + plugin_name + ' crashed.'
-            logging.exception(msg)
-            print(msg + ' Check log for more information.')
-        else:
-            logging.info(plugin.name + ' ends without errors.')
+    try:
+        plugin_class = dynamic_data.AVAIL_PLUGINS[plugin_name].load()
+        plugin = plugin_class()
+    except Exception:
+        msg = 'Plugin ' + plugin_name + ' crashed while loading.'
+        logging.exception(msg)
+        print(msg + ' Check log for more information.')
+        return False
+    else:
+        logging.info('Loaded plugin: ' + plugin_name)
+
+    try:
+        download_from_plugin(plugin)
+        plugin.clean_up()
+    except PluginException as ex:
+        msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
+              "".format(plugin_name=plugin_name,
+                        reason='unknown' if (ex.msg == '') else ex.msg)
+        logging.error(msg)
+        print(msg)
+    except Exception:
+        msg = 'Plugin ' + plugin_name + ' crashed.'
+        logging.exception(msg)
+        print(msg + ' Check log for more information.')
+    else:
+        logging.info(plugin.name + ' ends without errors.')
+    return True
 
 
 def check_update():

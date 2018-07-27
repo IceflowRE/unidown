@@ -17,6 +17,9 @@ SAVESTAT_DIR = MAIN_DIR.joinpath(Path('savestates/'))
 #: log file of the program
 LOGFILE_PATH = MAIN_DIR.joinpath(Path('UniDown.log'))
 
+#: available plugins which are found at starting the program, name -> EntryPoint
+AVAIL_PLUGINS = {}
+
 #: how many core shoud be used
 USING_CORES = 1
 #: log level
