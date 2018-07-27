@@ -26,20 +26,20 @@ setup(
     packages=find_packages(include=['unidown', 'unidown.*']),
     python_requires='>=3.6',
     install_requires=[
-        'urllib3[secure]==1.22',
-        'tqdm==4.23.4',
-        'protobuf==3.5.2.post1',
+        'urllib3[secure]==1.23',
+        'tqdm==4.24.0',
+        'protobuf==3.6.0',
         'packaging==17.1',
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]==0.12.10',
+            'prospector[with_everything]==1.0',
+            # if update, update config too: pep8 -> pycodestyle & pep257 -> pydocstyle
             'nose2[coverage_plugin]==0.7.4',
-            'Sphinx==1.7.4',
-            'sphinx_rtd_theme==0.3.1',
-            'sphinxcontrib-svg2pdfconverter==0.1.0',
+            'Sphinx==1.7.6',
+            'sphinx_rtd_theme==0.4.0',
             'twine==1.11.0',
-            'setuptools==39.2.0',
+            'setuptools==40.0.0',
             'wheel==0.31.1',
         ],
     },
