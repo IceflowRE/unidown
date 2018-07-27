@@ -11,7 +11,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.ifconfig',
               'sphinx.ext.imgmath',
               'sphinx.ext.viewcode',
-              'sphinxcontrib.inkscapeconverter']
+              ]
+              #'sphinxcontrib.inkscapeconverter',]
 source_suffix = '.rst'
 master_doc = 'index'
 
