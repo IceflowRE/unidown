@@ -8,6 +8,10 @@ environment:
       PY_VERSION: "py36"
     - PYTHON_DIR: "C:\\Python36"
       PY_VERSION: "py36"
+    - PYTHON_DIR: "C:\\Python37-x64"
+      PY_VERSION: "py37"
+    - PYTHON_DIR: "C:\\Python37"
+      PY_VERSION: "py37"
 
 install:
   - "%PYTHON_DIR%\\Scripts\\pip install --upgrade -e .[dev]"
