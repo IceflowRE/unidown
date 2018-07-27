@@ -7,10 +7,10 @@ matrix:
     env: PY_VERSION=py36
   - python: "3.7"
     if: tag IS blank
-    env: PY_VERSION=py36
+    env: PY_VERSION=py37
   - python: "3.8-dev"
     if: tag IS blank
-    env: PY_VERSION=py37
+    env: PY_VERSION=py38
   allow_failures:
   - python: "3.8-dev"
 
