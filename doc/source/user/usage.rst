@@ -5,7 +5,10 @@ Using UniDown
 
 The program is a terminal program (yet), so it runs from the terminal.
 
-Calling with :command:`unidown`.
+Calling with:
+.. code-block:: none
+
+    unidown
 
 Furthermore, there are additional arguments:
 
@@ -21,7 +24,7 @@ Furthermore, there are additional arguments:
 
     list of using plugins
 
-.. option::  -m path, --main path
+.. option:: -m path, --main path
 
     main directory where all files will be created
 

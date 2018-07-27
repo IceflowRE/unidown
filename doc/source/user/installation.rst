@@ -18,7 +18,7 @@ The installation is preferably done over the terminal or one click script. The G
 Pip
 ^^^
 
-Installation over pip.
+Installation with pip.
 
 .. code-block:: none
 
@@ -31,7 +31,7 @@ Uninstallation methodes
 Pip
 ^^^
 
-Installation over pip.
+Uninstallation with pip.
 
 .. code-block:: none
 

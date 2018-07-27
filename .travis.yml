@@ -44,6 +44,6 @@ deploy:
 #    script: twine upload -u iceflower -p $PYPI_PASSWORD dist/*
 #    on:
 #      repo: IceflowRE/Universal-Downloader
-#?      tags: true
+#      tags: true
 #      branch:
 #        - release

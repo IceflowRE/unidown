@@ -178,7 +178,7 @@ class APlugin(ABC):
 
         if lost and log:
             for link, item in lost.items():
-                self.log.error('Not downloaded: {url} - {name}'.format(url=self.info.host + link, name=item.name))
+                self.log.error(f"Not downloaded: {self.info.host+link} - {item.name}")
 
         return succeed, lost
 
@@ -187,8 +187,7 @@ class APlugin(ABC):
         Default clean up for a module.
         Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
         """
-        if self._downloader.pool is not None:  # TODO: remove if new urrlib3 version comes out
-            self._downloader.close()
+        self._downloader.close()
         delete_dir_rec(self._temp_path)
 
     def delete_data(self):
@@ -264,7 +263,7 @@ class APlugin(ABC):
 
             pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
                         ncols=100, disable=dynamic_data.DISABLE_TQDM)
-            for iteration in pbar:
+            for _ in pbar:
                 pass
 
         download_without_errors = []
@@ -283,6 +282,7 @@ class APlugin(ABC):
 
         :param link_item_dict: data
         :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
+        :return: the savestate
         :rtype: ~unidown.plugin.save_state.SaveState
         """
         return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, self.last_update, link_item_dict)
