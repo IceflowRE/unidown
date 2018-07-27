@@ -3,7 +3,7 @@ Universal Downloader
 ********************
 |maintained| |programming language| |license|
 
-|travis| |appveyor| |requirements| |codacy| |codecov|
+|travis| |appveyor| |readthedocs| |requirements| |codacy| |codecov|
 
 ----
 
@@ -99,6 +99,9 @@ wheel
    
 .. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/universal-downloader/master.svg?label=AppVeyor%20CI
     :target: https://ci.appveyor.com/project/IceflowRE/universal-downloader/branch/master
+
+.. |readthedocs| image:: https://media.readthedocs.org/static/projects/badges/failing-flat.svg
+   :target: https://universal-downloader.readthedocs.io/en/latest/index.html
 
 .. |requirements| image:: https://requires.io/github/IceflowRE/Universal-Downloader/requirements.svg?branch=master
    :target: https://requires.io/github/IceflowRE/Universal-Downloader/requirements/?branch=master
