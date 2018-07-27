@@ -5,11 +5,14 @@ matrix:
   - python: "3.6"
     if: tag IS blank
     env: PY_VERSION=py36
-  - python: "3.7-dev"
+  - python: "3.7"
+    if: tag IS blank
+    env: PY_VERSION=py36
+  - python: "3.8-dev"
     if: tag IS blank
     env: PY_VERSION=py37
   allow_failures:
-  - python: "3.7-dev"
+  - python: "3.8-dev"
 
 addons:
   apt:
