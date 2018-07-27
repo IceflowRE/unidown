@@ -15,6 +15,9 @@ environment:
 
 install:
   - "%PYTHON_DIR%\\Scripts\\pip install --upgrade -e .[dev]"
+  - cd testplugin
+  - "%PYTHON_DIR%\\Scripts\\pip install --upgrade -e .[dev]"
+  - cd ..
 
 build_script:
   - "%PYTHON_DIR%\\python setup.py clean --all"

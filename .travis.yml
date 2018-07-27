@@ -20,6 +20,9 @@ addons:
 
 install:
   - pip install --upgrade -e .[dev]
+  - cd testplugin
+  - pip install --upgrade -e .
+  - cd ..
   - pip install codacy-coverage codecov
 
 script:
