@@ -16,8 +16,8 @@ def main(args):
     Entry point into the program. Gets the arguments from the console and proceed them with :class:`~argparse.ArgumentParser`.
     Returns if its success successful 0 else 1.
     """
-    if sys.version_info[0] < 3 or sys.version_info[1] < 6:
-        sys.exit('Only Python 3.6 or greater is supported. You are using:' + sys.version)
+    if sys.version_info[0] < 3 or sys.version_info[1] < 7:
+        sys.exit('Only Python 3.7 or greater is supported. You are using:' + sys.version)
 
     parser = ArgumentParser(prog=static_data.SHORT_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
