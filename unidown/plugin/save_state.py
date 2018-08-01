@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from typing import Dict
 
@@ -50,7 +52,7 @@ class SaveState:
         return not self.__eq__(other)
 
     @classmethod
-    def from_protobuf(cls, proto: SaveStateProto) -> 'SaveState':
+    def from_protobuf(cls, proto: SaveStateProto) -> SaveState:
         """
         Constructor from protobuf. Can raise ValueErrors from called from_protobuf() parsers.
 

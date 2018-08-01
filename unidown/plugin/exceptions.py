@@ -15,6 +15,6 @@ class PluginException(Exception):
     :vartype msg: str
     """
 
-    def __init__(self, msg=''):
+    def __init__(self, msg: str = ''):
         super(PluginException, self).__init__(msg)
         self.msg = msg

@@ -2,9 +2,9 @@ language: python
 
 matrix:
   include:
-  - python: "3.6"
+  - python: "3.7-dev"  # remove if travis made 3.7 available
     if: tag IS blank
-    env: PY_VERSION=py36
+    env: PY_VERSION=py37
   - python: "3.7"
     if: tag IS blank
     env: PY_VERSION=py37
@@ -12,6 +12,7 @@ matrix:
     if: tag IS blank
     env: PY_VERSION=py38
   allow_failures:
+  - python: "3.7"  # remove if travis made 3.7 available
   - python: "3.8-dev"
 
 addons:

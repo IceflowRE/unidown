@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from packaging.version import InvalidVersion, Version
 
 from unidown.plugin.protobuf.plugin_info_pb2 import PluginInfoProto
@@ -39,7 +41,7 @@ class PluginInfo:
             raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=version))
 
     @classmethod
-    def from_protobuf(cls, proto: PluginInfoProto) -> 'PluginInfo':
+    def from_protobuf(cls, proto: PluginInfoProto) -> PluginInfo:
         """
         Constructor from protobuf.
 

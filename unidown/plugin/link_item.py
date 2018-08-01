@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from google.protobuf.timestamp_pb2 import Timestamp
@@ -32,7 +34,7 @@ class LinkItem:
         self._time = time
 
     @classmethod
-    def from_protobuf(cls, proto: LinkItemProto) -> 'LinkItem':
+    def from_protobuf(cls, proto: LinkItemProto) -> LinkItem:
         """
         Constructor from protobuf.
 
