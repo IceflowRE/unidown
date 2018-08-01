@@ -2,12 +2,11 @@ language: python
 
 matrix:
   include:
-  - python: "3.7-dev"  # remove if travis made 3.7 available
-    if: tag IS blank
-    env: PY_VERSION=py37
   - python: "3.7"
     if: tag IS blank
     env: PY_VERSION=py37
+    dist: xenial
+    sudo: true
   - python: "3.8-dev"
     if: tag IS blank
     env: PY_VERSION=py38
