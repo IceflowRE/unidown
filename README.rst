@@ -88,7 +88,7 @@ wheel
 
 .. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
 
-.. |programming language| image:: https://img.shields.io/badge/language-Python_3.6-orange.svg
+.. |programming language| image:: https://img.shields.io/badge/language-Python_3.7-orange.svg
    :target: https://www.python.org/
 
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
@@ -100,7 +100,7 @@ wheel
 .. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/universal-downloader/master.svg?label=AppVeyor%20CI
     :target: https://ci.appveyor.com/project/IceflowRE/universal-downloader/branch/master
 
-.. |readthedocs| image:: https://media.readthedocs.org/static/projects/badges/failing-flat.svg
+.. |readthedocs| image:: https://readthedocs.org/projects/universal-downloader/badge/?version=latest
    :target: https://universal-downloader.readthedocs.io/en/latest/index.html
 
 .. |requirements| image:: https://requires.io/github/IceflowRE/Universal-Downloader/requirements.svg?branch=master
