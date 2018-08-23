@@ -14,3 +14,7 @@ class ManagerTest(unittest.TestCase):
                 self.assertTrue(path.joinpath('savestates').exists())
                 self.assertTrue(path.joinpath('temp').exists())
                 self.assertTrue(path.joinpath('UniDown.log').is_file())
+
+    def test_run(self):
+        with self.subTest(desc="not existing plugin"):
+            self.assertFalse(manager.run("not_existing_plugin"))
