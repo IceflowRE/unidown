@@ -150,7 +150,8 @@ def run(plugin_name: str) -> bool:
         print(msg + ' Check log for more information.')
     else:
         logging.info(plugin.name + ' ends without errors.')
-    return True
+        return True
+    return False
 
 
 def check_update():
