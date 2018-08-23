@@ -141,7 +141,7 @@ def run(plugin_name: str) -> bool:
         download_from_plugin(plugin)
         plugin.clean_up()
     except PluginException as ex:
-        msg = f"Plugin {plugin_name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg)}"
+        msg = f"Plugin {plugin_name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
         logging.error(msg)
         print(msg)
     except Exception:
