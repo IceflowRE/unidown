@@ -23,7 +23,7 @@ class APluginLayer(object):
     @classmethod
     def setUp(cls):
         cls.test_plugin = None
-        for entry in pkg_resources.iter_entry_points('unidown.plugins'):
+        for entry in pkg_resources.iter_entry_points('unidown.plugin'):
             if entry.name == "test":
                 cls.test_plugin = entry.load()
 
@@ -34,6 +34,8 @@ class APluginTest(unittest.TestCase):
     def setUp(self):
         manager.init(Path('./tmp'), Path('UniDown.log'), 'INFO')
         dynamic_data.DISABLE_TQDM = True
+        if self.layer.test_plugin is None:
+            self.fail("Test plugin could not be loaded or was not found.")
         self.plugin = self.layer.test_plugin()
         self.plugin.log.disabled = True
         self.eg_data = {'/IceflowRE/Universal-Downloader/master/README.rst':
