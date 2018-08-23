@@ -25,8 +25,7 @@ class PluginInfoTest(unittest.TestCase):
             version = '1.0.0.dd'
             with self.assertRaises(InvalidVersion) as rai:
                 PluginInfo('Blub', version, 'example.com')
-            self.assertEqual('Plugin version is not PEP440 conform: {version}'.format(version=version),
-                             str(rai.exception))
+            self.assertEqual(f"Plugin version is not PEP440 conform: {version}", str(rai.exception))
 
     def test_equality(self):
         with self.subTest(desc="different type"):

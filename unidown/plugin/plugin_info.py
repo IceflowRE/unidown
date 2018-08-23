@@ -38,7 +38,7 @@ class PluginInfo:
         try:
             self.version = Version(version)
         except InvalidVersion:
-            raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=version))
+            raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}")
 
     @classmethod
     def from_protobuf(cls, proto: PluginInfoProto) -> PluginInfo:

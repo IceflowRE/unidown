@@ -71,7 +71,7 @@ class SaveState:
         try:
             version = Version(proto.version)
         except InvalidVersion:
-            raise InvalidVersion('Plugin version is not PEP440 conform: {version}'.format(version=proto.version))
+            raise InvalidVersion(f"Plugin version is not PEP440 conform: {proto.version}")
         return cls(version, PluginInfo.from_protobuf(proto.plugin_info), Timestamp.ToDatetime(proto.last_update),
                    data_dict)
 

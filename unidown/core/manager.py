@@ -44,15 +44,11 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
     cores = multiprocessing.cpu_count()
     dynamic_data.USING_CORES = min(4, max(1, cores - 1))
 
-    info = "{name} {version}\n\n" \
-           "System: {plat_sys} - {plat_ver} - {plat_mach} - {cores} cores\n" \
-           "Python: {py_ver} - {py_build}\n" \
-           "Arguments: main={main_dir} | logfile={logfile} | loglevel={loglevel}\n" \
-           "Using cores: {ucores}\n\n" \
-           "".format(name=static_data.NAME, version=static_data.VERSION, plat_sys=platform.system(), cores=cores,
-                     plat_ver=platform.version(), plat_mach=platform.machine(), py_ver=platform.python_version(),
-                     py_build=' - '.join(platform.python_build()), main_dir=str(main_dir.resolve()),
-                     logfile=str(logfile_path.resolve()), loglevel=log_level, ucores=dynamic_data.USING_CORES)
+    info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
+           f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {cores} cores\n" \
+           f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
+           f"Arguments: main={main_dir.resolve()} | logfile={logfile_path.resolve()} | loglevel={log_level}\n" \
+           f"Using cores: {dynamic_data.USING_CORES}\n\n"
     with dynamic_data.LOGFILE_PATH.open(mode='w', encoding="utf8") as writer:
         writer.write(info)
 
@@ -101,12 +97,11 @@ def download_from_plugin(plugin: APlugin):
         plugin.log.info('No new data. Nothing to do.')
         return
     # download new/updated data
-    plugin.log.info('Download new {unit}s: {number}'.format(unit=plugin.unit, number=len(down_link_item_dict)))
+    plugin.log.info(f"Download new {plugin.unit}s: {len(down_link_item_dict)}")
     plugin.download(down_link_item_dict, plugin.download_path, 'Download new ' + plugin.unit + 's', plugin.unit)
     # check which downloads are succeeded
     succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin.download_path)
-    plugin.log.info(
-        'Downloaded: {success}/{total}'.format(success=len(succeed_link_item_dict), total=len(down_link_item_dict)))
+    plugin.log.info(f"Downloaded: {len(succeed_link_item_dict)}/{len(down_link_item_dict)}")
     # update savestate link_item_dict with succeeded downloads dict
     plugin.log.info('Update savestate')
     plugin.update_dict(save_state.link_item_dict, succeed_link_item_dict)
@@ -146,9 +141,7 @@ def run(plugin_name: str) -> bool:
         download_from_plugin(plugin)
         plugin.clean_up()
     except PluginException as ex:
-        msg = "Plugin {plugin_name} stopped working. Reason: {reason}" \
-              "".format(plugin_name=plugin_name,
-                        reason='unknown' if (ex.msg == '') else ex.msg)
+        msg = f"Plugin {plugin_name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg)}"
         logging.error(msg)
         print(msg)
     except Exception:

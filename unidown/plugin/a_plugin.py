@@ -224,7 +224,7 @@ class APlugin(ABC):
                 with folder.joinpath(name).open(mode='wb') as out_file:
                     out_file.write(reader.data)
             else:
-                raise HTTPError("{url} | {status}".format(url=url, status=str(reader.status)))
+                raise HTTPError(f"{url} | {reader.status}")
 
         if delay > 0:
             time.sleep(delay)
@@ -320,14 +320,12 @@ class APlugin(ABC):
                 savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
             except ParseError:
                 raise PluginException(
-                    "Broken savestate json. Please fix or delete (you may lose data in this case) the file: {path}"
-                    "".format(path=self._save_state_file))
+                    f"Broken savestate json. Please fix or delete (you may lose data in this case) the file: {self._save_state_file}")
 
         try:
             save_state = SaveState.from_protobuf(savestat_proto)
         except ValueError as ex:
-            raise PluginException("Could not parse the protobuf {path}: {msg}".format(path=self._save_state_file,
-                                                                                      msg=str(ex)))
+            raise PluginException(f"Could not parse the protobuf {self._save_state_file}: {ex}")
         else:
             del savestat_proto
 

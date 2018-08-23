@@ -170,7 +170,7 @@ class APluginTest(unittest.TestCase):
         for item in items:
             with self.subTest():
                 if data.find(item) == -1:
-                    self.fail("{item} | not found.".format(item=item))
+                    self.fail(f"{item} | not found.")
 
     def test_load_save_savestate(self):
         with self.subTest(desc="default return"):
