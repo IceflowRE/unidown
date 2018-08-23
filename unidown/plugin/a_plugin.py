@@ -1,9 +1,9 @@
 import logging
+import time
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from time import time
 from typing import Dict, List, Tuple
 
 import certifi
