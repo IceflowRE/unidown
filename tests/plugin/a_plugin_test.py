@@ -47,36 +47,40 @@ class APluginTest(unittest.TestCase):
         self.plugin.delete_data()
 
     def test_init(self):
-        self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
-        self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
+        with self.subTest(desc="without parameter"):
+            self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
+            self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
 
-        self.assertIsInstance(self.plugin.log, logging.Logger)
-        self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
-        self.assertIsInstance(self.plugin.info, PluginInfo)
-        self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
-        self.assertEqual(self.plugin.name, 'test')
-        self.assertEqual(self.plugin.version, Version('1.0.0'))
-        self.assertEqual(self.plugin.download_path, dynamic_data.DOWNLOAD_DIR.joinpath(self.plugin.name))
-        self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
-        self.assertEqual(self.plugin.download_data, {})
-        self.assertEqual(self.plugin.unit, "item")
+            self.assertIsInstance(self.plugin.log, logging.Logger)
+            self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
+            self.assertIsInstance(self.plugin.info, PluginInfo)
+            self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
+            self.assertEqual(self.plugin.name, 'test')
+            self.assertEqual(self.plugin.version, Version('1.0.0'))
+            self.assertEqual(self.plugin.download_path, dynamic_data.DOWNLOAD_DIR.joinpath(self.plugin.name))
+            self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
+            self.assertEqual(self.plugin.download_data, {})
+            self.assertEqual(self.plugin.unit, "item")
+        with self.subTest(desc="with parameter"):
+            plugin = self.layer.test_plugin(["delay=10.0"])
+            self.assertEqual(plugin._options['delay'], 10.0)
 
     def test_equality(self):
         with self.subTest(desc="different type"):
             self.assertFalse(self.plugin == "blub")
             self.assertTrue(self.plugin != "blub")
         with self.subTest(desc="equal"):
-            plugin = self.layer.test_plugin(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(None, PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
             self.assertTrue(self.plugin == plugin)
             self.assertFalse(self.plugin != plugin)
         with self.subTest(desc="unequal"):
-            plugin = self.layer.test_plugin(PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(None, PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
-            plugin = self.layer.test_plugin(PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
+            plugin = self.layer.test_plugin(None, PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
-            plugin = self.layer.test_plugin(PluginInfo('test', '1.0.0', 'www.example.com'))
+            plugin = self.layer.test_plugin(None, PluginInfo('test', '1.0.0', 'www.example.com'))
             self.assertFalse(self.plugin == plugin)
             self.assertTrue(self.plugin != plugin)
 
@@ -187,7 +191,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(save_state, result)
 
         with self.subTest(desc="different save state version"):
-            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
             with self.assertRaises(PluginException):
@@ -195,14 +199,14 @@ class APluginTest(unittest.TestCase):
             self.setUp()
 
         with self.subTest(desc="different plugin version"):
-            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
-            plugin = self.layer.test_plugin(PluginInfo("test", "2.0.0", "host"))
+            plugin = self.layer.test_plugin(None, PluginInfo("test", "2.0.0", "host"))
             with self.assertRaises(PluginException):
                 plugin.load_save_state()
 
         with self.subTest(desc="different plugin name"):
-            plugin = self.layer.test_plugin(PluginInfo("test", "1.0.0", "host"))
+            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
             plugin.save_save_state(self.eg_data)
             plugin._info.name = "different"
             with self.assertRaises(PluginException):

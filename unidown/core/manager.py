@@ -5,6 +5,7 @@ import logging
 import multiprocessing
 import platform
 from pathlib import Path
+from typing import List
 
 from unidown import dynamic_data, static_data
 from unidown.core import updater
@@ -110,15 +111,19 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_save_state(save_state.link_item_dict)
 
 
-def run(plugin_name: str) -> bool:
+def run(plugin_name: str, options: List[str] = None) -> bool:
     """
-    Run through a list of plugin names, initialize directories and uses the download routine each.
+    Run a plugin so use the download routine and clean up after.
 
     :param plugin_name: name of plugin
     :type plugin_name: str
+    :param options: parameters which will be send to the plugin initialization
+    :type options: List[str]
     :return: success
     :rtype: bool
     """
+    if options is None:
+        options = []
 
     if plugin_name not in dynamic_data.AVAIL_PLUGINS:
         msg = 'Plugin ' + plugin_name + ' was not found.'
@@ -128,7 +133,7 @@ def run(plugin_name: str) -> bool:
 
     try:
         plugin_class = dynamic_data.AVAIL_PLUGINS[plugin_name].load()
-        plugin = plugin_class()
+        plugin = plugin_class(options)
     except Exception:
         msg = 'Plugin ' + plugin_name + ' crashed while loading.'
         logging.exception(msg)
@@ -141,11 +146,11 @@ def run(plugin_name: str) -> bool:
         download_from_plugin(plugin)
         plugin.clean_up()
     except PluginException as ex:
-        msg = f"Plugin {plugin_name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
+        msg = f"Plugin {plugin.name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
         logging.error(msg)
         print(msg)
     except Exception:
-        msg = 'Plugin ' + plugin_name + ' crashed.'
+        msg = 'Plugin ' + plugin.name + ' crashed.'
         logging.exception(msg)
         print(msg + ' Check log for more information.')
     else:

@@ -31,6 +31,8 @@ class APlugin(ABC):
 
     :param info: information about the plugin
     :type info: ~unidown.plugin.plugin_info.PluginInfo
+    :param options: parameters which can included optional parameters
+    :type options: List[str]
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
 
     :ivar _log: use this for logging **| do not edit**
@@ -53,9 +55,14 @@ class APlugin(ABC):
     :vartype _download_data: Dict[str, ~unidown.plugin.link_item.LinkItem]
     :ivar _downloader: downloader which will download the data **| do not edit**
     :vartype _downloader: ~urllib3.HTTPSConnectionPool
+    :ivar _options: options which the plugin uses internal, should be used for the given options at init
+    :vartype _options: Dict[str, ~typing.Any]
     """
 
-    def __init__(self, info: PluginInfo):
+    def __init__(self, info: PluginInfo, options: List[str] = None):
+        if options is None:
+            options = []
+
         self._log = logging.getLogger(info.name)
         self._simul_downloads = dynamic_data.USING_CORES
 
@@ -75,6 +82,17 @@ class APlugin(ABC):
         self._download_data = {}
         self._downloader = urllib3.HTTPSConnectionPool(self.info.host, maxsize=self._simul_downloads,
                                                        cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+
+        # load options
+        # supported: delay
+        self._options = {}
+        for option in options:
+            if option.startswith('delay='):
+                try:
+                    self._options['delay'] = float(option[6:])
+                except ValueError:
+                    # TODO: bypasses log.disabled
+                    self.log.warning("Plugin option 'delay' is not a float. Using default.")
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -251,6 +269,8 @@ class APlugin(ABC):
         :return: list of urls of downloads without errors
         :rtype: List[str]
         """
+        if 'delay' in self._options:
+            delay = self._options['delay']
         # TODO: add other optional host?
         if not link_item_dict:
             return []

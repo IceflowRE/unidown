@@ -1,6 +1,8 @@
 from datetime import datetime
+from typing import List
 
 from unidown.plugin.a_plugin import APlugin
+from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
 from unidown.plugin.plugin_info import PluginInfo
 
@@ -10,11 +12,17 @@ class Plugin(APlugin):
     Test plugin.
     """
 
-    def __init__(self, info: PluginInfo = None):
+    # TODO: param options as first param is a must -> add to doc
+    def __init__(self, options: List[str] = None, info: PluginInfo = None):
         if info is None:
-            super().__init__(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
+            super().__init__(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), options)
         else:
-            super().__init__(info)
+            super().__init__(info, options)
+        self._options['behaviour'] = 'normal'
+        if options is not None:
+            for option in options:
+                if option.startswith('behaviour='):
+                    self._options['behaviour'] = option[10:]
 
     def _create_download_links(self):
         return {
@@ -25,4 +33,9 @@ class Plugin(APlugin):
         }
 
     def _create_last_update_time(self):
+        if self._options['behaviour'] == "fail":
+            raise PluginException('failed')
+        elif self._options['behaviour'] == "crash":
+            raise Exception("crashed")
+
         return datetime(1999, 9, 9, hour=9, minute=9, second=9)

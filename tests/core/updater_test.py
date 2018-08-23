@@ -1,7 +1,7 @@
 import unittest
 
-from unidown.core import updater
 from unidown import static_data
+from unidown.core import updater
 
 
 class UpdaterTest(unittest.TestCase):

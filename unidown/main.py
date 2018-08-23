@@ -22,8 +22,9 @@ def main(args):
     parser = ArgumentParser(prog=static_data.SHORT_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
 
-    parser.add_argument('-p', '--plugin', nargs='+', dest='plugins', required=True, type=str, metavar='name',
-                        help='list of using plugins')
+    parser.add_argument('-p', '--plugin', action='append', nargs='+', dest='plugins', required=True, type=str,
+                        metavar='name',
+                        help='plugin to execute with given parameters')
     parser.add_argument('-m', '--main', dest='main_dir', default=dynamic_data.MAIN_DIR, type=Path, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
     parser.add_argument('-o', '--output', dest='logfile', default=dynamic_data.LOGFILE_PATH, type=Path, metavar='path',
@@ -44,7 +45,7 @@ def main(args):
         print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
         sys.exit(1)
     manager.check_update()
-    for plugin_name in args.plugins:
-        manager.run(plugin_name)
+    for plugin in args.plugins:
+        manager.run(plugin[0], plugin[1:])
     manager.shutdown()
     sys.exit(0)
