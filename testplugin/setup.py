@@ -14,6 +14,6 @@ setup(
     python_requires='>=3.6',
     zip_safe=True,
     entry_points={
-        'unidown.plugins': "test = testplugin.plugin:Plugin"
+        'unidown.plugin': "test = testplugin.plugin:Plugin"
     },
 )
