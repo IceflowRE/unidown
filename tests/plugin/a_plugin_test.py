@@ -38,9 +38,9 @@ class APluginTest(unittest.TestCase):
             self.fail("Test plugin could not be loaded or was not found.")
         self.plugin = self.layer.test_plugin()
         self.plugin.log.disabled = True
-        self.eg_data = {'/IceflowRE/Universal-Downloader/master/README.rst':
+        self.eg_data = {'/IceflowRE/unidown/master/README.rst':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-                        '/IceflowRE/Universal-Downloader/master/no_file_here':
+                        '/IceflowRE/unidown/master/no_file_here':
                             LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
 
     def tearDown(self):
@@ -85,9 +85,9 @@ class APluginTest(unittest.TestCase):
             self.assertTrue(self.plugin != plugin)
 
     def test_update_download_links(self):
-        result = {'/IceflowRE/Universal-Downloader/master/README.rst':
+        result = {'/IceflowRE/unidown/master/README.rst':
                       LinkItem('README.rst', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
-                  '/IceflowRE/Universal-Downloader/master/no_file_here':
+                  '/IceflowRE/unidown/master/no_file_here':
                       LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
                   }
         self.plugin.update_download_links()
@@ -108,9 +108,9 @@ class APluginTest(unittest.TestCase):
         with self.subTest(desc="one succeed, one lost"):
             create_test_file(self.plugin._temp_path.joinpath('One'))
             data = self.plugin.check_download(self.eg_data, self.plugin._temp_path)
-            succeed = {'/IceflowRE/Universal-Downloader/master/README.rst':
+            succeed = {'/IceflowRE/unidown/master/README.rst':
                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            lost = {'/IceflowRE/Universal-Downloader/master/no_file_here':
+            lost = {'/IceflowRE/unidown/master/no_file_here':
                         LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
             self.assertEqual((succeed, lost), data)
 
@@ -132,13 +132,13 @@ class APluginTest(unittest.TestCase):
         self.assertFalse(self.plugin._save_state_file.exists())
 
     def test_download_as_file(self):
-        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
+        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
                                      self.plugin._temp_path, 'file')
         self.assertTrue(self.plugin._temp_path.joinpath('file').exists())
-        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
+        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
                                      self.plugin._temp_path, 'file')
         self.assertTrue(self.plugin._temp_path.joinpath('file_d').exists())
-        self.plugin.download_as_file('/IceflowRE/Universal-Downloader/master/README.rst',
+        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
                                      self.plugin._temp_path, 'file')
         self.assertTrue(self.plugin._temp_path.joinpath('file_d_d').exists())
 
@@ -148,7 +148,7 @@ class APluginTest(unittest.TestCase):
 
         with self.subTest(desc="one success, one fail"):
             data = self.plugin.download(self.eg_data, self.plugin._temp_path, 'Down units', 'unit')
-            self.assertEqual(['/IceflowRE/Universal-Downloader/master/README.rst'], data)
+            self.assertEqual(['/IceflowRE/unidown/master/README.rst'], data)
 
     def test_create_save_state(self):
         result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.info, self.plugin.last_update, self.eg_data)
@@ -164,11 +164,11 @@ class APluginTest(unittest.TestCase):
         except AttributeError:
             self.fail("No data part found.")
         items = [
-            ('"/IceflowRE/Universal-Downloader/master/README.rst": {' '\n'
+            ('"/IceflowRE/unidown/master/README.rst": {' '\n'
              '      "name": "One",' '\n'
              '      "time": "2001-01-01T01:01:01Z"' '\n'
              '    }'),
-            ('"/IceflowRE/Universal-Downloader/master/no_file_here": {' '\n'
+            ('"/IceflowRE/unidown/master/no_file_here": {' '\n'
              '      "name": "Two",' '\n'
              '      "time": "2002-02-02T02:02:02Z"' '\n'
              '    }')
@@ -241,15 +241,15 @@ class APluginTest(unittest.TestCase):
             self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
 
         with self.subTest(desc='filled with one item more'):
-            old_data = {'/IceflowRE/Universal-Downloader/master/README.rst':
+            old_data = {'/IceflowRE/unidown/master/README.rst':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            result = {'/IceflowRE/Universal-Downloader/master/no_file_here':
+            result = {'/IceflowRE/unidown/master/no_file_here':
                           LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
             self.plugin._download_data = self.eg_data
             self.assertEqual(result, self.plugin.get_updated_data(old_data))
 
         with self.subTest(desc='one item more with filled'):
-            new_data = {'/IceflowRE/Universal-Downloader/master/no_file_here':
+            new_data = {'/IceflowRE/unidown/master/no_file_here':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
             self.plugin._download_data = new_data
             self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))

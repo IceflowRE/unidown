@@ -19,7 +19,7 @@ def main(args):
     if sys.version_info[0] < 3 or sys.version_info[1] < 7:
         sys.exit('Only Python 3.7 or greater is supported. You are using:' + sys.version)
 
-    parser = ArgumentParser(prog=static_data.SHORT_NAME, description=static_data.DESCRIPTION)
+    parser = ArgumentParser(prog=static_data.LONG_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
 
     parser.add_argument('-p', '--plugin', action='append', nargs='+', dest='plugins', required=True, type=str,

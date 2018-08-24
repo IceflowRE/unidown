@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 from unidown import static_data
 
 setup(
-    name="Unidown test plugin",
+    name="unidown_test_plugin",
     version="0.1.0",
     description=static_data.DESCRIPTION,
     author="Iceflower S",

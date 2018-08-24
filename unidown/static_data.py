@@ -4,13 +4,13 @@ because it is used inside the setup.py **| do not edit**.
 """
 
 #: name of this program
-NAME = "Universal-Downloader"
+NAME = "unidown"
 #: short name of this program
-SHORT_NAME = "unidown"
+LONG_NAME = "Universal Downloader"
 #: version in PEP440 format
 VERSION = '2.0.0.dev1'
 #: url to the current version
-VERSION_URL = "https://raw.githubusercontent.com/IceflowRE/Universal-Downloader/release/version"
+VERSION_URL = "https://raw.githubusercontent.com/IceflowRE/unidown/release/version"
 #: author
 AUTHOR = 'Iceflower S'
 #: author github link
@@ -20,4 +20,4 @@ AUTHOR_EMAIL = 'iceflower@gmx.de'
 #: short description
 DESCRIPTION = 'Universal downloader, a modular extensible downloader who manage progress and updates.'
 #: project url
-PROJECT_URL = 'https://github.com/IceflowRE/Universal-Downloader'
+PROJECT_URL = 'https://github.com/IceflowRE/unidown'

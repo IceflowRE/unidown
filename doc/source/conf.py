@@ -16,7 +16,7 @@ extensions = ['sphinx.ext.autodoc',
 source_suffix = '.rst'
 master_doc = 'index'
 
-project = 'Universal-Downloader'
+project = 'Universal Downloader'
 author = 'Iceflower S'
 copyright = '2018, Iceflower S'
 title = project + ' Documentation'

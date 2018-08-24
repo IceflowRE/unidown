@@ -20,7 +20,7 @@ Universal Downloader
 Web
 ===
 
-https://github.com/IceflowRE/Universal-Downloader
+https://github.com/IceflowRE/unidown
 
 Credits
 =======
@@ -94,20 +94,20 @@ wheel
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
 
-.. |travis| image:: https://img.shields.io/travis/IceflowRE/Universal-Downloader/master.svg?label=Travis%20CI
-   :target: https://travis-ci.org/IceflowRE/Universal-Downloader
+.. |travis| image:: https://img.shields.io/travis/IceflowRE/unidown/master.svg?label=Travis%20CI
+   :target: https://travis-ci.org/IceflowRE/unidown
    
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/universal-downloader/master.svg?label=AppVeyor%20CI
-    :target: https://ci.appveyor.com/project/IceflowRE/universal-downloader/branch/master
+.. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/unidown/master.svg?label=AppVeyor%20CI
+    :target: https://ci.appveyor.com/project/IceflowRE/unidown/branch/master
 
-.. |readthedocs| image:: https://readthedocs.org/projects/universal-downloader/badge/?version=latest
+.. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
    :target: https://universal-downloader.readthedocs.io/en/latest/index.html
 
-.. |requirements| image:: https://requires.io/github/IceflowRE/Universal-Downloader/requirements.svg?branch=master
-   :target: https://requires.io/github/IceflowRE/Universal-Downloader/requirements/?branch=master
+.. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=master
+   :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=master
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/7783e0b9e3734ee6ab43e142b43e9663
-   :target: https://app.codacy.com/project/IceflowRE/Universal-Downloader/dashboard
+   :target: https://app.codacy.com/project/IceflowRE/unidown/dashboard
    
-.. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/universal-downloader/master.svg?label=coverage
-   :target: https://codecov.io/gh/IceflowRE/Universal-Downloader
+.. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/unidown/master.svg?label=coverage
+   :target: https://codecov.io/gh/IceflowRE/unidown
