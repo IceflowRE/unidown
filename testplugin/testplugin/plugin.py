@@ -23,6 +23,8 @@ class Plugin(APlugin):
             for option in options:
                 if option.startswith('behaviour='):
                     self._options['behaviour'] = option[10:]
+        if self._options['behaviour'] == 'load_crash':
+            raise Exception("crash")
 
     def _create_download_links(self):
         return {
@@ -33,9 +35,9 @@ class Plugin(APlugin):
         }
 
     def _create_last_update_time(self):
-        if self._options['behaviour'] == "fail":
+        if self._options['behaviour'] == "run_fail":
             raise PluginException('failed')
-        elif self._options['behaviour'] == "crash":
+        elif self._options['behaviour'] == "run_crash":
             raise Exception("crashed")
 
         return datetime(1999, 9, 9, hour=9, minute=9, second=9)

@@ -9,6 +9,7 @@ from typing import List
 
 from unidown import dynamic_data, static_data
 from unidown.core import updater
+from unidown.core.plugin_state import PluginState
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.tools import create_dir_rec
@@ -111,7 +112,7 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_save_state(save_state.link_item_dict)
 
 
-def run(plugin_name: str, options: List[str] = None) -> bool:
+def run(plugin_name: str, options: List[str] = None) -> PluginState:
     """
     Run a plugin so use the download routine and clean up after.
 
@@ -120,7 +121,7 @@ def run(plugin_name: str, options: List[str] = None) -> bool:
     :param options: parameters which will be send to the plugin initialization
     :type options: List[str]
     :return: success
-    :rtype: bool
+    :rtype: ~unidown.plugin.plugin_state.PluginState
     """
     if options is None:
         options = []
@@ -129,7 +130,7 @@ def run(plugin_name: str, options: List[str] = None) -> bool:
         msg = 'Plugin ' + plugin_name + ' was not found.'
         logging.error(msg)
         print(msg)
-        return False
+        return PluginState.NOT_FOUND
 
     try:
         plugin_class = dynamic_data.AVAIL_PLUGINS[plugin_name].load()
@@ -138,7 +139,7 @@ def run(plugin_name: str, options: List[str] = None) -> bool:
         msg = 'Plugin ' + plugin_name + ' crashed while loading.'
         logging.exception(msg)
         print(msg + ' Check log for more information.')
-        return False
+        return PluginState.LOAD_CRASH
     else:
         logging.info('Loaded plugin: ' + plugin_name)
 
@@ -149,14 +150,15 @@ def run(plugin_name: str, options: List[str] = None) -> bool:
         msg = f"Plugin {plugin.name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
         logging.error(msg)
         print(msg)
+        return PluginState.RUN_FAIL
     except Exception:
         msg = 'Plugin ' + plugin.name + ' crashed.'
         logging.exception(msg)
         print(msg + ' Check log for more information.')
+        return PluginState.RUN_CRASH
     else:
         logging.info(plugin.name + ' ends without errors.')
-        return True
-    return False
+        return PluginState.END_SUCCESS
 
 
 def check_update():
