@@ -94,14 +94,14 @@ wheel
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
 
-.. |travis| image:: https://img.shields.io/travis/IceflowRE/unidown/master.svg?label=Travis%20CI
+.. |travis| image:: https://img.shields.io/travis/com/IceflowRE/unidown/master.svg?label=Travis%20CI
    :target: https://travis-ci.org/IceflowRE/unidown
    
 .. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/unidown/master.svg?label=AppVeyor%20CI
     :target: https://ci.appveyor.com/project/IceflowRE/unidown/branch/master
 
 .. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
-   :target: https://universal-downloader.readthedocs.io/en/latest/index.html
+   :target: https://unidown.readthedocs.io/en/latest/index.html
 
 .. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=master
    :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=master
