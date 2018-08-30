@@ -3,12 +3,10 @@ language: python
 matrix:
   include:
   - python: "3.7"  # remove workaround if travis relases 3.7 officially
-    if: tag IS blank
     env: PY_VERSION=py37
     dist: xenial
     sudo: true
   - python: "3.8-dev"
-    if: tag IS blank
     env: PY_VERSION=py38
   allow_failures:
   - python: "3.8-dev"
