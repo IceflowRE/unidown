@@ -14,7 +14,6 @@ setup(
     version=static_data.VERSION,
     description=static_data.DESCRIPTION,
     long_description=long_description,
-    long_description_content_type='longtext/x-rst',
     author=static_data.AUTHOR,
     author_email=static_data.AUTHOR_EMAIL,
     license='GPLv3',
