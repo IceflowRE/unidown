@@ -36,16 +36,16 @@ after_success:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: twine upload -u iceflower -p $TEST_PYPI_PASSWORD --skip-existing -c $TRAVIS_COMMIT --repository-url https://test.pypi.org/legacy/ dist/*
+    script: twine upload -u $PYPI_USER -p $TEST_PYPI_PASSWORD --skip-existing --repository-url https://test.pypi.org/legacy/ dist/*
     on:
       repo: IceflowRE/unidown
+      tags: true
+      condition: $TRAVIS_BRANCH != master
+  - provider: script
+    skip_cleanup: true
+    script: twine upload -u $PYPI_USER -p $PYPI_PASSWORD --skip-existing dist/*
+    on:
+      repo: IceflowRE/unidown
+      tags: true
       branch:
         - master
-#  - provider: script
-#    skip_cleanup: true
-#    script: twine upload -u iceflower -p $PYPI_PASSWORD dist/*
-#    on:
-#      repo: IceflowRE/unidown
-#      tags: true
-#      branch:
-#        - release
