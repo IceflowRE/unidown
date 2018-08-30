@@ -1,12 +1,20 @@
 #!/usr/bin/env python
+from pathlib import Path
+
 from setuptools import find_packages, setup
 
 from unidown import static_data
+
+# get long description
+with Path('README.rst').open(mode='r', encoding='UTF-8') as reader:
+    long_description = reader.read()
 
 setup(
     name=static_data.NAME,
     version=static_data.VERSION,
     description=static_data.DESCRIPTION,
+    long_description=long_description,
+    long_description_content_type='longtext/x-rst',
     author=static_data.AUTHOR,
     author_email=static_data.AUTHOR_EMAIL,
     license='GPLv3',
@@ -19,7 +27,6 @@ setup(
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
         'Natural Language :: English',
-        'Natural Language :: German',
         'Environment :: Console',
         # 'Environment :: X11 Applications :: Qt',
     ],
