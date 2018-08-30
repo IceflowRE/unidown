@@ -35,53 +35,51 @@ Third Party
 nose2
     - Jason Pellerin
     - https://github.com/nose-devs/nose2
-    - `BSD-2-Clause <https://github.com/nose-devs/nose2/blob/master/license.txt>`_
+    - `BSD-2-Clause <https://github.com/nose-devs/nose2/blob/master/license.txt>`__
 Packaging
     - Donald Stufft and individual contributors
     - https://github.com/pypa/packaging
-    - `BSD-3-Clause, Apache-2.0 <https://github.com/pypa/packaging/blob/master/LICENSE>`_
+    - `BSD-3-Clause, Apache-2.0 <https://github.com/pypa/packaging/blob/master/LICENSE>`__
 Prospector
     - `landscapeio <https://github.com/landscapeio>`_
     - https://github.com/landscapeio/prospector
-    - `GPL-2.0+ <https://github.com/landscapeio/prospector/blob/master/LICENSE>`_
+    - `GPL-2.0+ <https://github.com/landscapeio/prospector/blob/master/LICENSE>`__
 Protocol Buffers
     - `Google Inc. <https://github.com/google>`_
     - https://github.com/google/protobuf/tree/master/python
-    - `BSD-3-Clause <https://github.com/google/protobuf/blob/master/LICENSE>`_
+    - `BSD-3-Clause <https://github.com/google/protobuf/blob/master/LICENSE>`__
 Read the Docs Sphinx Theme
     - `Dave Snider <https://github.com/snide>`_
     - https://github.com/rtfd/sphinx_rtd_theme
-    - `MIT <https://github.com/rtfd/sphinx_rtd_theme/blob/master/LICENSE>`_
+    - `MIT <https://github.com/rtfd/sphinx_rtd_theme/blob/master/LICENSE>`__
 Setuptools
     - Jason R Coombs / `Setuptools Developers <https://github.com/orgs/pypa/teams/setuptools-developers>`_
     - https://github.com/pypa/setuptools
-    - `MIT <https://github.com/pypa/setuptools/blob/master/LICENSE>`_
+    - `MIT <https://github.com/pypa/setuptools/blob/master/LICENSE>`__
 Sphinx
-    - `the Sphinx team <https://github.com/sphinx-doc/sphinx/blob/master/AUTHORS>`_
+    - `the Sphinx team <https://github.com/sphinx-doc/sphinx/blob/master/AUTHORS>`__
     - https://github.com/sphinx-doc/sphinx
-    - `BSD-2-Clause <https://github.com/sphinx-doc/sphinx/blob/master/LICENSE>`_
-
+    - `BSD-2-Clause <https://github.com/sphinx-doc/sphinx/blob/master/LICENSE>`__
 sphinxcontrib-svg2pdfconverter
     - `Missing Link Electronics, Inc. <https://github.com/missinglinkelectronics>`_
     - https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter
-    - `BSD-2-Clause <https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter/blob/master/LICENSE.txt>`_
-
+    - `BSD-2-Clause <https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter/blob/master/LICENSE.txt>`__
 tqdm
     - `noamraph <https://github.com/noamraph>`_
     - https://github.com/tqdm/tqdm
-    - `MIT, MPL-2.0 <https://raw.githubusercontent.com/tqdm/tqdm/master/LICENCE>`_
+    - `MIT, MPL-2.0 <https://raw.githubusercontent.com/tqdm/tqdm/master/LICENCE>`__
 twine
-    - `various authors <https://github.com/pypa/twine/blob/master/AUTHORS>`_
+    - `various authors <https://github.com/pypa/twine/blob/master/AUTHORS>`__
     - https://github.com/pypa/twine
-    - `Apache-2.0 <https://github.com/pypa/twine/blob/master/LICENSE>`_
+    - `Apache-2.0 <https://github.com/pypa/twine/blob/master/LICENSE>`__
 urllib3
     - `Andrey Petrov and contributors <https://github.com/shazow/urllib3/blob/master/CONTRIBUTORS.txt>`_
     - https://github.com/shazow/urllib3
-    - `MIT <https://github.com/shazow/urllib3/blob/master/LICENSE.txt>`_
+    - `MIT <https://github.com/shazow/urllib3/blob/master/LICENSE.txt>`__
 wheel
     - `Charlie Denton <https://github.com/meshy>`_
     - https://github.com/meshy/pythonwheels
-    - `BSD-2-Clause <https://github.com/meshy/pythonwheels/blob/master/LICENSE>`_
+    - `BSD-2-Clause <https://github.com/meshy/pythonwheels/blob/master/LICENSE>`__
 
 
 .. Badges.
