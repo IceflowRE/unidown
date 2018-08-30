@@ -8,7 +8,7 @@ NAME = "unidown"
 #: short name of this program
 LONG_NAME = "Universal Downloader"
 #: version in PEP440 format
-VERSION = '2.0.0.dev3'
+VERSION = '2.0.0.dev4'
 #: url to the current version
 VERSION_URL = "https://raw.githubusercontent.com/IceflowRE/unidown/release/version"
 #: author
