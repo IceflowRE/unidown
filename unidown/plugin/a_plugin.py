@@ -127,6 +127,10 @@ class APlugin(ABC):
         return self._info.version
 
     @property
+    def temp_path(self) -> Path:
+        return self._temp_path
+
+    @property
     def download_path(self) -> Path:
         return self._download_path
 
