@@ -12,6 +12,7 @@ Documentation
 
     user/main
     dev_plugins/main
+    development/main
     source_doc/main
 
 .. only:: html
