@@ -1,10 +1,10 @@
 """
 Ebook download execution.
 """
-import MrDeDownloader
+from unidown import MrDeDownloader
 
 
-if __name__ == "__main__":
+def main():
     MrDeDownloader.about()
 
     MrDeDownloader.init()

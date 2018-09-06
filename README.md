@@ -8,11 +8,10 @@ Dieses Programm/ Skript sollte alle verfügbaren eBooks von der deutschen Mobile
 ## Information - *English*
 ### Installation
 Install Python 3 or greater, don't forget to use the correct architecture. (https://www.python.org/downloads/)  
-Download and unzip the latest release of this program/ script. (https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest)  
-Run `InstallMissingModules.sh`. This will install additional required modules for Python.
+Run `pip install unidown` to install.
 
 ### Usage
-Run `Start.sh` (Linux) or `Start.bat` (Windows) or **better** run `StartDeDownload.py` from the command line!
+Run `unidown` from the command line!
 
 ### Created data
 - `ebook` folder where all ebooks will downloaded.
@@ -32,11 +31,10 @@ Have in mind that you can be banned or something similar if you strained the MR 
 ## Information - *Deutsch*
 ### Installation
 Installiere Python 3 oder höher, vergess dabei nicht die richtige Architektur zu wählen. (https://www.python.org/downloads/)  
-Downloade und entpacke die letzte Veröffentlichung von dem Downloader. (https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest)  
-Führe `InstallMissingModules.sh` aus. Dies wird gegebenenfalls fehlende, benötigte Python Module installieren.  
+Gebe auf der Kommandozeile `pip install unidown` ein.
 
 ### Benutzung
-Starte `Start.sh` (Linux) oder `Start.bat` (Windows) oder **besser**, starte `StartDeDownload.py` von der Kommandozeile aus.
+Starte mit `unidown` von der Kommandozeile aus.
 
 ### Erstellte Daten
 - `ebook` der Ordner wohin alle eBooks heruntergeladen werden.

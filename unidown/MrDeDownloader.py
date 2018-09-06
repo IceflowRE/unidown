@@ -7,18 +7,21 @@ Download module with all functions.
 :var download_failed_list: item: id
 :var not_found_ebooks_thread: item: thread
 """
-import sys
 import functools
 import json
 import re
+import sys
 from concurrent import futures
+from pathlib import Path
+
 import certifi
 import urllib3
-import ListHTMLParser
-import ThreadHTMLParser
 from packaging import version
-from pathlib import Path
+
 # import multiprocessing
+from unidown.ThreadHTMLParser import ThreadHTMLParser
+
+from unidown.ListHTMLParser import ListHTMLParser
 
 VERSION = '1.2.2'
 
@@ -71,7 +74,7 @@ def get_current_app_version():
     """
     try:
         with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
-            url = 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/release/version'
+            url = 'https://raw.githubusercontent.com/IceflowRE/unidown/release/version'
             ver = p_man.urlopen('GET', url).data.decode('utf-8')
         return ver
     except Exception:
@@ -89,7 +92,7 @@ def check_for_app_updates():
     except Exception as ex:
         print(ex)
         return
-    if version.parse(newest_version) > version.parse(version):
+    if version.parse(newest_version) > version.parse(VERSION):
         print()
         print("!!! UPDATE AVAILABLE !!!")
         print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
@@ -181,7 +184,7 @@ def get_ebook_threads():
     global thread_list
     global ebook_link_dict
 
-    parser = ListHTMLParser.ListHTMLParser(format_list)
+    parser = ListHTMLParser(format_list)
     with temp_path.joinpath('main_list.html').open(mode='r', encoding="utf8") as reader:
         parser.feed(reader.read())
     parser.close()
@@ -289,7 +292,7 @@ def get_ebook_links_from_file(path: Path):
     """
     Extract the ebook attachment links from given file.
     """
-    parser = ThreadHTMLParser.ThreadHTMLParser(path)
+    parser = ThreadHTMLParser(path)
     try:
         with path.open(mode='r', encoding="utf-8") as reader:
             parser.feed(reader.read())
