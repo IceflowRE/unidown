@@ -93,7 +93,7 @@ wheel
    :target: https://www.gnu.org/licenses/gpl-3.0
 
 .. |travis| image:: https://img.shields.io/travis/com/IceflowRE/unidown/master.svg?label=Travis%20CI
-   :target: https://travis-ci.org/IceflowRE/unidown
+   :target: https://travis-ci.com/IceflowRE/unidown
    
 .. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/unidown/master.svg?label=AppVeyor%20CI
     :target: https://ci.appveyor.com/project/IceflowRE/unidown/branch/master
