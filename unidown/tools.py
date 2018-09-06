@@ -69,5 +69,5 @@ def print_plugin_list(plugins: Dict[str, pkg_resources.EntryPoint]):
             )
         except Exception:
             print(
-                f"{trigger} (err)"
+                f"{trigger} (failed)"
             )
