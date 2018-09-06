@@ -22,8 +22,13 @@ class DynamicDataTest(unittest.TestCase):
         delete_dir_rec(Path('./tmp/'))
         with self.subTest(desc="no delay"):
             with self.assertRaises(SystemExit) as se:
-                main(['--main', './tmp/', '--plugin', 'test', '--log', 'CRITICAL'])
+                main(['/usr/bin/unidown', '--main', './tmp/', '--plugin', 'test', '--log', 'CRITICAL'])
 
             self.assertEqual(se.exception.code, 0)
             self.assertTrue(Path('./tmp/savestates/test_save.json').exists())
             self.assertTrue(Path('./tmp/downloads/test/README.rst').exists())
+        with self.subTest(desc="print list"):
+            with self.assertRaises(SystemExit) as se:
+                main(['/usr/bin/unidown', '--plugin-list'])
+
+            self.assertEqual(se.exception.code, 0)

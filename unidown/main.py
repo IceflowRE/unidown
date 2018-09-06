@@ -33,14 +33,14 @@ def main(argv=None):
         sys.exit('Only Python 3.7 or greater is supported. You are using:' + sys.version)
 
     if argv is None:
-        argv = sys.argv
+        argv = sys.argv[1:]
 
     parser = ArgumentParser(prog=static_data.LONG_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
     parser.add_argument('--plugin-list', action=PluginListAction, help="show plugin list and exit")
 
     parser.add_argument('-p', '--plugin', action='append', nargs='+', dest='plugins', required=True, type=str,
-                        metavar='name',
+                        metavar='name/options',
                         help='plugin to execute with given parameters')
     parser.add_argument('-m', '--main', dest='main_dir', default=dynamic_data.MAIN_DIR, type=Path, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
