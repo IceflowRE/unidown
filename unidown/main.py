@@ -37,14 +37,14 @@ def main(argv=None):
 
     parser = ArgumentParser(prog=static_data.LONG_NAME, description=static_data.DESCRIPTION)
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
-    parser.add_argument('--plugin-list', action=PluginListAction, help="show plugin list and exit")
+    parser.add_argument('--list-plugins', action=PluginListAction, help="show plugin list and exit")
 
     parser.add_argument('-p', '--plugin', action='append', nargs='+', dest='plugins', required=True, type=str,
                         metavar='name/options',
                         help='plugin to execute with given parameters')
     parser.add_argument('-m', '--main', dest='main_dir', default=dynamic_data.MAIN_DIR, type=Path, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
-    parser.add_argument('-o', '--output', dest='logfile', default=dynamic_data.LOGFILE_PATH, type=Path, metavar='path',
+    parser.add_argument('--logfile', dest='logfile', default=dynamic_data.LOGFILE_PATH, type=Path, metavar='path',
                         help='log filepath relativ to the main dir (default: %(default)s)')
     parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         default=dynamic_data.LOG_LEVEL, help='set the logging level (default: %(default)s)')
