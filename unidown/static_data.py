@@ -9,8 +9,8 @@ NAME = "unidown"
 LONG_NAME = "Universal Downloader"
 #: version in PEP440 format
 VERSION = '2.0.0.dev6'
-#: url to the current version
-VERSION_URL = "https://raw.githubusercontent.com/IceflowRE/unidown/release/version"
+#: url to the unidown pypi json
+PYPI_JSON_URL = 'https://pypi.python.org/pypi/unidown/json'
 #: author
 AUTHOR = 'Iceflower S'
 #: author github link
