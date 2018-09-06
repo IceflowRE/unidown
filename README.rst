@@ -5,6 +5,8 @@ Universal Downloader
 
 |travis| |appveyor| |readthedocs| |requirements| |codacy| |codecov|
 
+|pypi|
+
 ----
 
 ``<Description English>``
@@ -100,6 +102,9 @@ wheel
 
 .. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
    :target: https://unidown.readthedocs.io/en/latest/index.html
+
+.. |pypi| image:: https://img.shields.io/pypi/v/unidown.svg
+   :target: https://pypi.org/project/unidown/
 
 .. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=master
    :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=master
