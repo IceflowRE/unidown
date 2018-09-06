@@ -14,8 +14,8 @@ import re
 from concurrent import futures
 import certifi
 import urllib3
-import ListHTMLParser
-import ThreadHTMLParser
+import unidown.ListHTMLParser
+import unidown.ThreadHTMLParser
 from packaging import version
 from pathlib import Path
 # import multiprocessing
@@ -71,7 +71,7 @@ def get_current_app_version():
     """
     try:
         with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
-            url = 'https://raw.githubusercontent.com/IceflowRE/MR-eBook-Downloader/release/version'
+            url = 'https://raw.githubusercontent.com/IceflowRE/unidown/release/version'
             ver = p_man.urlopen('GET', url).data.decode('utf-8')
         return ver
     except Exception:
@@ -89,7 +89,7 @@ def check_for_app_updates():
     except Exception as ex:
         print(ex)
         return
-    if version.parse(newest_version) > version.parse(version):
+    if version.parse(newest_version) > version.parse(VERSION):
         print()
         print("!!! UPDATE AVAILABLE !!!")
         print("https://github.com/IceflowRE/MR-eBook-Downloader/releases/latest")
