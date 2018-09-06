@@ -19,24 +19,22 @@ from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.save_state import SaveState
 
 
-class APluginLayer(object):
+class APluginTest(unittest.TestCase):
+
     @classmethod
-    def setUp(cls):
+    def setUpClass(cls):
         cls.test_plugin = None
         for entry in pkg_resources.iter_entry_points('unidown.plugin'):
             if entry.name == "test":
                 cls.test_plugin = entry.load()
-
-
-class APluginTest(unittest.TestCase):
-    layer = APluginLayer
+        if cls.test_plugin is None:
+            raise ValueError("Test plugin could not be loaded or was not found.")
+        cls.plugin_info = cls.test_plugin._info
 
     def setUp(self):
         manager.init(Path('./tmp'), Path('UniDown.log'), 'INFO')
         dynamic_data.DISABLE_TQDM = True
-        if self.layer.test_plugin is None:
-            self.fail("Test plugin could not be loaded or was not found.")
-        self.plugin = self.layer.test_plugin()
+        self.plugin = self.test_plugin()
         self.plugin.log.disabled = True
         self.eg_data = {'/IceflowRE/unidown/master/README.rst':
                             LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
@@ -45,12 +43,24 @@ class APluginTest(unittest.TestCase):
 
     def tearDown(self):
         self.plugin.delete_data()
+        self.test_plugin._info = self.plugin_info
+
+    def test_equality(self):
+        with self.subTest(desc="different type"):
+            self.assertFalse(self.plugin == "blub")
+            self.assertTrue(self.plugin != "blub")
+        with self.subTest(desc="equal"):
+            plugin = self.test_plugin()
+            self.assertTrue(self.plugin == plugin)
+            self.assertFalse(self.plugin != plugin)
+        # this and unequal test is covered by PlugInfo tests too
 
     def test_init(self):
         with self.subTest(desc="without parameter"):
-            self.assertTrue(self.plugin._temp_path.exists() and self.plugin._temp_path.is_dir())
+            self.assertIsNotNone(self.plugin._log)
+            self.assertEqual(self.plugin._simul_downloads, dynamic_data.USING_CORES)
+            self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
             self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
-
             self.assertIsInstance(self.plugin.log, logging.Logger)
             self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
             self.assertIsInstance(self.plugin.info, PluginInfo)
@@ -61,28 +71,18 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
             self.assertEqual(self.plugin.download_data, {})
             self.assertEqual(self.plugin.unit, "item")
+            self.assertEqual(self.plugin._options, {'behaviour': 'normal'})
         with self.subTest(desc="with parameter"):
-            plugin = self.layer.test_plugin(["delay=10.0"])
+            plugin = self.test_plugin(["delay=10.0"])
             self.assertEqual(plugin._options['delay'], 10.0)
-
-    def test_equality(self):
-        with self.subTest(desc="different type"):
-            self.assertFalse(self.plugin == "blub")
-            self.assertTrue(self.plugin != "blub")
-        with self.subTest(desc="equal"):
-            plugin = self.layer.test_plugin(None, PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'))
-            self.assertTrue(self.plugin == plugin)
-            self.assertFalse(self.plugin != plugin)
-        with self.subTest(desc="unequal"):
-            plugin = self.layer.test_plugin(None, PluginInfo('blub', '1.0.0', 'raw.githubusercontent.com'))
-            self.assertFalse(self.plugin == plugin)
-            self.assertTrue(self.plugin != plugin)
-            plugin = self.layer.test_plugin(None, PluginInfo('test', '2.0.0', 'raw.githubusercontent.com'))
-            self.assertFalse(self.plugin == plugin)
-            self.assertTrue(self.plugin != plugin)
-            plugin = self.layer.test_plugin(None, PluginInfo('test', '1.0.0', 'www.example.com'))
-            self.assertFalse(self.plugin == plugin)
-            self.assertTrue(self.plugin != plugin)
+        with self.subTest(desc="with wrong parameter"):
+            plugin = self.test_plugin(["delay=nasua"])
+            with self.assertRaises(KeyError):
+                _ = plugin._options['delay']
+        with self.subTest(desc="info is not set"):
+            self.test_plugin._info = None
+            with self.assertRaises(ValueError):
+                self.test_plugin()
 
     def test_update_download_links(self):
         result = {'/IceflowRE/unidown/master/README.rst':
@@ -191,33 +191,29 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(save_state, result)
 
         with self.subTest(desc="different save state version"):
-            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
-            plugin.save_save_state(self.eg_data)
+            self.plugin.save_save_state(self.eg_data)
             dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
             with self.assertRaises(PluginException):
-                plugin.load_save_state()
-            self.setUp()
+                self.plugin.load_save_state()
 
         with self.subTest(desc="different plugin version"):
-            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
-            plugin.save_save_state(self.eg_data)
-            plugin = self.layer.test_plugin(None, PluginInfo("test", "2.0.0", "host"))
+            self.plugin.save_save_state(self.eg_data)
+            self.plugin._info.version = Version("0.4.2")
             with self.assertRaises(PluginException):
-                plugin.load_save_state()
+                self.plugin.load_save_state()
 
         with self.subTest(desc="different plugin name"):
-            plugin = self.layer.test_plugin(None, PluginInfo("test", "1.0.0", "host"))
-            plugin.save_save_state(self.eg_data)
-            plugin._info.name = "different"
+            self.plugin.save_save_state(self.eg_data)
+            self.plugin._info.name = "different"
             with self.assertRaises(PluginException):
-                plugin.load_save_state()
+                self.plugin.load_save_state()
 
         with self.subTest(desc="json parse error"):
             create_test_file(self.plugin._save_state_file)
             with self.assertRaises(PluginException):
                 self.plugin.load_save_state()
 
-        with self.subTest(desc="json parse error"):
+        with self.subTest(desc="json parse error 2"):
             with open(self.plugin._save_state_file, 'wb') as writer:
                 writer.write(str.encode('{}'))
             with self.assertRaises(PluginException):
@@ -262,5 +258,5 @@ class APluginTest(unittest.TestCase):
 
 
 def create_test_file(file: Path):
-    with open(file, 'wb') as writer:
+    with file.open('wb') as writer:
         writer.write(str.encode('test'))

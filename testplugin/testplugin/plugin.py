@@ -11,13 +11,10 @@ class Plugin(APlugin):
     """
     Test plugin.
     """
+    _info = PluginInfo('test', '1.0.0', 'raw.githubusercontent.com')
 
-    # TODO: param options as first param is a must -> add to doc
-    def __init__(self, options: List[str] = None, info: PluginInfo = None):
-        if info is None:
-            super().__init__(PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), options)
-        else:
-            super().__init__(info, options)
+    def __init__(self, options: List[str] = None):
+        super().__init__(options)
         self._options['behaviour'] = 'normal'
         if options is not None:
             for option in options:

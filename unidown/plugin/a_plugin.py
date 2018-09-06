@@ -29,8 +29,6 @@ class APlugin(ABC):
     """
     Abstract class of a plugin. Provides all needed variables and methods.
 
-    :param info: information about the plugin
-    :type info: ~unidown.plugin.plugin_info.PluginInfo
     :param options: parameters which can included optional parameters
     :type options: List[str]
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
@@ -58,18 +56,20 @@ class APlugin(ABC):
     :ivar _options: options which the plugin uses internal, should be used for the given options at init
     :vartype _options: Dict[str, ~typing.Any]
     """
+    _info = None
 
-    def __init__(self, info: PluginInfo, options: List[str] = None):
+    def __init__(self, options: List[str] = None):
         if options is None:
             options = []
+        if self._info is None:
+            raise ValueError("info is not set.")
 
-        self._log = logging.getLogger(info.name)
+        self._log = logging.getLogger(self._info.name)
         self._simul_downloads = dynamic_data.USING_CORES
 
-        self._info = info  # info about the module
-        self._temp_path = dynamic_data.TEMP_DIR.joinpath(self.name)  # module temp path
-        self._download_path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)  # module download path
-        self._save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')  # module save path
+        self._temp_path = dynamic_data.TEMP_DIR.joinpath(self.name)
+        self._download_path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)
+        self._save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
 
         try:
             create_dir_rec(self._temp_path)
@@ -91,7 +91,6 @@ class APlugin(ABC):
                 try:
                     self._options['delay'] = float(option[6:])
                 except ValueError:
-                    # TODO: bypasses log.disabled
                     self.log.warning("Plugin option 'delay' is not a float. Using default.")
 
     def __eq__(self, other: object) -> bool:
@@ -256,9 +255,17 @@ class APlugin(ABC):
     def download(self, link_item_dict: Dict[str, LinkItem], folder: Path, desc: str, unit: str, delay: float = 0) -> \
             List[str]:
         """
+        .. warning::
+
+            The parameters may change in future versions. (e.g. change order and accept another host)
+
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.plugin.a_plugin.APlugin._simul_downloads`. After
         :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommend.
+
+        This function don't use an internal `link_item_dict`, `delay` or `folder` directly set in options or instance
+        vars, because it can be used aside of the normal download routine inside the plugin itself for own things.
+        As of this it still needs access to the logger, so a staticmethod is not possible.
 
         :param link_item_dict: data which gets downloaded
         :type link_item_dict: Dict[str, ~unidown.plugin.link_item.LinkItem]
@@ -379,8 +386,8 @@ class APlugin(ABC):
         for link, link_item in tqdm(self.download_data.items(), desc="Compare with save", unit="item", leave=True,
                                     mininterval=1, ncols=100, disable=dynamic_data.DISABLE_TQDM):
             # TODO: add methode to log lost items, which are in old but not in new
-            if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
-                self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
+            #if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
+                #self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
 
             # if the new_data link does not exists in old_data or new_data time is newer
             if (link not in old_data) or (link_item.time > old_data[link].time):
