@@ -12,11 +12,7 @@ from packaging.version import Version
 
 from unidown import dynamic_data
 from unidown.core import manager
-from unidown.plugin.a_plugin import APlugin
-from unidown.plugin.exceptions import PluginException
-from unidown.plugin.link_item import LinkItem
-from unidown.plugin.plugin_info import PluginInfo
-from unidown.plugin.save_state import SaveState
+from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo, SaveState
 
 
 class APluginTest(unittest.TestCase):

@@ -3,10 +3,8 @@ from datetime import datetime
 
 from packaging.version import InvalidVersion, Version
 
-from unidown.plugin.link_item import LinkItem
-from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin import LinkItem, PluginInfo, SaveState
 from unidown.plugin.protobuf.save_state_pb2 import SaveStateProto
-from unidown.plugin.save_state import SaveState
 
 
 class SaveStateTest(unittest.TestCase):

@@ -1,10 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from unidown.plugin.a_plugin import APlugin
-from unidown.plugin.exceptions import PluginException
-from unidown.plugin.link_item import LinkItem
-from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 
 
 class Plugin(APlugin):
