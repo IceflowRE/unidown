@@ -16,13 +16,12 @@ from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
-from unidown import dynamic_data
+from unidown import dynamic_data, tools
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
 from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.protobuf.save_state_pb2 import SaveStateProto
 from unidown.plugin.save_state import SaveState
-from unidown.tools import create_dir_rec, delete_dir_rec
 
 
 class APlugin(ABC):
@@ -72,8 +71,8 @@ class APlugin(ABC):
         self._save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
 
         try:
-            create_dir_rec(self._temp_path)
-            create_dir_rec(self._download_path)
+            tools.create_dir_rec(self._temp_path)
+            tools.create_dir_rec(self._download_path)
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
@@ -209,14 +208,14 @@ class APlugin(ABC):
         Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
         """
         self._downloader.close()
-        delete_dir_rec(self._temp_path)
+        tools.delete_dir_rec(self._temp_path)
 
     def delete_data(self):
         """
         Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
         """
         self.clean_up()
-        delete_dir_rec(self._download_path)
+        tools.delete_dir_rec(self._download_path)
         if self._save_state_file.exists():
             self._save_state_file.unlink()
 
@@ -386,8 +385,8 @@ class APlugin(ABC):
         for link, link_item in tqdm(self.download_data.items(), desc="Compare with save", unit="item", leave=True,
                                     mininterval=1, ncols=100, disable=dynamic_data.DISABLE_TQDM):
             # TODO: add methode to log lost items, which are in old but not in new
-            #if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
-                #self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
+            # if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
+            # self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
 
             # if the new_data link does not exists in old_data or new_data time is newer
             if (link not in old_data) or (link_item.time > old_data[link].time):

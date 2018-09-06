@@ -7,12 +7,11 @@ import platform
 from pathlib import Path
 from typing import List
 
-from unidown import dynamic_data, static_data
+from unidown import dynamic_data, static_data, tools
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
-from unidown.tools import create_dir_rec
 
 
 def init(main_dir: Path, logfile_path: Path, log_level: str):
@@ -31,11 +30,11 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
 
     dynamic_data.check_dirs()
 
-    create_dir_rec(dynamic_data.MAIN_DIR)
-    create_dir_rec(dynamic_data.TEMP_DIR)
-    create_dir_rec(dynamic_data.DOWNLOAD_DIR)
-    create_dir_rec(dynamic_data.SAVESTAT_DIR)
-    create_dir_rec(Path.resolve(dynamic_data.LOGFILE_PATH).parent)
+    tools.create_dir_rec(dynamic_data.MAIN_DIR)
+    tools.create_dir_rec(dynamic_data.TEMP_DIR)
+    tools.create_dir_rec(dynamic_data.DOWNLOAD_DIR)
+    tools.create_dir_rec(dynamic_data.SAVESTAT_DIR)
+    tools.create_dir_rec(Path.resolve(dynamic_data.LOGFILE_PATH).parent)
     dynamic_data.LOG_LEVEL = log_level
     logging.basicConfig(filename=dynamic_data.LOGFILE_PATH, filemode='a', level=dynamic_data.LOG_LEVEL,
                         format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('
