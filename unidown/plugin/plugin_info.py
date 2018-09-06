@@ -7,6 +7,10 @@ from unidown.plugin.protobuf.plugin_info_pb2 import PluginInfoProto
 
 class PluginInfo:
     """
+    .. warning:
+
+        Parameters may change in the future.
+
     Information about the module. Those information will be saved into the save files as well.
 
     :param name: the name of the plugin
