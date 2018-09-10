@@ -67,7 +67,7 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
             self.assertEqual(self.plugin.download_data, {})
             self.assertEqual(self.plugin.unit, "item")
-            self.assertEqual(self.plugin._options, {'behaviour': 'normal'})
+            self.assertEqual(self.plugin.options, {'behaviour': 'normal'})
         with self.subTest(desc="with parameter"):
             plugin = self.test_plugin(["delay=10.0"])
             self.assertEqual(plugin._options['delay'], 10.0)

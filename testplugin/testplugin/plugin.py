@@ -12,11 +12,8 @@ class Plugin(APlugin):
 
     def __init__(self, options: List[str] = None):
         super().__init__(options)
-        self._options['behaviour'] = 'normal'
-        if options is not None:
-            for option in options:
-                if option.startswith('behaviour='):
-                    self._options['behaviour'] = option[10:]
+        if not 'behaviour' in self._options:
+            self._options['behaviour'] = 'normal'
         if self._options['behaviour'] == 'load_crash':
             raise Exception("crash")
 

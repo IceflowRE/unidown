@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import certifi
 import pkg_resources
@@ -58,8 +58,6 @@ class APlugin(ABC):
     _info = None
 
     def __init__(self, options: List[str] = None):
-        if options is None:
-            options = []
         if self._info is None:
             raise ValueError("info is not set.")
 
@@ -84,13 +82,19 @@ class APlugin(ABC):
 
         # load options
         # supported: delay
-        self._options = {}
-        for option in options:
-            if option.startswith('delay='):
+        if options is not None:
+            self._options = self._get_options_dic(options)
+        else:
+            self._options = {}
+        if "delay" in self._options:
+            try:
+                self._options['delay'] = float(self._options['delay'])
+            except ValueError:
                 try:
-                    self._options['delay'] = float(option[6:])
-                except ValueError:
-                    self.log.warning("Plugin option 'delay' is not a float. Using default.")
+                    del self._options['delay']
+                except KeyError:
+                    pass
+                self.log.warning("Plugin option 'delay' is not a float. Using default.")
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -143,6 +147,10 @@ class APlugin(ABC):
     @property
     def unit(self) -> str:
         return self._unit
+
+    @property
+    def options(self) -> Dict[str, Any]:
+        return self._options
 
     @abstractmethod
     def _create_download_links(self) -> Dict[str, LinkItem]:
@@ -409,6 +417,24 @@ class APlugin(ABC):
                 if link in base:
                     self.log.info('Actualize item: ' + link + ' | ' + str(base[link]) + ' -> ' + str(item))
         base.update(new)
+
+    def _get_options_dic(self, options: List[str]) -> Dict[str, str]:
+        """
+        Convert the option list to a dictionary where the key is the option and the value is the related option.
+        Is called in the init.
+
+        :param options: options given to the plugin.
+        :type options: List[str]
+        :return: dictionary which contains the option key as str related to the option string
+        :rtype Dict[str, str]
+        """
+        options_dic = {}
+        for option in options:
+            cur_option = option.split("=")
+            if len(cur_option) != 2:
+                self.log.warning(f"'{option}' is not valid and will be ignored.")
+            options_dic[cur_option[0]] = cur_option[1]
+        return options_dic
 
     @staticmethod
     def get_plugins() -> Dict[str, pkg_resources.EntryPoint]:
