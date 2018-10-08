@@ -44,7 +44,7 @@ setup(
             'nose2[coverage_plugin]==0.8.0',
             'Sphinx==1.8.1',
             'sphinxcontrib-svg2pdfconverter==0.1.0',
-            'sphinx_rtd_theme==0.4.1',
+            'sphinx_rtd_theme==0.4.2',
             'twine==1.12.1',
             'setuptools==40.4.3',
             'wheel==0.32.1',
