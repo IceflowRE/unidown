@@ -33,7 +33,7 @@ setup(
     packages=find_packages(include=['unidown', 'unidown.*']),
     python_requires='>=3.7',
     install_requires=[
-        'urllib3[secure]==1.24',
+        'urllib3[secure]==1.24.1',
         'tqdm==4.28.1',
         'protobuf==3.6.1',
         'packaging==18.0',
