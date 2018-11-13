@@ -46,7 +46,7 @@ setup(
             'sphinxcontrib-svg2pdfconverter==0.1.0',
             'sphinx_rtd_theme==0.4.2',
             'twine==1.12.1',
-            'setuptools==40.5.0',
+            'setuptools==40.6.1',
             'wheel==0.32.2',
         ],
     },
