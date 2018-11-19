@@ -47,7 +47,7 @@ setup(
             'sphinx_rtd_theme==0.4.2',
             'twine==1.12.1',
             'setuptools==40.6.2',
-            'wheel==0.32.2',
+            'wheel==0.32.3',
         ],
     },
     package_data={
