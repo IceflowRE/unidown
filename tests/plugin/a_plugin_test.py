@@ -62,7 +62,7 @@ class APluginTest(unittest.TestCase):
             self.assertIsInstance(self.plugin.info, PluginInfo)
             self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
             self.assertEqual(self.plugin.name, 'test')
-            self.assertEqual(self.plugin.version, Version('1.0.0'))
+            self.assertEqual(self.plugin.version, Version('0.1.0'))
             self.assertEqual(self.plugin.download_path, dynamic_data.DOWNLOAD_DIR.joinpath(self.plugin.name))
             self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
             self.assertEqual(self.plugin.download_data, {})
@@ -177,7 +177,7 @@ class APluginTest(unittest.TestCase):
     def test_load_save_savestate(self):
         with self.subTest(desc="default return"):
             result = SaveState(dynamic_data.SAVE_STATE_VERSION,
-                               PluginInfo('test', '1.0.0', 'raw.githubusercontent.com'), datetime(1970, 1, 1), {})
+                               PluginInfo('test', '0.1.0', 'raw.githubusercontent.com'), datetime(1970, 1, 1), {})
             self.assertEqual(result, self.plugin.load_save_state())
 
         with self.subTest(desc="load without errors"):

@@ -11,7 +11,7 @@ setup(
     author_email="iceflower@gmx.de",
     license='GPLv3',
     packages=find_packages(),
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     zip_safe=True,
     entry_points={
         'unidown.plugin': "test = testplugin.plugin:Plugin"

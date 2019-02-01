@@ -8,11 +8,11 @@ class Plugin(APlugin):
     """
     Test plugin.
     """
-    _info = PluginInfo('test', '1.0.0', 'raw.githubusercontent.com')
+    _info = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
 
     def __init__(self, options: List[str] = None):
         super().__init__(options)
-        if not 'behaviour' in self._options:
+        if 'behaviour' not in self._options:
             self._options['behaviour'] = 'normal'
         if self._options['behaviour'] == 'load_crash':
             raise Exception("crash")
