@@ -5,7 +5,7 @@ because it is used inside the setup.py **| do not edit**.
 
 #: name of this program
 NAME = "unidown"
-#: short name of this program
+#: long name of this program
 LONG_NAME = "Universal Downloader"
 #: version in PEP440 format
 VERSION = '2.0.0.dev7'
