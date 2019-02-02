@@ -1,52 +1,55 @@
 """
 Test for plugins.a_plugin.
 """
+import copy
 import logging
 import re
 import unittest
 from datetime import datetime
 from pathlib import Path
 
-import pkg_resources
 from packaging.version import Version
+from unidown_test_plugin.plugin import Plugin as TestPlugin
 
 from unidown import dynamic_data
 from unidown.core import manager
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo, SaveState
 
 
+def create_test_file(file: Path):
+    with file.open('wb') as writer:
+        writer.write(str.encode('test'))
+
+
 class APluginTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.test_plugin = None
-        for entry in pkg_resources.iter_entry_points('unidown.plugin'):
-            if entry.name == "test":
-                cls.test_plugin = entry.load()
-        if cls.test_plugin is None:
-            raise ValueError("Test plugin could not be loaded or was not found.")
-        cls.plugin_info = cls.test_plugin._info
+        cls.origin_info = copy.copy(TestPlugin()._info)
 
     def setUp(self):
-        manager.init(Path('./tmp'), Path('UniDown.log'), 'INFO')
+        manager.init(Path('./test-tmp/APluginTest'), Path('UniDown.log'), 'INFO')
         dynamic_data.DISABLE_TQDM = True
-        self.plugin = self.test_plugin()
+        self.plugin = TestPlugin()
         self.plugin.log.disabled = True
-        self.eg_data = {'/IceflowRE/unidown/master/README.rst':
-                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-                        '/IceflowRE/unidown/master/no_file_here':
-                            LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
+        self.eg_data = {
+            '/IceflowRE/unidown/master/README.rst':
+                LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+            '/IceflowRE/unidown/master/no_file_here':
+                LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+        }
 
     def tearDown(self):
         self.plugin.delete_data()
-        self.test_plugin._info = self.plugin_info
+        # restore static variable
+        TestPlugin._info = copy.copy(self.origin_info)
 
     def test_equality(self):
         with self.subTest(desc="different type"):
             self.assertFalse(self.plugin == "blub")
             self.assertTrue(self.plugin != "blub")
         with self.subTest(desc="equal"):
-            plugin = self.test_plugin()
+            plugin = self.plugin
             self.assertTrue(self.plugin == plugin)
             self.assertFalse(self.plugin != plugin)
         # this and unequal test is covered by PlugInfo tests too
@@ -69,16 +72,16 @@ class APluginTest(unittest.TestCase):
             self.assertEqual(self.plugin.unit, "item")
             self.assertEqual(self.plugin.options, {'behaviour': 'normal'})
         with self.subTest(desc="with parameter"):
-            plugin = self.test_plugin(["delay=10.0"])
+            plugin = TestPlugin(["delay=10.0"])
             self.assertEqual(plugin._options['delay'], 10.0)
         with self.subTest(desc="with wrong parameter"):
-            plugin = self.test_plugin(["delay=nasua"])
+            plugin = TestPlugin(["delay=nasua"])
             with self.assertRaises(KeyError):
                 _ = plugin._options['delay']
         with self.subTest(desc="info is not set"):
-            self.test_plugin._info = None
+            TestPlugin._info = None
             with self.assertRaises(ValueError):
-                self.test_plugin()
+                TestPlugin()
 
     def test_update_download_links(self):
         result = {'/IceflowRE/unidown/master/README.rst':
@@ -251,8 +254,3 @@ class APluginTest(unittest.TestCase):
         This test requires that the unidown test plugin is installed.
         """
         self.assertIn('test', APlugin.get_plugins())
-
-
-def create_test_file(file: Path):
-    with file.open('wb') as writer:
-        writer.write(str.encode('test'))

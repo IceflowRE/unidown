@@ -6,19 +6,23 @@ from unidown.tools import delete_dir_rec
 
 class ToolsTest(unittest.TestCase):
     def test_delete_dir_rec(self):
-        Path("./test_delete_dir_rec/").mkdir()
+        folder = Path("./test-tmp/test_delete_dir_rec/")
+        folder.mkdir(parents=True, exist_ok=True)
         for number in range(1, 4):
-            file = open("./test_delete_dir_rec/" + str(number), 'w')
-            file.close()
-        Path("./test_delete_dir_rec/temp/").mkdir()
+            with folder.joinpath(str(number)).open('w'):
+                pass
+
+        sub_folder = folder.joinpath("sub")
+        sub_folder.mkdir(parents=True, exist_ok=True)
         for number in range(1, 4):
-            file = open("./test_delete_dir_rec/temp/" + str(number), 'w')
-            file.close()
-        Path("./test_delete_dir_rec/temp2/").mkdir()
-        delete_dir_rec(Path("./test_delete_dir_rec/"))
+            with sub_folder.joinpath(str(number)).open('w'):
+                pass
+        folder.joinpath("sub2").mkdir()
+        delete_dir_rec(folder)
 
-        self.assertFalse(Path("./test_delete_dir_rec/").exists())
+        self.assertFalse(folder.exists())
 
-        self.assertFalse(Path("./donotexist/").exists())
-        delete_dir_rec(Path("./donotexist/"))
-        self.assertFalse(Path("./donotexist/").exists())
+        no_folder = Path("./donotexist/")
+        self.assertFalse(no_folder.exists())
+        delete_dir_rec(no_folder)
+        self.assertFalse(no_folder.exists())

@@ -41,5 +41,6 @@ deploy:
     skip_cleanup: true
     script: twine upload -u $PYPI_USER -p $PYPI_PASSWORD --skip-existing dist/*
     on:
+      branch: master
       repo: IceflowRE/unidown
       tags: true

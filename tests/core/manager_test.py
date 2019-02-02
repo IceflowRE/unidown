@@ -8,7 +8,7 @@ from unidown.core.plugin_state import PluginState
 
 class ManagerTest(unittest.TestCase):
     def test_init(self):
-        for path in [Path('./tmp'), Path('./tmp2/tmp')]:
+        for path in [Path('./test-tmp/test_init'), Path('./test-tmp/test_init-2')]:
             manager.init(path, Path('UniDown.log'), dynamic_data.LOG_LEVEL)
             with self.subTest(path=str(path), logfile='UniDown.log', loglevel=dynamic_data.LOG_LEVEL):
                 self.assertTrue(path.joinpath('downloads').exists())
