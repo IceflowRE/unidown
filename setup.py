@@ -41,7 +41,7 @@ setup(
     extras_require={
         'dev': [
             'prospector[with_everything]==1.1.6.2',
-            'nose2[coverage_plugin]==0.8.0',
+            'nose2[coverage_plugin]==0.9.0',
             'Sphinx==2.0.0',
             'sphinxcontrib-svg2pdfconverter==0.1.0',
             'sphinx_rtd_theme==0.4.2',
