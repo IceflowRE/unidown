@@ -42,7 +42,7 @@ setup(
         'dev': [
             'prospector[with_everything]==1.1.6.2',
             'nose2[coverage_plugin]==0.9.0',
-            'Sphinx==2.0.0',
+            'Sphinx==2.0.1',
             'sphinxcontrib-svg2pdfconverter==0.1.0',
             'sphinx_rtd_theme==0.4.2',
             'twine==1.13.0',
