@@ -34,7 +34,7 @@ setup(
     python_requires='>=3.7',
     install_requires=[
         'urllib3[secure]==1.24.2',
-        'tqdm==4.31.1',
+        'tqdm==4.32.1',
         'protobuf==3.7.1',
         'packaging==19.0',
     ],
