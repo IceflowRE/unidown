@@ -25,6 +25,7 @@ install:
 script:
   - ./scripts/build.sh "$PY_VERSION"
   - nose2 -c setup.cfg -v
+  - python setup.py check -v -m -s
   - twine check dist/*
   - unidown --version
   - sphinx-build -b html ./doc/source/ ./doc/build/html/
@@ -34,7 +35,7 @@ script:
 after_success:
   - codecov
   - coverage xml
-  - python-codacy-coverage -v -r coverage.xml
+  - python-codacy-coverage -r coverage.xml
 
 deploy:
   - provider: script

@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 from setuptools import find_packages, setup
 
-from unidown import static_data
-
 setup(
     name="unidown_test_plugin",
     version="0.1.0",
-    description=static_data.DESCRIPTION,
+    description="Test plugin for unidown.",
     author="Iceflower S",
     author_email="iceflower@gmx.de",
     license='GPLv3',
-    packages=find_packages(),
+    packages=find_packages('unidown_test_plugin', 'unidown_test_plugin.*'),
     python_requires='>=3.7',
+    install_requires=[
+        'unidown',
+    ],
     zip_safe=True,
     entry_points={
         'unidown.plugin': "test = unidown_test_plugin.plugin:Plugin"
