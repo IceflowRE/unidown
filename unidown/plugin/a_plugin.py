@@ -77,8 +77,9 @@ class APlugin(ABC):
         self._last_update = datetime(1970, 1, 1)
         self._unit = 'item'
         self._download_data = {}
-        self._downloader = urllib3.HTTPSConnectionPool(self.info.host, maxsize=self._simul_downloads,
-                                                       cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+        self._downloader = urllib3.HTTPSConnectionPool(
+            self.info.host, maxsize=self._simul_downloads, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()
+        )
 
         # load options
         # supported: delay
@@ -206,7 +207,7 @@ class APlugin(ABC):
 
         if lost and log:
             for link, item in lost.items():
-                self.log.error(f"Not downloaded: {self.info.host+link} - {item.name}")
+                self.log.error(f"Not downloaded: {self.info.host + link} - {item.name}")
 
         return succeed, lost
 
