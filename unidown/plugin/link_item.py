@@ -26,12 +26,8 @@ class LinkItem:
     """
 
     def __init__(self, name: str, time: datetime):
-        if name is None or name == '':
-            raise ValueError("name cannot be empty or None.")
-        elif time is None:
-            raise ValueError("time cannot be None.")
-        self._name = name
-        self._time = time
+        self._name = self.name = name
+        self._time = self.time = time
 
     @classmethod
     def from_protobuf(cls, proto: LinkItemProto) -> LinkItem:
@@ -63,9 +59,21 @@ class LinkItem:
     def name(self) -> str:
         return self._name
 
+    @name.setter
+    def name(self, name: str):
+        if name is None or name == '':
+            raise ValueError("name cannot be empty or None.")
+        self._name = name
+
     @property
     def time(self) -> datetime:
         return self._time
+
+    @time.setter
+    def time(self, time: datetime):
+        if time is None:
+            raise ValueError("time cannot be None.")
+        self._time = time
 
     def to_protobuf(self) -> LinkItemProto:
         """
