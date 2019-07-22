@@ -10,7 +10,7 @@ import pkg_resources
 from google.protobuf.timestamp_pb2 import Timestamp
 
 
-def delete_dir_rec(path: Path):
+def unlink_dir_rec(path: Path):
     """
     Delete a folder recursive.
 
@@ -21,21 +21,10 @@ def delete_dir_rec(path: Path):
         return
     for sub in path.iterdir():
         if sub.is_dir():
-            delete_dir_rec(sub)
+            unlink_dir_rec(sub)
         else:
             sub.unlink()
     path.rmdir()
-
-
-def create_dir_rec(path: Path):
-    """
-    Create a folder recursive.
-
-    :param path: path
-    :type path: ~pathlib.Path
-    """
-    if not path.exists():
-        Path.mkdir(path, parents=True, exist_ok=True)
 
 
 def datetime_to_timestamp(time: datetime) -> Timestamp:

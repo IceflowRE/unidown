@@ -30,11 +30,11 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
 
     dynamic_data.check_dirs()
 
-    tools.create_dir_rec(dynamic_data.MAIN_DIR)
-    tools.create_dir_rec(dynamic_data.TEMP_DIR)
-    tools.create_dir_rec(dynamic_data.DOWNLOAD_DIR)
-    tools.create_dir_rec(dynamic_data.SAVESTAT_DIR)
-    tools.create_dir_rec(Path.resolve(dynamic_data.LOGFILE_PATH).parent)
+    dynamic_data.MAIN_DIR.mkdir(parents=True, exist_ok=True)
+    dynamic_data.TEMP_DIR.mkdir(parents=True, exist_ok=True)
+    dynamic_data.DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    dynamic_data.SAVESTAT_DIR.mkdir(parents=True, exist_ok=True)
+    dynamic_data.LOGFILE_PATH.mkdir(parents=True, exist_ok=True)
     dynamic_data.LOG_LEVEL = log_level
     logging.basicConfig(filename=dynamic_data.LOGFILE_PATH, filemode='a', level=dynamic_data.LOG_LEVEL,
                         format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('

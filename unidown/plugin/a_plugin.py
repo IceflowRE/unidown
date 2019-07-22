@@ -69,8 +69,8 @@ class APlugin(ABC):
         self._save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
 
         try:
-            tools.create_dir_rec(self._temp_path)
-            tools.create_dir_rec(self._download_path)
+            self._temp_path.mkdir(parents=True, exist_ok=True)
+            self._download_path.mkdir(parents=True, exist_ok=True)
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
@@ -217,14 +217,14 @@ class APlugin(ABC):
         Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
         """
         self._downloader.close()
-        tools.delete_dir_rec(self._temp_path)
+        tools.unlink_dir_rec(self._temp_path)
 
     def delete_data(self):
         """
         Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
         """
         self.clean_up()
-        tools.delete_dir_rec(self._download_path)
+        tools.unlink_dir_rec(self._download_path)
         if self._save_state_file.exists():
             self._save_state_file.unlink()
 

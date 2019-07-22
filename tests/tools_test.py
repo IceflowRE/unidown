@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from unidown.tools import delete_dir_rec
+from unidown.tools import unlink_dir_rec
 
 
 class ToolsTest(unittest.TestCase):
@@ -18,11 +18,11 @@ class ToolsTest(unittest.TestCase):
             with sub_folder.joinpath(str(number)).open('w'):
                 pass
         folder.joinpath("sub2").mkdir()
-        delete_dir_rec(folder)
+        unlink_dir_rec(folder)
 
         self.assertFalse(folder.exists())
 
         no_folder = Path("./donotexist/")
         self.assertFalse(no_folder.exists())
-        delete_dir_rec(no_folder)
+        unlink_dir_rec(no_folder)
         self.assertFalse(no_folder.exists())
