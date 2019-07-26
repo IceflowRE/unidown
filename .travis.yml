@@ -28,13 +28,12 @@ script:
   - python setup.py check -v -m -s
   - twine check dist/*
   - unidown --version
-  - sphinx-build -b html ./doc/source/ ./doc/build/html/
-  - sphinx-build -b linkcheck ./doc/source/ ./doc/build/linkcheck/
-  - sphinx-build -b latex ./doc/source/ ./doc/build/latex/
+  - sphinx-build -b html ./doc/source/ ./build/doc/html/
+  - sphinx-build -b linkcheck ./doc/source/ ./build/doc/linkcheck/
+  - sphinx-build -b latex ./doc/source/ ./build/doc/latex/
 
 after_success:
   - codecov
-  - coverage xml
   - python-codacy-coverage -r coverage.xml
 
 deploy:

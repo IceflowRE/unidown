@@ -66,6 +66,10 @@ sphinxcontrib-svg2pdfconverter
     - `Missing Link Electronics, Inc. <https://github.com/missinglinkelectronics>`__
     - https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter
     - `BSD-2-Clause <https://github.com/missinglinkelectronics/sphinxcontrib-svg2pdfconverter/blob/master/LICENSE.txt>`__
+sphinx-autodoc-typehints
+    - `Alex Grönholm <https://github.com/agronholm>`__
+    - https://github.com/agronholm/sphinx-autodoc-typehints
+    - `MIT <https://github.com/agronholm/sphinx-autodoc-typehints/blob/master/LICENSE>`__
 tqdm
     - `noamraph <https://github.com/noamraph>`__
     - https://github.com/tqdm/tqdm
