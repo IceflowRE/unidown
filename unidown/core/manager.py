@@ -19,11 +19,8 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
     Initialize the _downloader. TODO.
 
     :param main_dir: main directory
-    :type main_dir: ~pathlib.Path
     :param logfile_path: logfile path
-    :type logfile_path: ~pathlib.Path
     :param log_level: logging level
-    :type log_level: str
     """
     dynamic_data.reset()
     dynamic_data.init_dirs(main_dir, logfile_path)
@@ -78,7 +75,6 @@ def download_from_plugin(plugin: APlugin):
     9. write new savestate
 
     :param plugin: plugin
-    :type plugin: ~unidown.plugin.a_plugin.APlugin
     """
     # get last update date
     plugin.log.info('Get last update')
@@ -116,11 +112,8 @@ def run(plugin_name: str, options: List[str] = None) -> PluginState:
     Run a plugin so use the download routine and clean up after.
 
     :param plugin_name: name of plugin
-    :type plugin_name: str
     :param options: parameters which will be send to the plugin initialization
-    :type options: List[str]
     :return: success
-    :rtype: ~unidown.plugin.plugin_state.PluginState
     """
     if options is None:
         options = []

@@ -17,13 +17,9 @@ class SaveState:
     Savestate of a plugin.
 
     :param version: savestate version
-    :type version: ~packaging.version.Version
     :param plugin_info: plugin info
-    :type plugin_info: ~unidown.plugin.plugin_info.PluginInfo
     :param last_update: last udpate time of the referenced data
-    :type last_update: ~datetime.datetime
     :param link_item_dict: data
-    :type link_item_dict: dict[str, ~unidown.plugin.link_item.LinkItem]
 
     :ivar version: savestate version
     :vartype version: ~packaging.version.Version
@@ -57,9 +53,7 @@ class SaveState:
         Constructor from protobuf. Can raise ValueErrors from called from_protobuf() parsers.
 
         :param proto: protobuf structure
-        :type proto: ~unidown.plugin.protobuf.save_state_pb2.SaveStateProto
         :return: the SaveState
-        :rtype: ~unidown.plugin.save_state.SaveState
         :raises ValueError: version of SaveState does not exist or is empty inside the protobuf
         :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
         """
@@ -80,7 +74,6 @@ class SaveState:
         Create protobuf item.
 
         :return: protobuf structure
-        :rtype: ~unidown.plugin.protobuf.save_state_pb2.SaveStateProto
         """
         result = SaveStateProto()
         result.version = str(self.version)

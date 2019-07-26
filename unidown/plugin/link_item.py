@@ -13,9 +13,7 @@ class LinkItem:
     Item which represents the data, who need to be downloaded. Has a name and an update time.
 
     :param name: name
-    :type name: str
     :param time: update time
-    :type time: ~datetime.datetime
     :raises ValueError: name cannot be empty or None
     :raises ValueError: time cannot be empty or None
 
@@ -35,9 +33,7 @@ class LinkItem:
         Constructor from protobuf.
 
         :param proto: protobuf structure
-        :type proto: ~unidown.plugin.protobuf.link_item_pb2.LinkItemProto
         :return: the LinkItem
-        :rtype: ~unidown.plugin.link_item.LinkItem
         :raises ValueError: name of LinkItem does not exist inside the protobuf or is empty
         """
         if proto.name == '':
@@ -80,7 +76,6 @@ class LinkItem:
         Create protobuf item.
 
         :return: protobuf structure
-        :rtype: ~unidown.plugin.protobuf.link_item_pb2.LinkItemProto
         """
         result = LinkItemProto()
         result.name = self._name

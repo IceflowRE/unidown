@@ -15,7 +15,6 @@ def get_newest_app_version() -> Version:
     Download the version tag from remote.
 
     :return: version from remote
-    :rtype: ~packaging.version.Version
     """
     with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
         pypi_json = p_man.urlopen('GET', static_data.PYPI_JSON_URL).data.decode('utf-8')
@@ -33,6 +32,5 @@ def check_for_app_updates() -> bool:
     Check for updates.
 
     :return: is update available
-    :rtype: bool
     """
     return get_newest_app_version() > Version(static_data.VERSION)  # TODO: catch invalid version
