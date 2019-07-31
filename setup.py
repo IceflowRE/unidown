@@ -36,7 +36,7 @@ setup(
         'urllib3[secure]==1.25.3',
         'tqdm==4.32.2',
         'protobuf==3.9.0',
-        'packaging==19.0',
+        'packaging==19.1',
     ],
     extras_require={
         'dev': [
