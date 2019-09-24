@@ -35,7 +35,7 @@ setup(
     install_requires=[
         'urllib3[secure]==1.25.3',
         'tqdm==4.35.0',
-        'protobuf==3.9.1',
+        'protobuf==3.9.2',
         'packaging==19.1',
     ],
     extras_require={
