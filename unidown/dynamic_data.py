@@ -20,7 +20,7 @@ LOGFILE_PATH = MAIN_DIR.joinpath(Path('UniDown.log'))
 #: available plugins which are found at starting the program, name -> EntryPoint
 AVAIL_PLUGINS = {}
 
-#: how many core shoud be used
+#: how many core should be used
 USING_CORES = 1
 #: log level
 LOG_LEVEL = 'INFO'
@@ -28,7 +28,7 @@ LOG_LEVEL = 'INFO'
 DISABLE_TQDM = False
 
 #: current savestate version which will be used **Do not edit**
-SAVE_STATE_VERSION = Version('1')
+SAVESTATE_VERSION = Version('1')
 
 
 # ===========================
@@ -54,7 +54,7 @@ def reset():
     Reset all dynamic variables to the default values.
     """
     global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH, USING_CORES, LOG_LEVEL, DISABLE_TQDM, \
-        SAVE_STATE_VERSION
+        SAVESTATE_VERSION
     MAIN_DIR = Path('./')
     TEMP_DIR = MAIN_DIR.joinpath(Path('temp/'))
     DOWNLOAD_DIR = MAIN_DIR.joinpath(Path('downloads/'))
@@ -65,7 +65,7 @@ def reset():
     LOG_LEVEL = 'INFO'
     DISABLE_TQDM = False
 
-    SAVE_STATE_VERSION = Version('1')
+    SAVESTATE_VERSION = Version('1')
 
 
 def check_dirs():

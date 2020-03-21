@@ -1,19 +1,14 @@
-"""
-Test for plugins.a_plugin.
-"""
-import copy
 import logging
-import re
-import unittest
 from datetime import datetime
 from pathlib import Path
 
+import pytest
 from packaging.version import Version
-from unidown_test_plugin.plugin import Plugin as TestPlugin
+from unidown_test.plugin import Plugin as TestPlugin
 
 from unidown import dynamic_data
-from unidown.core import manager
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo, SaveState
+from unidown.plugin.link_item_dict import LinkItemDict
 
 
 def create_test_file(file: Path):
@@ -21,236 +16,186 @@ def create_test_file(file: Path):
         writer.write(str.encode('test'))
 
 
-class APluginTest(unittest.TestCase):
+eg_data = LinkItemDict({
+    '/IceflowRE/unidown/master/README.rst':
+        LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    '/IceflowRE/unidown/master/missing':
+        LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+})
 
-    @classmethod
-    def setUpClass(cls):
-        cls.origin_info = copy.copy(TestPlugin()._info)
 
-    def setUp(self):
-        manager.init(Path('./test-tmp/APluginTest'), Path('UniDown.log'), 'INFO')
-        dynamic_data.DISABLE_TQDM = True
-        self.plugin = TestPlugin()
-        self.plugin.log.disabled = True
-        self.eg_data = {
-            '/IceflowRE/unidown/master/README.rst':
-                LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-            '/IceflowRE/unidown/master/no_file_here':
-                LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))
-        }
+def test_equality():
+    plugin = TestPlugin()
+    assert False == (plugin == "blub")
+    assert True == (plugin != "blub")
+    plugin_b = TestPlugin()
+    assert True == (plugin == plugin_b)
+    assert False == (plugin != plugin_b)
 
-    def tearDown(self):
-        self.plugin.delete_data()
-        # restore static variable
-        TestPlugin._info = copy.copy(self.origin_info)
 
-    def test_equality(self):
-        with self.subTest(desc="different type"):
-            self.assertFalse(self.plugin == "blub")
-            self.assertTrue(self.plugin != "blub")
-        with self.subTest(desc="equal"):
-            plugin = self.plugin
-            self.assertTrue(self.plugin == plugin)
-            self.assertFalse(self.plugin != plugin)
-        # this and unequal test is covered by PlugInfo tests too
+def test_init_without_param():
+    plugin = TestPlugin()
+    assert plugin._log is not None
+    assert plugin._simul_downloads == dynamic_data.USING_CORES
+    assert plugin.temp_path.exists() and plugin.temp_path.is_dir()
+    assert plugin.download_path.exists() and plugin.download_path.is_dir()
+    assert isinstance(plugin.log, logging.Logger)
+    assert plugin.simul_downloads == dynamic_data.USING_CORES
+    assert isinstance(plugin.info, PluginInfo)
+    assert plugin.host == 'raw.githubusercontent.com'
+    assert plugin.name == 'test'
+    assert plugin.version == Version('0.1.0')
+    assert plugin.download_path == dynamic_data.DOWNLOAD_DIR.joinpath(plugin.name)
+    assert plugin.last_update == datetime(1970, 1, 1)
+    assert plugin.download_data == {}
+    assert plugin.unit == "item"
+    assert plugin.options == {'behaviour': 'normal', 'delay': 0}
 
-    def test_init(self):
-        with self.subTest(desc="without parameter"):
-            self.assertIsNotNone(self.plugin._log)
-            self.assertEqual(self.plugin._simul_downloads, dynamic_data.USING_CORES)
-            self.assertTrue(self.plugin.temp_path.exists() and self.plugin.temp_path.is_dir())
-            self.assertTrue(self.plugin.download_path.exists() and self.plugin.download_path.is_dir())
-            self.assertIsInstance(self.plugin.log, logging.Logger)
-            self.assertEqual(self.plugin.simul_downloads, dynamic_data.USING_CORES)
-            self.assertIsInstance(self.plugin.info, PluginInfo)
-            self.assertEqual(self.plugin.host, 'raw.githubusercontent.com')
-            self.assertEqual(self.plugin.name, 'test')
-            self.assertEqual(self.plugin.version, Version('0.1.0'))
-            self.assertEqual(self.plugin.download_path, dynamic_data.DOWNLOAD_DIR.joinpath(self.plugin.name))
-            self.assertEqual(self.plugin.last_update, datetime(1970, 1, 1))
-            self.assertEqual(self.plugin.download_data, {})
-            self.assertEqual(self.plugin.unit, "item")
-            self.assertEqual(self.plugin.options, {'behaviour': 'normal'})
-        with self.subTest(desc="with parameter"):
-            plugin = TestPlugin(["delay=10.0"])
-            self.assertEqual(plugin._options['delay'], 10.0)
-        with self.subTest(desc="with wrong parameter"):
-            plugin = TestPlugin(["delay=nasua"])
-            with self.assertRaises(KeyError):
-                _ = plugin._options['delay']
-        with self.subTest(desc="info is not set"):
-            TestPlugin._info = None
-            with self.assertRaises(ValueError):
-                TestPlugin()
 
-    def test_update_download_links(self):
-        result = {'/IceflowRE/unidown/master/README.rst':
-                      LinkItem('README.rst', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
-                  '/IceflowRE/unidown/master/no_file_here':
-                      LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
-                  }
-        self.plugin.update_download_links()
+def test_init_with_param():
+    plugin = TestPlugin(["delay=10.0"])
+    assert plugin._options['delay'] == 10.0
 
-        self.assertEqual(result, self.plugin.download_data)
 
-    def test_update_last_update(self):
-        result = datetime(1999, 9, 9, hour=9, minute=9, second=9)
-        self.plugin.update_last_update()
-        self.assertEqual(self.plugin.last_update, result)
-        self.assertEqual(result, self.plugin.last_update)
+def test_init_without_info():
+    class Plugin(APlugin):
+        def _create_download_links(self) -> LinkItemDict:
+            return LinkItemDict()
 
-    def test_check_download(self):
-        with self.subTest(desc="empty"):
-            data = self.plugin.check_download({}, self.plugin._temp_path)
-            self.assertEqual(({}, {}), data)
+        def _create_last_update_time(self) -> datetime:
+            return datetime(1999, 9, 9, hour=9, minute=9, second=9)
 
-        with self.subTest(desc="one succeed, one lost"):
-            create_test_file(self.plugin._temp_path.joinpath('One'))
-            data = self.plugin.check_download(self.eg_data, self.plugin._temp_path)
-            succeed = {'/IceflowRE/unidown/master/README.rst':
-                           LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            lost = {'/IceflowRE/unidown/master/no_file_here':
-                        LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
-            self.assertEqual((succeed, lost), data)
+    with pytest.raises(ValueError):
+        Plugin()
 
-    def test_clean_up(self):
-        create_test_file(self.plugin._temp_path.joinpath('testfile'))
-        self.plugin.clean_up()
 
-        self.assertEqual(self.plugin._downloader.pool, None)
-        self.assertFalse(self.plugin._temp_path.exists())
+def test_update_download_links():
+    plugin = TestPlugin()
+    plugin.update_download_links()
+    assert all([a == b for a, b in zip(plugin.download_data, eg_data)])
 
-    def test_delete_data(self):
-        create_test_file(self.plugin._temp_path.joinpath('testfile'))
-        create_test_file(self.plugin.download_path.joinpath('testfile'))
-        create_test_file(self.plugin._save_state_file)
 
-        self.plugin.delete_data()
-        self.assertFalse(self.plugin._temp_path.exists())
-        self.assertFalse(self.plugin.download_path.exists())
-        self.assertFalse(self.plugin._save_state_file.exists())
+def test_update_last_update():
+    plugin = TestPlugin()
+    plugin.update_last_update()
+    result = datetime(1999, 9, 9, hour=9, minute=9, second=9)
+    assert plugin.last_update == result
+    assert result == plugin.last_update
 
-    def test_download_as_file(self):
-        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
-                                     self.plugin._temp_path, 'file')
-        self.assertTrue(self.plugin._temp_path.joinpath('file').exists())
-        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
-                                     self.plugin._temp_path, 'file')
-        self.assertTrue(self.plugin._temp_path.joinpath('file_d').exists())
-        self.plugin.download_as_file('/IceflowRE/unidown/master/README.rst',
-                                     self.plugin._temp_path, 'file')
-        self.assertTrue(self.plugin._temp_path.joinpath('file_d_d').exists())
 
-    def test_download(self):
-        with self.subTest(desc="no item"):
-            self.plugin.download({}, self.plugin._temp_path, 'Down units', 'unit')
+def test_check_download_empty():
+    plugin = TestPlugin()
+    data = plugin.check_download(LinkItemDict(), plugin._temp_path)
+    assert data == (LinkItemDict(), LinkItemDict())
 
-        with self.subTest(desc="one success, one fail"):
-            data = self.plugin.download(self.eg_data, self.plugin._temp_path, 'Down units', 'unit')
-            self.assertEqual(['/IceflowRE/unidown/master/README.rst'], data)
 
-    def test_create_save_state(self):
-        result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.info, self.plugin.last_update, self.eg_data)
-        self.assertEqual(result, self.plugin._create_save_state(self.eg_data))
+def test_check_download():
+    plugin = TestPlugin()
 
-    def test_save_save_state(self):
-        self.plugin.save_save_state(self.eg_data)
-        with self.plugin._save_state_file.open(mode='r', encoding="utf8") as data_file:
+    create_test_file(plugin._temp_path.joinpath('One'))
+    data = plugin.check_download(eg_data, plugin._temp_path)
+    succeed = LinkItemDict(
+        {'/IceflowRE/unidown/master/README.rst': LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
+    )
+    lost = LinkItemDict(
+        {'/IceflowRE/unidown/master/missing': LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
+    )
+    assert (succeed, lost) == data
+
+
+def test_clean_up():
+    plugin = TestPlugin()
+    create_test_file(plugin._temp_path.joinpath('testfile'))
+    plugin.clean_up()
+
+    assert plugin._downloader.pool is None
+    assert not plugin._temp_path.exists()
+
+
+def test_delete_data():
+    plugin = TestPlugin()
+    create_test_file(plugin._temp_path.joinpath('testfile'))
+    create_test_file(plugin.download_path.joinpath('testfile'))
+    create_test_file(plugin._savestate_file)
+
+    plugin.delete_data()
+    assert not plugin._temp_path.exists()
+    assert not plugin.download_path.exists()
+    assert not plugin._savestate_file.exists()
+
+
+def test_download_as_file():
+    plugin = TestPlugin()
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
+    assert plugin._temp_path.joinpath('file').exists()
+    assert plugin._temp_path.joinpath('file_d').exists()
+    assert plugin._temp_path.joinpath('file_d_d').exists()
+
+
+def test_download():
+    plugin = TestPlugin()
+    plugin.download(eg_data, plugin._temp_path, 'Down units', 'unit')
+
+
+class TestSaveState:
+    def test_update_savestate(self):
+        plugin = TestPlugin()
+        result = SaveState(dynamic_data.SAVESTATE_VERSION, plugin.info, plugin.last_update, eg_data)
+        plugin.update_savestate(eg_data)
+        assert result == plugin._savestate
+
+    def test_save_savestate(self):
+        plugin = TestPlugin()
+        plugin.update_savestate(eg_data)
+        plugin.save_savestate()
+        with plugin._savestate_file.open(mode='r', encoding="utf8") as data_file:
             json_data = data_file.read()
-        regexp = re.compile(r'"data":\s{([\s\S]+"\s+}\s)')
-        try:
-            data = regexp.search(json_data).group(1)
-        except AttributeError:
-            self.fail("No data part found.")
-        items = [
-            ('"/IceflowRE/unidown/master/README.rst": {' '\n'
-             '      "name": "One",' '\n'
-             '      "time": "2001-01-01T01:01:01Z"' '\n'
-             '    }'),
-            ('"/IceflowRE/unidown/master/no_file_here": {' '\n'
-             '      "name": "Two",' '\n'
-             '      "time": "2002-02-02T02:02:02Z"' '\n'
-             '    }')
-        ]
-        for item in items:
-            with self.subTest():
-                if data.find(item) == -1:
-                    self.fail(f"{item} | not found.")
+        assert json_data == '{"version": "1", "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "One", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "Two", "time": "20020202T020202.000000Z"}}}'
 
-    def test_load_save_savestate(self):
-        with self.subTest(desc="default return"):
-            result = SaveState(dynamic_data.SAVE_STATE_VERSION,
-                               PluginInfo('test', '0.1.0', 'raw.githubusercontent.com'), datetime(1970, 1, 1), {})
-            self.assertEqual(result, self.plugin.load_save_state())
+    @pytest.mark.parametrize('data', [LinkItemDict(), eg_data])
+    def test_normal(self, data):
+        plugin = TestPlugin()
+        plugin.update_savestate(data)
+        plugin.save_savestate()
+        plugin.load_savestate()
+        assert plugin._savestate == SaveState(dynamic_data.SAVESTATE_VERSION, plugin.info, datetime(1970, 1, 1), data)
 
-        with self.subTest(desc="load without errors"):
-            self.plugin.save_save_state(self.eg_data)
-            save_state = self.plugin.load_save_state()
-            result = SaveState(dynamic_data.SAVE_STATE_VERSION, self.plugin.info, self.plugin.last_update, self.eg_data)
-            self.assertEqual(save_state, result)
+    def test_diff_savestate_version(self):
+        plugin = TestPlugin()
+        plugin.save_savestate()
+        dynamic_data.SAVESTATE_VERSION = Version('0.4.2')
+        with pytest.raises(PluginException):
+            plugin.load_savestate()
 
-        with self.subTest(desc="different save state version"):
-            self.plugin.save_save_state(self.eg_data)
-            dynamic_data.SAVE_STATE_VERSION = Version('0.4.2')
-            with self.assertRaises(PluginException):
-                self.plugin.load_save_state()
+    def test_diff_plugin_version(self):
+        plugin = TestPlugin()
+        plugin.save_savestate()
+        plugin._info.version = Version("0.0.1")
+        with pytest.raises(PluginException):
+            plugin.load_savestate()
 
-        with self.subTest(desc="different plugin version"):
-            self.plugin.save_save_state(self.eg_data)
-            self.plugin._info.version = Version("0.4.2")
-            with self.assertRaises(PluginException):
-                self.plugin.load_save_state()
+    def test_diff_plugin_name(self):
+        plugin = TestPlugin()
+        plugin.save_savestate()
+        plugin._info.name = "different"
+        with pytest.raises(PluginException):
+            plugin.load_savestate()
 
-        with self.subTest(desc="different plugin name"):
-            self.plugin.save_save_state(self.eg_data)
-            self.plugin._info.name = "different"
-            with self.assertRaises(PluginException):
-                self.plugin.load_save_state()
+    def test_json_error(self):
+        plugin = TestPlugin()
+        create_test_file(plugin._savestate_file)
+        with pytest.raises(PluginException):
+            plugin.load_savestate()
 
-        with self.subTest(desc="json parse error"):
-            create_test_file(self.plugin._save_state_file)
-            with self.assertRaises(PluginException):
-                self.plugin.load_save_state()
+    def test_json_error_2(self):
+        plugin = TestPlugin()
+        with plugin._savestate_file.open('wb') as writer:
+            writer.write(str.encode('{}'))
+        with pytest.raises(PluginException):
+            plugin.load_savestate()
 
-        with self.subTest(desc="json parse error 2"):
-            with open(self.plugin._save_state_file, 'wb') as writer:
-                writer.write(str.encode('{}'))
-            with self.assertRaises(PluginException):
-                self.plugin.load_save_state()
 
-    def test_get_updated_data(self):
-        with self.subTest(desc='empty with empty'):
-            self.plugin._download_data = {}
-            self.assertEqual({}, self.plugin.get_updated_data({}))
-
-        with self.subTest(desc='filled with filled and the same'):
-            self.plugin._download_data = self.eg_data
-            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
-
-        with self.subTest(desc='empty with filled'):
-            self.plugin._download_data = self.eg_data
-            self.assertEqual(self.eg_data, self.plugin.get_updated_data({}))
-
-        with self.subTest(desc='filled with empty'):
-            self.plugin._download_data = {}
-            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
-
-        with self.subTest(desc='filled with one item more'):
-            old_data = {'/IceflowRE/unidown/master/README.rst':
-                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            result = {'/IceflowRE/unidown/master/no_file_here':
-                          LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
-            self.plugin._download_data = self.eg_data
-            self.assertEqual(result, self.plugin.get_updated_data(old_data))
-
-        with self.subTest(desc='one item more with filled'):
-            new_data = {'/IceflowRE/unidown/master/no_file_here':
-                            LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-            self.plugin._download_data = new_data
-            self.assertEqual({}, self.plugin.get_updated_data(self.eg_data))
-
-    def test_get_plugins(self):
-        """
-        This test requires that the unidown test plugin is installed.
-        """
-        self.assertIn('test', APlugin.get_plugins())
+def test_get_plugins():
+    assert 'test' in APlugin.get_plugins()

@@ -1,33 +1,29 @@
-import unittest
 from pathlib import Path
+
+import pytest
 
 from unidown import dynamic_data
 from unidown.core import manager
 from unidown.core.plugin_state import PluginState
 
 
-class ManagerTest(unittest.TestCase):
-    def test_init(self):
-        for path in [Path('./test-tmp/test_init'), Path('./test-tmp/test_init-2')]:
-            manager.init(path, Path('UniDown.log'), dynamic_data.LOG_LEVEL)
-            with self.subTest(path=str(path), logfile='UniDown.log', loglevel=dynamic_data.LOG_LEVEL):
-                self.assertTrue(path.joinpath('downloads').exists())
-                self.assertTrue(path.joinpath('savestates').exists())
-                self.assertTrue(path.joinpath('temp').exists())
-                self.assertTrue(path.joinpath('UniDown.log').is_file())
+def test_init(tmp_path):
+    manager.init(tmp_path, Path('UniDown.log'), dynamic_data.LOG_LEVEL)
+    assert tmp_path.joinpath('downloads').exists()
+    assert tmp_path.joinpath('savestates').exists()
+    assert tmp_path.joinpath('temp').exists()
+    assert tmp_path.joinpath('UniDown.log').is_file()
 
-    def test_run(self):
-        with self.subTest(desc="not existing plugin"):
-            self.assertEqual(manager.run("not_existing_plugin"), PluginState.NOT_FOUND)
 
-        with self.subTest(desc="crash while loading"):
-            self.assertEqual(manager.run("test", ["behaviour=load_crash"]), PluginState.LOAD_CRASH)
+test_options = [
+    ('not_existing_plugin', [], PluginState.NotFound),
+    ('test', ["behaviour=load_crash"], PluginState.LoadCrash),
+    ('test', ["behaviour=run_fail"], PluginState.RunFail),
+    ('test', ["behaviour=run_crash"], PluginState.RunCrash),
+    ('test', ["behaviour=normal"], PluginState.EndSuccess),
+]
 
-        with self.subTest(desc="stopped working"):
-            self.assertEqual(manager.run("test", ["behaviour=run_fail"]), PluginState.RUN_FAIL)
 
-        with self.subTest(desc="not existing plugin"):
-            self.assertEqual(manager.run("test", ["behaviour=run_crash"]), PluginState.RUN_CRASH)
-
-        with self.subTest(desc="success"):
-            self.assertEqual(manager.run("test", ["behaviour=normal"]), PluginState.END_SUCCESS)
+@pytest.mark.parametrize('name,options,result', test_options)
+def test_run(name, options, result):
+    assert manager.run(name, options) == result

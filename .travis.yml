@@ -1,44 +1,48 @@
 language: python
+os: linux
 
-matrix:
+jobs:
   include:
-  - python: "3.7"  # remove workaround if travis relases 3.7 officially
+  - python: "3.7"
     env: PY_VERSION=py37
-    dist: xenial
-    sudo: true
-  - python: "3.8-dev"
+  - python: "3.8"
     env: PY_VERSION=py38
+  - python: "3.9"
+    env: PY_VERSION=py39
   allow_failures:
-  - python: "3.8-dev"
+  - python: "3.9"
 
 addons:
   apt:
     update: true
 
+before_install:
+  - sudo apt-get install jq
+  - curl -LSs "$(curl -LSs https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | endswith(".jar"))) | .[0].browser_download_url')" -o codacy-coverage-reporter-assembly.jar
+
 install:
   - pip install --upgrade -e .[dev]
-  - cd testplugin
+  - cd test-plugin
   - pip install --upgrade -e .
   - cd ..
-  - pip install codacy-coverage codecov
+  - pip install codecov
 
 script:
-  - ./scripts/build.sh "$PY_VERSION"
-  - nose2 -c setup.cfg -v
+  - python setup.py clean --all
+  - python setup.py bdist_wheel
+  - pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml
   - python setup.py check -v -m -s
   - twine check dist/*
   - unidown --version
   - sphinx-build -b html ./doc/source/ ./build/doc/html/
   - sphinx-build -b linkcheck ./doc/source/ ./build/doc/linkcheck/
-  - sphinx-build -b latex ./doc/source/ ./build/doc/latex/
 
 after_success:
   - codecov
-  - python-codacy-coverage -r coverage.xml
+  - java -jar codacy-coverage-reporter-assembly.jar report -l Python -r coverage.xml
 
 deploy:
   - provider: script
-    skip_cleanup: true
     script: twine upload -u $PYPI_USER -p $PYPI_PASSWORD --skip-existing dist/*
     on:
       branch: master

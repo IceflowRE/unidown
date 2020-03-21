@@ -2,11 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from google.protobuf.timestamp_pb2 import Timestamp
-
-from unidown.plugin.protobuf.link_item_pb2 import LinkItemProto
-from unidown.tools import datetime_to_timestamp
-
 
 class LinkItem:
     """
@@ -18,27 +13,30 @@ class LinkItem:
     :raises ValueError: time cannot be empty or None
 
     :ivar _name: name of the item
-    :vartype _name: str
     :ivar _time: time of the item
-    :vartype _time: ~datetime.datetime
     """
+    time_format: str = "%Y%m%dT%H%M%S.%fZ"
 
     def __init__(self, name: str, time: datetime):
-        self._name = self.name = name
-        self._time = self.time = time
+        self._name: str = ""
+        self._time: datetime = datetime(1970, 1, 1)
+        self.name = name
+        self.time = time
 
     @classmethod
-    def from_protobuf(cls, proto: LinkItemProto) -> LinkItem:
+    def from_json(cls, data: dict) -> LinkItem:
         """
-        Constructor from protobuf.
+        Constructor from json dict.
 
-        :param proto: protobuf structure
+        :param data: json data as dict
         :return: the LinkItem
-        :raises ValueError: name of LinkItem does not exist inside the protobuf or is empty
+        :raises ValueError: missing parameter
         """
-        if proto.name == '':
-            raise ValueError("name of LinkItem does not exist or is empty inside the protobuf.")
-        return cls(proto.name, Timestamp.ToDatetime(proto.time))
+        if 'name' not in data:
+            raise ValueError("name is missing")
+        if 'time' not in data:
+            raise ValueError("time is missing")
+        return cls(data['name'], datetime.strptime(data['time'], LinkItem.time_format))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -71,13 +69,10 @@ class LinkItem:
             raise ValueError("time cannot be None.")
         self._time = time
 
-    def to_protobuf(self) -> LinkItemProto:
+    def to_json(self) -> dict:
         """
-        Create protobuf item.
+        Create json data.
 
-        :return: protobuf structure
+        :return: json dictionary
         """
-        result = LinkItemProto()
-        result.name = self._name
-        result.time.CopyFrom(datetime_to_timestamp(self._time))
-        return result
+        return {'name': self._name, 'time': self._time.strftime(LinkItem.time_format)}

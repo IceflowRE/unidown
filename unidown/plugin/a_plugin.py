@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from abc import ABC, abstractmethod
@@ -10,18 +11,15 @@ import certifi
 import pkg_resources
 import urllib3
 import urllib3.util
-from google.protobuf import json_format
-from google.protobuf.json_format import ParseError
 from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
 from unidown import dynamic_data, tools
 from unidown.plugin.exceptions import PluginException
-from unidown.plugin.link_item import LinkItem
+from unidown.plugin.link_item_dict import LinkItemDict
 from unidown.plugin.plugin_info import PluginInfo
-from unidown.plugin.protobuf.save_state_pb2 import SaveStateProto
-from unidown.plugin.save_state import SaveState
+from unidown.plugin.savestate import SaveState
 
 
 class APlugin(ABC):
@@ -32,40 +30,29 @@ class APlugin(ABC):
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
 
     :ivar _log: use this for logging **| do not edit**
-    :vartype _log: ~logging.Logger
     :ivar _simul_downloads: number of simultaneous downloads
-    :vartype _simul_downloads: int
     :ivar _info: information about the plugin **| do not edit**
-    :vartype _info: ~unidown.plugin.plugin_info.PluginInfo
     :ivar _temp_path: path where the plugin can place all temporary data **| do not edit**
-    :vartype _temp_path: ~pathlib.Path
     :ivar _download_path: general download path of the plugin **| do not edit**
-    :vartype _download_path: ~pathlib.Path
-    :ivar _save_state_file: file which contains the latest savestate of the plugin **| do not edit**
-    :vartype _save_state_file: ~pathlib.Path
+    :ivar _savestate_file: file which contains the latest savestate of the plugin **| do not edit**
     :ivar _last_update: latest update time of the referencing data **| do not edit**
-    :vartype _last_update: ~datetime.datetime
     :ivar _unit: the thing which should be downloaded, may be displayed in the progress bar
-    :vartype _unit: str
     :ivar _download_data: referencing data **| do not edit**
-    :vartype _download_data: Dict[str, ~unidown.plugin.link_item.LinkItem]
     :ivar _downloader: downloader which will download the data **| do not edit**
-    :vartype _downloader: ~urllib3.HTTPSConnectionPool
     :ivar _options: options which the plugin uses internal, should be used for the given options at init
-    :vartype _options: Dict[str, ~typing.Any]
     """
-    _info = None
+    _info: PluginInfo = None
 
     def __init__(self, options: List[str] = None):
         if self._info is None:
             raise ValueError("info is not set.")
 
-        self._log = logging.getLogger(self._info.name)
-        self._simul_downloads = dynamic_data.USING_CORES
+        self._log: logging.Logger = logging.getLogger(self._info.name)
+        self._simul_downloads: int = dynamic_data.USING_CORES
 
-        self._temp_path = dynamic_data.TEMP_DIR.joinpath(self.name)
-        self._download_path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)
-        self._save_state_file = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
+        self._temp_path: Path = dynamic_data.TEMP_DIR.joinpath(self.name)
+        self._download_path: Path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)
+        self._savestate_file: Path = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
 
         try:
             self._temp_path.mkdir(parents=True, exist_ok=True)
@@ -73,28 +60,18 @@ class APlugin(ABC):
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
-        self._last_update = datetime(1970, 1, 1)
-        self._unit = 'item'
-        self._download_data = {}
-        self._downloader = urllib3.HTTPSConnectionPool(
+        self._last_update: datetime = datetime(1970, 1, 1)
+        self._unit: str = 'item'
+        self._download_data: LinkItemDict = LinkItemDict()
+        self._downloader: urllib3.HTTPSConnectionPool = urllib3.HTTPSConnectionPool(
             self.info.host, maxsize=self._simul_downloads, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()
         )
 
+        self._savestate: SaveState = SaveState(dynamic_data.SAVESTATE_VERSION, self.info, self.last_update,
+                                               LinkItemDict())
+
         # load options
-        # supported: delay
-        if options is not None:
-            self._options = self._get_options_dic(options)
-        else:
-            self._options = {}
-        if "delay" in self._options:
-            try:
-                self._options['delay'] = float(self._options['delay'])
-            except ValueError:
-                try:
-                    del self._options['delay']
-                except KeyError:
-                    pass
-                self.log.warning("Plugin option 'delay' is not a float. Using default.")
+        self._options: Dict[str, Any] = self._get_options_dict(options)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -137,11 +114,15 @@ class APlugin(ABC):
         return self._download_path
 
     @property
+    def savestate(self):
+        return self._savestate
+
+    @property
     def last_update(self) -> datetime:
         return self._last_update
 
     @property
-    def download_data(self) -> Dict[str, LinkItem]:
+    def download_data(self) -> LinkItemDict:
         return self._download_data
 
     @property
@@ -152,15 +133,44 @@ class APlugin(ABC):
     def options(self) -> Dict[str, Any]:
         return self._options
 
-    @abstractmethod
-    def _create_download_links(self) -> Dict[str, LinkItem]:
+    def load_savestate(self):
         """
-        Get the download links in a specific format.
-        **Has to be implemented inside Plugins.**
+        Load the save of the plugin.
 
-        :raises NotImplementedError: abstract method
+        :raises ~unidown.plugin.exceptions.PluginException: broken savestate json
+        :raises ~unidown.plugin.exceptions.PluginException: different savestate versions
+        :raises ~unidown.plugin.exceptions.PluginException: different plugin versions
+        :raises ~unidown.plugin.exceptions.PluginException: different plugin names
+        :raises ~unidown.plugin.exceptions.PluginException: could not parse the json
         """
-        raise NotImplementedError
+        if not self._savestate_file.exists():
+            self.log.info("No savestate file found.")
+            return
+
+        with self._savestate_file.open(mode='r', encoding="utf8") as data_file:
+            try:
+                savestate_json = json.loads(data_file.read())
+            except Exception:
+                raise PluginException(
+                    f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
+
+        try:
+            savestate = SaveState.from_json(savestate_json)
+        except Exception as ex:
+            raise PluginException(f"Could not load savestate from json {self._savestate_file}: {ex}")
+        else:
+            del savestate_json
+
+        if savestate.version != dynamic_data.SAVESTATE_VERSION:
+            raise PluginException("Different save state version handling is not implemented yet.")
+
+        if savestate.plugin_info.version != self.info.version:
+            raise PluginException("Different plugin version handling is not implemented yet.")
+
+        if savestate.plugin_info.name != self.info.name:
+            raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
+                name=savestate.plugin_info.name, cur_name=self.name))
+        self._savestate = savestate
 
     @abstractmethod
     def _create_last_update_time(self) -> datetime:
@@ -178,48 +188,63 @@ class APlugin(ABC):
         """
         self._last_update = self._create_last_update_time()
 
+    @abstractmethod
+    def _create_download_links(self) -> LinkItemDict:
+        """
+        Get the download links in a specific format.
+        **Has to be implemented inside Plugins.**
+
+        :raises NotImplementedError: abstract method
+        """
+        raise NotImplementedError
+
     def update_download_links(self):
         """
         Update the download links. Calls :func:`~unidown.plugin.a_plugin.APlugin._create_download_links`.
         """
         self._download_data = self._create_download_links()
 
-    # TODO: parallelize?
-    def check_download(self, link_item_dict: Dict[str, LinkItem], folder: Path, log: bool = True) -> Tuple[
-        Dict[str, LinkItem], Dict[str, LinkItem]]:
+    def download(self, link_items: LinkItemDict, folder: Path, desc: str, unit: str):
         """
-        Check if the download of the given dict was successful. No proving if the content of the file is correct too.
+        .. warning::
 
-        :param link_item_dict: dict which to check
-        :param folder: folder where the downloads are saved
-        :param log: if the lost items should be logged
-        :return: succeeded and lost dicts
-        """
-        succeed = {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
-        lost = {link: item for link, item in link_item_dict.items() if link not in succeed}
+            The parameters may change in future versions. (e.g. change order and accept another host)
 
-        if lost and log:
-            for link, item in lost.items():
-                self.log.error(f"Not downloaded: {self.info.host + link} - {item.name}")
+        Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
+        :attr:`~unidown.plugin.a_plugin.APlugin._simul_downloads`. After
+        :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommend.
 
-        return succeed, lost
+        This function don't use an internal `link_item_dict`, `delay` or `folder` directly set in options or instance
+        vars, because it can be used aside of the normal download routine inside the plugin itself for own things.
+        As of this it still needs access to the logger, so a staticmethod is not possible.
 
-    def clean_up(self):
+        :param link_items: data which gets downloaded
+        :param folder: target download folder
+        :param desc: description of the progressbar
+        :param unit: unit of the download, shown in the progressbar
+        :param delay: delay between the downloads in seconds
         """
-        Default clean up for a module.
-        Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
-        """
-        self._downloader.close()
-        tools.unlink_dir_rec(self._temp_path)
+        # TODO: add other optional host?
+        if not link_items:
+            return
 
-    def delete_data(self):
-        """
-        Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
-        """
-        self.clean_up()
-        tools.unlink_dir_rec(self._download_path)
-        if self._save_state_file.exists():
-            self._save_state_file.unlink()
+        job_list = []
+        with ThreadPoolExecutor(max_workers=self._simul_downloads) as executor:
+            for link, item in link_items.items():
+                job = executor.submit(self.download_as_file, link, folder, item.name, self._options['delay'])
+                job_list.append(job)
+
+            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
+                        ncols=100, disable=dynamic_data.DISABLE_TQDM)
+            for _ in pbar:
+                pass
+
+        for job in job_list:
+            try:
+                job.result()
+            except HTTPError as ex:
+                self.log.warning("Failed to download: " + str(ex))
+                # Todo: connection lost handling (check if the connection to the server itself is lost)
 
     def download_as_file(self, url: str, folder: Path, name: str, delay: float = 0) -> str:
         """
@@ -248,152 +273,63 @@ class APlugin(ABC):
 
         return url
 
-    def download(self, link_item_dict: Dict[str, LinkItem], folder: Path, desc: str, unit: str, delay: float = 0) -> \
-            List[str]:
+    def check_download(self, link_item_dict: LinkItemDict, folder: Path, log: bool = True) -> Tuple[
+        LinkItemDict, LinkItemDict]:
         """
-        .. warning::
+        Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
-            The parameters may change in future versions. (e.g. change order and accept another host)
-
-        Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
-        :attr:`~unidown.plugin.a_plugin.APlugin._simul_downloads`. After
-        :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommend.
-
-        This function don't use an internal `link_item_dict`, `delay` or `folder` directly set in options or instance
-        vars, because it can be used aside of the normal download routine inside the plugin itself for own things.
-        As of this it still needs access to the logger, so a staticmethod is not possible.
-
-        :param link_item_dict: data which gets downloaded
-        :param folder: target download folder
-        :param desc: description of the progressbar
-        :param unit: unit of the download, shown in the progressbar
-        :param delay: delay between the downloads in seconds
-        :return: list of urls of downloads without errors
+        :param link_item_dict: dict which to check
+        :param folder: folder where the downloads are saved
+        :param log: if the lost items should be logged
+        :return: succeeded and failed
         """
-        if 'delay' in self._options:
-            delay = self._options['delay']
-        # TODO: add other optional host?
-        if not link_item_dict:
-            return []
+        succeed = LinkItemDict(
+            {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()})
+        failed = LinkItemDict({link: item for link, item in link_item_dict.items() if link not in succeed})
 
-        job_list = []
-        with ThreadPoolExecutor(max_workers=self._simul_downloads) as executor:
-            for link, item in link_item_dict.items():
-                job = executor.submit(self.download_as_file, link, folder, item.name, delay)
-                job_list.append(job)
+        if failed and log:
+            for link, item in failed.items():
+                self.log.error(f"Not downloaded: {self.info.host + link} - {item.name}")
 
-            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
-                        ncols=100, disable=dynamic_data.DISABLE_TQDM)
-            for _ in pbar:
-                pass
+        return succeed, failed
 
-        download_without_errors = []
-        for job in job_list:
-            try:
-                download_without_errors.append(job.result())
-            except HTTPError as ex:
-                self.log.warning("Failed to download: " + str(ex))
-                # Todo: connection lost handling (check if the connection to the server itself is lost)
-
-        return download_without_errors
-
-    def _create_save_state(self, link_item_dict: Dict[str, LinkItem]) -> SaveState:
+    def update_savestate(self, new_items: LinkItemDict):
         """
-        Create protobuf savestate of the module and the given data.
+        Update savestate.
 
-        :param link_item_dict: data
-        :return: the savestate
+        :param new_items: new items
         """
-        return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, self.last_update, link_item_dict)
+        self._savestate.link_items.actualize(new_items)
+        self._savestate = SaveState(dynamic_data.SAVESTATE_VERSION, self.info, self.last_update,
+                                    self._savestate.link_items)
 
-    def save_save_state(self, data_dict: Dict[str, LinkItem]):  # TODO: add progressbar
+    def save_savestate(self):  # TODO: add progressbar
         """
         Save meta data about the downloaded things and the plugin to file.
 
         :param data_dict: data
         """
-        json_data = json_format.MessageToJson(self._create_save_state(data_dict).to_protobuf())
-        with self._save_state_file.open(mode='w', encoding="utf8") as writer:
-            writer.write(json_data)
+        with self._savestate_file.open(mode='w', encoding="utf8") as writer:
+            writer.write(json.dumps(self._savestate.to_json()))
 
-    def load_save_state(self) -> SaveState:
+    def clean_up(self):
         """
-        Load the savestate of the plugin.
-
-        :return: savestate
-        :raises ~unidown.plugin.exceptions.PluginException: broken savestate json
-        :raises ~unidown.plugin.exceptions.PluginException: different savestate versions
-        :raises ~unidown.plugin.exceptions.PluginException: different plugin versions
-        :raises ~unidown.plugin.exceptions.PluginException: different plugin names
-        :raises ~unidown.plugin.exceptions.PluginException: could not parse the protobuf
+        Default clean up for a module.
+        Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
         """
-        if not self._save_state_file.exists():
-            self.log.info("No savestate file found.")
-            return SaveState(dynamic_data.SAVE_STATE_VERSION, self.info, datetime(1970, 1, 1), {})
+        self._downloader.close()
+        tools.unlink_dir_rec(self._temp_path)
 
-        savestat_proto = ""
-        with self._save_state_file.open(mode='r', encoding="utf8") as data_file:
-            try:
-                savestat_proto = json_format.Parse(data_file.read(), SaveStateProto(), ignore_unknown_fields=False)
-            except ParseError:
-                raise PluginException(
-                    f"Broken savestate json. Please fix or delete (you may lose data in this case) the file: {self._save_state_file}")
-
-        try:
-            save_state = SaveState.from_protobuf(savestat_proto)
-        except ValueError as ex:
-            raise PluginException(f"Could not parse the protobuf {self._save_state_file}: {ex}")
-        else:
-            del savestat_proto
-
-        if save_state.version != dynamic_data.SAVE_STATE_VERSION:
-            raise PluginException("Different save state version handling is not implemented yet.")
-
-        if save_state.plugin_info.version != self.info.version:
-            raise PluginException("Different plugin version handling is not implemented yet.")
-
-        if save_state.plugin_info.name != self.name:
-            raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
-                name=save_state.plugin_info.name, cur_name=self.name))
-        return save_state
-
-    def get_updated_data(self, old_data: Dict[str, LinkItem]) -> Dict[str, LinkItem]:
+    def delete_data(self):
         """
-        Get links who needs to be downloaded by comparing old and the new data.
-
-        :param old_data: old data
-        :return: data which is newer or dont exist in the old one
+        Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
         """
-        if not self.download_data:
-            return {}
-        new_link_item_dict = {}
-        for link, link_item in tqdm(self.download_data.items(), desc="Compare with save", unit="item", leave=True,
-                                    mininterval=1, ncols=100, disable=dynamic_data.DISABLE_TQDM):
-            # TODO: add methode to log lost items, which are in old but not in new
-            # if link in new_link_item_dict:  # TODO: is ever false, since its the key of a dict: move to the right place
-            # self.log.warning("Duplicate: " + link + " - " + new_link_item_dict[link] + " : " + link_item)
+        self.clean_up()
+        tools.unlink_dir_rec(self._download_path)
+        if self._savestate_file.exists():
+            self._savestate_file.unlink()
 
-            # if the new_data link does not exists in old_data or new_data time is newer
-            if (link not in old_data) or (link_item.time > old_data[link].time):
-                new_link_item_dict[link] = link_item
-
-        return new_link_item_dict
-
-    def update_dict(self, base: Dict[str, LinkItem], new: Dict[str, LinkItem]):
-        """
-        Use for updating save state dicts and get the new save state dict. Provides a debug option at info level.
-        Updates the base dict. Basically executes `base.update(new)`.
-
-        :param base: base dict **gets overridden!**
-        :param new: data which updates the base
-        """
-        if logging.INFO >= logging.getLevelName(dynamic_data.LOG_LEVEL):  # TODO: logging here or outside
-            for link, item in new.items():
-                if link in base:
-                    self.log.info('Actualize item: ' + link + ' | ' + str(base[link]) + ' -> ' + str(item))
-        base.update(new)
-
-    def _get_options_dic(self, options: List[str]) -> Dict[str, str]:
+    def _get_options_dict(self, options: List[str]) -> Dict[str, Any]:
         """
         Convert the option list to a dictionary where the key is the option and the value is the related option.
         Is called in the init.
@@ -401,13 +337,26 @@ class APlugin(ABC):
         :param options: options given to the plugin.
         :return: dictionary which contains the option key as str related to the option string
         """
-        options_dic = {}
+        if options is None:
+            options = []
+        plugin_options = {}
         for option in options:
             cur_option = option.split("=")
             if len(cur_option) != 2:
                 self.log.warning(f"'{option}' is not valid and will be ignored.")
-            options_dic[cur_option[0]] = cur_option[1]
-        return options_dic
+                continue
+            plugin_options[cur_option[0]] = cur_option[1]
+
+        if "delay" in plugin_options:
+            try:
+                plugin_options['delay'] = float(plugin_options['delay'])
+            except ValueError:
+                plugin_options['delay'] = 0
+                self.log.warning("Plugin option 'delay' is not a float. Using default.")
+        else:
+            plugin_options['delay'] = 0
+            self.log.warning("Plugin option 'delay' is missing. Using default.")
+        return plugin_options
 
     @staticmethod
     def get_plugins() -> Dict[str, pkg_resources.EntryPoint]:

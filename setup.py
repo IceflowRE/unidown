@@ -14,12 +14,13 @@ setup(
     version=static_data.VERSION,
     description=static_data.DESCRIPTION,
     long_description=long_description,
+    long_description_content_type='text/x-rst',
     author=static_data.AUTHOR,
     author_email=static_data.AUTHOR_EMAIL,
     license='GPLv3',
     url=static_data.PROJECT_URL,
     classifiers=[
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Development Status :: 4 - Beta',
         'Operating System :: OS Independent',
@@ -33,17 +34,17 @@ setup(
     packages=find_packages(include=['unidown', 'unidown.*']),
     python_requires='>=3.7',
     install_requires=[
-        'urllib3[secure]==1.25.3',
+        'urllib3[secure]==1.25.8',
         'tqdm==4.35.0',
-        'protobuf==3.9.1',
         'packaging==19.1',
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]==1.1.7',
-            'nose2[coverage_plugin]==0.9.1',
+            'prospector[with_everything]==1.2.0',
+            'pytest==5.4.1',
+            'pytest-cov==2.8.1',
+            'coverage==5.0.3',
             'Sphinx==2.2.0',
-            'sphinxcontrib-svg2pdfconverter==0.1.0',
             'sphinx-autodoc-typehints==1.7.0',
             'sphinx_rtd_theme==0.4.3',
             'twine==1.14.0',
@@ -51,10 +52,6 @@ setup(
             'wheel==0.33.6',
         ],
     },
-    package_data={
-
-    },
-    include_package_data=True,
     zip_safe=True,
     entry_points={
         'console_scripts': [

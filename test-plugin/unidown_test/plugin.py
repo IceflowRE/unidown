@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List
 
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
+from unidown.plugin.link_item_dict import LinkItemDict
 
 
 class Plugin(APlugin):
@@ -17,15 +18,15 @@ class Plugin(APlugin):
         if self._options['behaviour'] == 'load_crash':
             raise Exception("crash")
 
-    def _create_download_links(self):
-        return {
+    def _create_download_links(self) -> LinkItemDict:
+        return LinkItemDict({
             '/IceflowRE/unidown/master/README.rst':
                 LinkItem('README.rst', datetime(2000, 1, 1, hour=1, minute=1, second=1)),
-            '/IceflowRE/unidown/master/no_file_here':
+            '/IceflowRE/unidown/master/missing':
                 LinkItem('LICENSE', datetime(2002, 2, 2, hour=2, minute=2, second=2))
-        }
+        })
 
-    def _create_last_update_time(self):
+    def _create_last_update_time(self) -> datetime:
         if self._options['behaviour'] == "run_fail":
             raise PluginException('failed')
         elif self._options['behaviour'] == "run_crash":

@@ -1,32 +1,21 @@
-import unittest
-from pathlib import Path
+import pytest
 
 from unidown import dynamic_data
 from unidown.main import main
 
 
-class MainTest(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
+class TestMain:
+    def test_run(self, tmp_path):
         dynamic_data.DISABLE_TQDM = True
+        with pytest.raises(SystemExit) as se:
+            main(['--main', str(tmp_path), '--plugin', 'test', '--log', 'CRITICAL'])
 
-    def test_main(self):
-        """
-        This just runs the main for the test plugin. Nothing else is done.
+        assert se.value.code == 0
+        assert tmp_path.joinpath('savestates/test_save.json').exists()
+        assert tmp_path.joinpath('downloads/test/README.rst').exists()
 
-        Missing:
-        - argument testing
-        - ...
-        """
-        with self.subTest(desc="no delay"):
-            with self.assertRaises(SystemExit) as se:
-                main(['--main', './test-tmp/test_main/', '--plugin', 'test', '--log', 'CRITICAL'])
+    def test_print_list(self):
+        with pytest.raises(SystemExit) as se:
+            main(['--list-plugins'])
 
-            self.assertEqual(se.exception.code, 0)
-            self.assertTrue(Path('./test-tmp/test_main/savestates/test_save.json').exists())
-            self.assertTrue(Path('./test-tmp/test_main/downloads/test/README.rst').exists())
-        with self.subTest(desc="print list"):
-            with self.assertRaises(SystemExit) as se:
-                main(['--list-plugins'])
-
-            self.assertEqual(se.exception.code, 0)
+        assert se.value.code == 0

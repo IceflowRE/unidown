@@ -11,9 +11,8 @@ class PluginException(Exception):
     :param msg: message
 
     :ivar msg: exception message
-    :vartype msg: str
     """
 
     def __init__(self, msg: str = ''):
         super().__init__(msg)
-        self.msg = msg
+        self.msg: str = msg

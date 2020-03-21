@@ -12,14 +12,19 @@ unidown.plugin.plugin_info
 .. automodule:: unidown.plugin.plugin_info
     :members:
 
+unidown.plugin.link_item_dict
+-----------------------------
+.. automodule:: unidown.plugin.link_item_dict
+    :members:
+
 unidown.plugin.link_item
 ------------------------
 .. automodule:: unidown.plugin.link_item
     :members:
 
-unidown.plugin.save_state
+unidown.plugin.savestate
 -------------------------
-.. automodule:: unidown.plugin.save_state
+.. automodule:: unidown.plugin.savestate
     :members:
 
 unidown.plugin.exceptions

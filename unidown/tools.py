@@ -2,12 +2,10 @@
 Different tools.
 """
 
-from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
 import pkg_resources
-from google.protobuf.timestamp_pb2 import Timestamp
 
 
 def unlink_dir_rec(path: Path):
@@ -24,18 +22,6 @@ def unlink_dir_rec(path: Path):
         else:
             sub.unlink()
     path.rmdir()
-
-
-def datetime_to_timestamp(time: datetime) -> Timestamp:
-    """
-    Convert datetime to protobuf.timestamp.
-
-    :param time: time
-    :return: protobuf.timestamp
-    """
-    protime = Timestamp()
-    protime.FromDatetime(time)
-    return protime
 
 
 def print_plugin_list(plugins: Dict[str, pkg_resources.EntryPoint]):

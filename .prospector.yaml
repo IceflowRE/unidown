@@ -4,8 +4,6 @@ ignore-paths:
     - doc
     - scripts
     - tests
-    - unidown/plugin/protobuf
-    - unidown\plugin\protobuf # for windows, see issue #203
 
 strictness: veryhigh
 test-warnings: true

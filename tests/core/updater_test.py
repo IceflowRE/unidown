@@ -1,27 +1,10 @@
-import unittest
+import pytest
 
 from unidown import static_data
 from unidown.core import updater
 
 
-class UpdaterTest(unittest.TestCase):
-    def test_get_newest_app_version(self):
-        """
-        Does not cover every possible option. As it only checks if it can be connect to Github.
-        """
-        try:
-            updater.get_newest_app_version()
-        except Exception:
-            self.fail('connection failed.')
-
-    def test_check_for_app_updates(self):
-        static_data.VERSION = '1.0.0'
-        try:
-            self.assertTrue(updater.check_for_app_updates())
-        except Exception:
-            self.fail('connection failed.')
-        static_data.VERSION = '100000.0.0'
-        try:
-            self.assertFalse(updater.check_for_app_updates())
-        except Exception:
-            self.fail('connection failed.')
+@pytest.mark.parametrize('version,result', [('1.0.0', True), ('100000000.0.0', False)])
+def test_check_for_app_updates(version, result):
+    static_data.VERSION = version
+    assert updater.check_for_app_updates() == result

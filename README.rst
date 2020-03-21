@@ -3,7 +3,7 @@ Universal Downloader
 ********************
 |maintained| |programming language| |license|
 
-|travis| |appveyor| |readthedocs| |requirements| |codacy| |codecov|
+|travis| |readthedocs| |requirements| |codacy| |codecov|
 
 |pypi|
 
@@ -34,10 +34,10 @@ Credits
 Third Party
 -----------
 
-nose2
-    - Jason Pellerin
-    - https://github.com/nose-devs/nose2
-    - `BSD-2-Clause <https://github.com/nose-devs/nose2/blob/master/license.txt>`__
+pytest
+    - `Holger Krekel and others <https://github.com/pytest-dev/pytest/blob/master/AUTHORS>`__
+    - https://github.com/pytest-dev/pytest
+    - `MIT <https://github.com/pytest-dev/pytest/blob/master/LICENSE>`__
 Packaging
     - Donald Stufft and individual contributors
     - https://github.com/pypa/packaging
@@ -46,10 +46,6 @@ Prospector
     - `landscapeio <https://github.com/landscapeio>`__
     - https://github.com/landscapeio/prospector
     - `GPL-2.0+ <https://github.com/landscapeio/prospector/blob/master/LICENSE>`__
-Protocol Buffers
-    - `Google Inc. <https://github.com/google>`__
-    - https://github.com/google/protobuf/tree/master/python
-    - `BSD-3-Clause <https://github.com/google/protobuf/blob/master/LICENSE>`__
 Read the Docs Sphinx Theme
     - `Dave Snider <https://github.com/snide>`__
     - https://github.com/rtfd/sphinx_rtd_theme
@@ -104,7 +100,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
 
-.. |programming language| image:: https://img.shields.io/badge/language-Python_3.7-orange.svg
+.. |programming language| image:: https://img.shields.io/badge/language-Python_3.8-orange.svg
    :target: https://www.python.org/
 
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
@@ -112,9 +108,6 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. |travis| image:: https://img.shields.io/travis/com/IceflowRE/unidown/master.svg?label=Travis%20CI
    :target: https://travis-ci.com/IceflowRE/unidown
-   
-.. |appveyor| image:: https://img.shields.io/appveyor/ci/IceflowRE/unidown/master.svg?label=AppVeyor%20CI
-    :target: https://ci.appveyor.com/project/IceflowRE/unidown/branch/master
 
 .. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
    :target: https://unidown.readthedocs.io/en/latest/index.html

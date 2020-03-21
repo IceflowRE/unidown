@@ -7,11 +7,12 @@ import platform
 from pathlib import Path
 from typing import List
 
-from unidown import dynamic_data, static_data, tools
+from unidown import dynamic_data, static_data
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
+from unidown.plugin.link_item_dict import LinkItemDict
 
 
 def init(main_dir: Path, logfile_path: Path, log_level: str):
@@ -31,7 +32,6 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
     dynamic_data.TEMP_DIR.mkdir(parents=True, exist_ok=True)
     dynamic_data.DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
     dynamic_data.SAVESTAT_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.LOGFILE_PATH.mkdir(parents=True, exist_ok=True)
     dynamic_data.LOG_LEVEL = log_level
     logging.basicConfig(filename=dynamic_data.LOGFILE_PATH, filemode='a', level=dynamic_data.LOG_LEVEL,
                         format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('
@@ -80,31 +80,31 @@ def download_from_plugin(plugin: APlugin):
     plugin.log.info('Get last update')
     plugin.update_last_update()
     # load old save state
-    save_state = plugin.load_save_state()
-    if plugin.last_update <= save_state.last_update:
+    plugin.load_savestate()
+    if plugin.last_update <= plugin.savestate.last_update:
         plugin.log.info('No update. Nothing to do.')
         return
     # get download links
     plugin.log.info('Get download links')
     plugin.update_download_links()
     # compare with save state
-    down_link_item_dict = plugin.get_updated_data(save_state.link_item_dict)
+    new_items = LinkItemDict.get_new_items(plugin.savestate.link_items, plugin.download_data)
     plugin.log.info('Compared with save state: ' + str(len(plugin.download_data)))
-    if not down_link_item_dict:
+    if not new_items:
         plugin.log.info('No new data. Nothing to do.')
         return
     # download new/updated data
-    plugin.log.info(f"Download new {plugin.unit}s: {len(down_link_item_dict)}")
-    plugin.download(down_link_item_dict, plugin.download_path, 'Download new ' + plugin.unit + 's', plugin.unit)
+    plugin.log.info(f"Download new {plugin.unit}s: {len(new_items)}")
+    plugin.download(new_items, plugin.download_path, 'Download new ' + plugin.unit + 's', plugin.unit)
     # check which downloads are succeeded
-    succeed_link_item_dict, lost_link_item_dict = plugin.check_download(down_link_item_dict, plugin.download_path)
-    plugin.log.info(f"Downloaded: {len(succeed_link_item_dict)}/{len(down_link_item_dict)}")
+    succeeded, lost = plugin.check_download(new_items, plugin.download_path)
+    plugin.log.info(f"Downloaded: {len(succeeded)}/{len(new_items)}")
     # update savestate link_item_dict with succeeded downloads dict
     plugin.log.info('Update savestate')
-    plugin.update_dict(save_state.link_item_dict, succeed_link_item_dict)
+    plugin.update_savestate(succeeded)
     # write new savestate
     plugin.log.info('Write savestate')
-    plugin.save_save_state(save_state.link_item_dict)
+    plugin.save_savestate()
 
 
 def run(plugin_name: str, options: List[str] = None) -> PluginState:
@@ -121,17 +121,16 @@ def run(plugin_name: str, options: List[str] = None) -> PluginState:
     if plugin_name not in dynamic_data.AVAIL_PLUGINS:
         msg = 'Plugin ' + plugin_name + ' was not found.'
         logging.error(msg)
-        print(msg)
-        return PluginState.NOT_FOUND
+        return PluginState.NotFound
 
     try:
         plugin_class = dynamic_data.AVAIL_PLUGINS[plugin_name].load()
         plugin = plugin_class(options)
-    except Exception:
+    except Exception as ex:
         msg = 'Plugin ' + plugin_name + ' crashed while loading.'
-        logging.exception(msg)
+        logging.exception(msg, ex)
         print(msg + ' Check log for more information.')
-        return PluginState.LOAD_CRASH
+        return PluginState.LoadCrash
     else:
         logging.info('Loaded plugin: ' + plugin_name)
 
@@ -142,15 +141,15 @@ def run(plugin_name: str, options: List[str] = None) -> PluginState:
         msg = f"Plugin {plugin.name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
         logging.error(msg)
         print(msg)
-        return PluginState.RUN_FAIL
-    except Exception:
+        return PluginState.RunFail
+    except Exception as ex:
         msg = 'Plugin ' + plugin.name + ' crashed.'
-        logging.exception(msg)
+        logging.exception(msg, ex)
         print(msg + ' Check log for more information.')
-        return PluginState.RUN_CRASH
+        return PluginState.RunCrash
     else:
         logging.info(plugin.name + ' ends without errors.')
-        return PluginState.END_SUCCESS
+        return PluginState.EndSuccess
 
 
 def check_update():
