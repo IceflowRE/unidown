@@ -52,7 +52,7 @@ class APlugin(ABC):
 
         self._temp_path: Path = dynamic_data.TEMP_DIR.joinpath(self.name)
         self._download_path: Path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)
-        self._savestate_file: Path = dynamic_data.SAVESTAT_DIR.joinpath(self.name + '_save.json')
+        self._savestate_file: Path = dynamic_data.SAVESTATE_DIR.joinpath(self.name + '_save.json')
 
         try:
             self._temp_path.mkdir(parents=True, exist_ok=True)

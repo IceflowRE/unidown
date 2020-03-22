@@ -48,6 +48,8 @@ class SaveState:
         :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
         """
         data_dict = LinkItemDict()
+        if 'linkItems' not in data:
+            raise ValueError("linkItems of SaveState does not exist.")
         for key, link_item in data['linkItems'].items():
             data_dict[key] = LinkItem.from_json(link_item)
         if 'version' not in data or data['version'] == "":
@@ -55,7 +57,7 @@ class SaveState:
         try:
             version = Version(data['version'])
         except InvalidVersion:
-            raise InvalidVersion(f"Plugin version is not PEP440 conform: {data['version']}")
+            raise InvalidVersion(f"Savestate version is not PEP440 conform: {data['version']}")
         return cls(version, PluginInfo.from_json(data['pluginInfo']),
                    datetime.strptime(data['lastUpdate'], SaveState.time_format), data_dict)
 

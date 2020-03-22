@@ -197,5 +197,13 @@ class TestSaveState:
             plugin.load_savestate()
 
 
+def test_get_options_dict(caplog):
+    TestPlugin(["wrongarg"])
+    TestPlugin(["delay=notfloat"])
+    assert caplog.records[0].msg == "'wrongarg' is not valid and will be ignored."
+    assert caplog.records[1].msg == "Plugin option 'delay' is missing. Using default."
+    assert caplog.records[2].msg == "Plugin option 'delay' is not a float. Using default."
+
+
 def test_get_plugins():
     assert 'test' in APlugin.get_plugins()

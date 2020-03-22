@@ -45,7 +45,7 @@ def main(argv=None):
                         help='plugin to execute with given parameters')
     parser.add_argument('-m', '--main', dest='main_dir', default=dynamic_data.MAIN_DIR, type=Path, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
-    parser.add_argument('--logfile', dest='logfile', default=dynamic_data.LOGFILE_PATH, type=Path, metavar='path',
+    parser.add_argument('--logfile', dest='logfile', default=dynamic_data.LOG_FILE, type=Path, metavar='path',
                         help='log filepath relativ to the main dir (default: %(default)s)')
     parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                         default=dynamic_data.LOG_LEVEL, help='set the logging level (default: %(default)s)')

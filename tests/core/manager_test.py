@@ -8,7 +8,7 @@ from unidown.core.plugin_state import PluginState
 
 
 def test_init(tmp_path):
-    manager.init(tmp_path, Path('UniDown.log'), dynamic_data.LOG_LEVEL)
+    manager.init(tmp_path, tmp_path.joinpath('UniDown.log'), dynamic_data.LOG_LEVEL)
     assert tmp_path.joinpath('downloads').exists()
     assert tmp_path.joinpath('savestates').exists()
     assert tmp_path.joinpath('temp').exists()

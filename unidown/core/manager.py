@@ -15,25 +15,25 @@ from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
 
 
-def init(main_dir: Path, logfile_path: Path, log_level: str):
+def init(main_dir: Path, log_file: Path, log_level: str):
     """
     Initialize the _downloader. TODO.
 
     :param main_dir: main directory
-    :param logfile_path: logfile path
+    :param log_file: logfile path
     :param log_level: logging level
     """
     dynamic_data.reset()
-    dynamic_data.init_dirs(main_dir, logfile_path)
+    dynamic_data.init_dirs(main_dir, log_file)
 
     dynamic_data.check_dirs()
 
     dynamic_data.MAIN_DIR.mkdir(parents=True, exist_ok=True)
     dynamic_data.TEMP_DIR.mkdir(parents=True, exist_ok=True)
     dynamic_data.DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.SAVESTAT_DIR.mkdir(parents=True, exist_ok=True)
+    dynamic_data.SAVESTATE_DIR.mkdir(parents=True, exist_ok=True)
     dynamic_data.LOG_LEVEL = log_level
-    logging.basicConfig(filename=dynamic_data.LOGFILE_PATH, filemode='a', level=dynamic_data.LOG_LEVEL,
+    logging.basicConfig(filename=dynamic_data.LOG_FILE, filemode='a', level=dynamic_data.LOG_LEVEL,
                         format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('
                                'message)s',
                         datefmt='%Y.%m.%d %H:%M:%S')
@@ -45,9 +45,9 @@ def init(main_dir: Path, logfile_path: Path, log_level: str):
     info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
            f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {cores} cores\n" \
            f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
-           f"Arguments: main={main_dir.resolve()} | logfile={logfile_path.resolve()} | loglevel={log_level}\n" \
+           f"Arguments: main={main_dir.resolve()} | logfile={log_file} | loglevel={log_level}\n" \
            f"Using cores: {dynamic_data.USING_CORES}\n\n"
-    with dynamic_data.LOGFILE_PATH.open(mode='w', encoding="utf8") as writer:
+    with dynamic_data.LOG_FILE.open(mode='w', encoding="utf8") as writer:
         writer.write(info)
 
     dynamic_data.AVAIL_PLUGINS = APlugin.get_plugins()

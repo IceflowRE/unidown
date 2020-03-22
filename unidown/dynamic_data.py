@@ -13,9 +13,9 @@ TEMP_DIR = MAIN_DIR.joinpath(Path('temp/'))
 #: download main path, here are the sub folders for every plugin
 DOWNLOAD_DIR = MAIN_DIR.joinpath(Path('downloads/'))
 #: savestates main path, here are the sub folders for every plugin
-SAVESTAT_DIR = MAIN_DIR.joinpath(Path('savestates/'))
+SAVESTATE_DIR = MAIN_DIR.joinpath(Path('savestates/'))
 #: log file of the program
-LOGFILE_PATH = MAIN_DIR.joinpath(Path('UniDown.log'))
+LOG_FILE = MAIN_DIR.joinpath(Path('UniDown.log'))
 
 #: available plugins which are found at starting the program, name -> EntryPoint
 AVAIL_PLUGINS = {}
@@ -34,32 +34,31 @@ SAVESTATE_VERSION = Version('1')
 # ===========================
 
 
-def init_dirs(main_dir: Path, logfilepath: Path):
+def init_dirs(main_dir: Path, log_file: Path = None):
     """
     Initialize the main directories.
 
     :param main_dir: main directory
-    :param logfilepath: log file
+    :param log_file: log file
     """
-    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH
+    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTATE_DIR, LOG_FILE
     MAIN_DIR = main_dir
     TEMP_DIR = MAIN_DIR.joinpath(Path('temp/'))
     DOWNLOAD_DIR = MAIN_DIR.joinpath(Path('downloads/'))
-    SAVESTAT_DIR = MAIN_DIR.joinpath(Path('savestates/'))
-    LOGFILE_PATH = MAIN_DIR.joinpath(logfilepath)
+    SAVESTATE_DIR = MAIN_DIR.joinpath(Path('savestates/'))
+    if log_file is None:
+        LOG_FILE = MAIN_DIR.joinpath(Path('UniDown.log'))
+    else:
+        LOG_FILE = log_file
 
 
 def reset():
     """
     Reset all dynamic variables to the default values.
     """
-    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR, LOGFILE_PATH, USING_CORES, LOG_LEVEL, DISABLE_TQDM, \
+    global MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTATE_DIR, LOG_FILE, USING_CORES, LOG_LEVEL, DISABLE_TQDM, \
         SAVESTATE_VERSION
-    MAIN_DIR = Path('./')
-    TEMP_DIR = MAIN_DIR.joinpath(Path('temp/'))
-    DOWNLOAD_DIR = MAIN_DIR.joinpath(Path('downloads/'))
-    SAVESTAT_DIR = MAIN_DIR.joinpath(Path('savestates/'))
-    LOGFILE_PATH = MAIN_DIR.joinpath(Path('UniDown.log'))
+    init_dirs(Path('./'))
 
     USING_CORES = 1
     LOG_LEVEL = 'INFO'
@@ -74,7 +73,7 @@ def check_dirs():
 
     :raises FileExistsError: if a file exists but is not a directory
     """
-    dirs = [MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTAT_DIR]
+    dirs = [MAIN_DIR, TEMP_DIR, DOWNLOAD_DIR, SAVESTATE_DIR]
     for directory in dirs:
         if directory.exists() and not directory.is_dir():
             raise FileExistsError(str(directory.resolve()) + " cannot be used as a directory.")
