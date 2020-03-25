@@ -7,7 +7,8 @@ import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
-from unidown import dynamic_data, static_data, tools
+from core.settings import Settings
+from unidown import static_data, tools
 from unidown.core import manager
 from unidown.plugin.a_plugin import APlugin
 
@@ -40,19 +41,28 @@ def main(argv=None):
     parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
     parser.add_argument('--list-plugins', action=PluginListAction, help="show plugin list and exit")
 
-    parser.add_argument('-p', '--plugin', action='append', nargs='+', dest='plugins', required=True, type=str,
-                        metavar='name/options',
+    parser.add_argument('-p', '--plugin', dest='plugin', default="", type=str, required=True, metavar='name',
+                        help='plugin to execute')
+    parser.add_argument('-o', '--options', action='append', nargs='+', dest='options', type=str,
+                        metavar='options passed to the plugin',
                         help='plugin to execute with given parameters')
-    parser.add_argument('-m', '--main', dest='main_dir', default=dynamic_data.MAIN_DIR, type=Path, metavar='path',
+    parser.add_argument('-r', '--root', dest='root_dir', default=None, type=str, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
-    parser.add_argument('--logfile', dest='logfile', default=dynamic_data.LOG_FILE, type=Path, metavar='path',
+    parser.add_argument('--logfile', dest='logfile', default=None, type=str, metavar='path',
                         help='log filepath relativ to the main dir (default: %(default)s)')
     parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                        default=dynamic_data.LOG_LEVEL, help='set the logging level (default: %(default)s)')
+                        default='INFO', help='set the logging level (default: %(default)s)')
 
     args = parser.parse_args(argv)
     try:
-        manager.init(Path(args.main_dir), Path(args.logfile), args.log_level)
+        root_dir = args.root_dir
+        if args.root_dir is not None:
+            root_dir = Path(args.root_dir)
+        log_file = args.logfile
+        if args.logfile is not None:
+            log_file = Path(args.logfile)
+        settings = Settings(root_dir, log_file, args.log_level)
+        manager.init_logging(settings)
     except PermissionError:
         print('Cant create needed folders. Make sure you have write permissions.')
         sys.exit(1)
@@ -63,7 +73,6 @@ def main(argv=None):
         print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
         sys.exit(1)
     manager.check_update()
-    for plugin in args.plugins:
-        manager.run(plugin[0], plugin[1:])
+    manager.run(settings, args.plugin, args.options)
     manager.shutdown()
     sys.exit(0)

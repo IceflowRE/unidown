@@ -4,53 +4,37 @@ Manager of the whole program, contains the most important functions as well as t
 import logging
 import multiprocessing
 import platform
-from pathlib import Path
 from typing import List
 
-from unidown import dynamic_data, static_data
+from unidown import static_data
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
+from core.settings import Settings
 
 
-def init(main_dir: Path, log_file: Path, log_level: str):
+def init_logging(settings: Settings):
     """
-    Initialize the _downloader. TODO.
+    Initialize the _downloader.
 
-    :param main_dir: main directory
-    :param log_file: logfile path
-    :param log_level: logging level
+    :param settings: settings
     """
-    dynamic_data.reset()
-    dynamic_data.init_dirs(main_dir, log_file)
-
-    dynamic_data.check_dirs()
-
-    dynamic_data.MAIN_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.TEMP_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.SAVESTATE_DIR.mkdir(parents=True, exist_ok=True)
-    dynamic_data.LOG_LEVEL = log_level
-    logging.basicConfig(filename=dynamic_data.LOG_FILE, filemode='a', level=dynamic_data.LOG_LEVEL,
+    logging.basicConfig(filename=str(settings.log_file), filemode='a', level=settings.log_level,
                         format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('
-                               'message)s',
-                        datefmt='%Y.%m.%d %H:%M:%S')
+                               'message)s', datefmt='%Y.%m.%d %H:%M:%S')
     logging.captureWarnings(True)
 
-    cores = multiprocessing.cpu_count()
-    dynamic_data.USING_CORES = min(4, max(1, cores - 1))
-
     info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
-           f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {cores} cores\n" \
+           f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores\n" \
            f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
-           f"Arguments: main={main_dir.resolve()} | logfile={log_file} | loglevel={log_level}\n" \
-           f"Using cores: {dynamic_data.USING_CORES}\n\n"
-    with dynamic_data.LOG_FILE.open(mode='w', encoding="utf8") as writer:
-        writer.write(info)
+           f"Arguments: main={settings.root_dir.resolve()} | logfile={settings.log_file} | loglevel={settings.log_level}\n" \
+           f"Using cores: {settings.cores}\n\n"
 
-    dynamic_data.AVAIL_PLUGINS = APlugin.get_plugins()
+    settings.log_file.parent.mkdir(parents=True, exist_ok=True)
+    with settings.log_file.open(mode='w', encoding="utf8") as writer:
+        writer.write(info)
 
 
 def shutdown():
@@ -107,10 +91,11 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_savestate()
 
 
-def run(plugin_name: str, options: List[str] = None) -> PluginState:
+def run(settings: Settings, plugin_name: str, options: List[str]) -> PluginState:
     """
     Run a plugin so use the download routine and clean up after.
 
+    :param settings: settings to use
     :param plugin_name: name of plugin
     :param options: parameters which will be send to the plugin initialization
     :return: success
@@ -118,14 +103,15 @@ def run(plugin_name: str, options: List[str] = None) -> PluginState:
     if options is None:
         options = []
 
-    if plugin_name not in dynamic_data.AVAIL_PLUGINS:
+    available_plugins = APlugin.get_plugins()
+    if plugin_name not in available_plugins:
         msg = 'Plugin ' + plugin_name + ' was not found.'
         logging.error(msg)
         return PluginState.NotFound
 
     try:
-        plugin_class = dynamic_data.AVAIL_PLUGINS[plugin_name].load()
-        plugin = plugin_class(options)
+        plugin_class = available_plugins[plugin_name].load()
+        plugin = plugin_class(settings, options)
     except Exception as ex:
         msg = 'Plugin ' + plugin_name + ' crashed while loading.'
         logging.exception(msg, ex)

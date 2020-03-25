@@ -15,11 +15,12 @@ from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
-from unidown import dynamic_data, tools
+from unidown import tools
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
 from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.savestate import SaveState
+from core.settings import Settings
 
 
 class APlugin(ABC):
@@ -29,9 +30,11 @@ class APlugin(ABC):
     :param options: parameters which can included optional parameters
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
 
+    :ivar _info: information about the plugin **| do not edit**
+    :ivar _savestate_cls: savestate class **| do not edit**
+    :ivar _disable_tqdm: if the tqdm progressbar should be disabled **| do not edit**
     :ivar _log: use this for logging **| do not edit**
     :ivar _simul_downloads: number of simultaneous downloads
-    :ivar _info: information about the plugin **| do not edit**
     :ivar _temp_path: path where the plugin can place all temporary data **| do not edit**
     :ivar _download_path: general download path of the plugin **| do not edit**
     :ivar _savestate_file: file which contains the latest savestate of the plugin **| do not edit**
@@ -42,21 +45,27 @@ class APlugin(ABC):
     :ivar _options: options which the plugin uses internal, should be used for the given options at init
     """
     _info: PluginInfo = None
+    _savestate_cls = SaveState
 
-    def __init__(self, options: List[str] = None):
+    def __init__(self, settings: Settings, options: List[str] = None):
+        if options is None:
+            options = []
         if self._info is None:
             raise ValueError("info is not set.")
 
+        self._disable_tqdm = settings.disable_tqdm
         self._log: logging.Logger = logging.getLogger(self._info.name)
-        self._simul_downloads: int = dynamic_data.USING_CORES
+        self._simul_downloads: int = settings.cores
 
-        self._temp_path: Path = dynamic_data.TEMP_DIR.joinpath(self.name)
-        self._download_path: Path = dynamic_data.DOWNLOAD_DIR.joinpath(self.name)
-        self._savestate_file: Path = dynamic_data.SAVESTATE_DIR.joinpath(self.name + '_save.json')
+        self._temp_path: Path = settings.temp_dir.joinpath(self.name)
+        self._download_path: Path = settings.download_dir.joinpath(self.name)
+        self._savestate_file: Path = settings.savestate_dir.joinpath(self.name + '_save.json')
 
         try:
+            settings.mkdir()
             self._temp_path.mkdir(parents=True, exist_ok=True)
             self._download_path.mkdir(parents=True, exist_ok=True)
+            settings.savestate_dir.mkdir(parents=True, exist_ok=True)
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
@@ -67,8 +76,7 @@ class APlugin(ABC):
             self.info.host, maxsize=self._simul_downloads, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()
         )
 
-        self._savestate: SaveState = SaveState(dynamic_data.SAVESTATE_VERSION, self.info, self.last_update,
-                                               LinkItemDict())
+        self._savestate: SaveState = self._savestate_cls(self.info, self.last_update, LinkItemDict())
 
         # load options
         self._options: Dict[str, Any] = self._get_options_dict(options)
@@ -147,7 +155,7 @@ class APlugin(ABC):
             self.log.info("No savestate file found.")
             return
 
-        with self._savestate_file.open(mode='r', encoding="utf8") as data_file:
+        with self._savestate_file.open(encoding="utf8") as data_file:
             try:
                 savestate_json = json.loads(data_file.read())
             except Exception:
@@ -155,17 +163,12 @@ class APlugin(ABC):
                     f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
 
         try:
-            savestate = SaveState.from_json(savestate_json)
+            savestate = self._savestate_cls.from_json(savestate_json)
         except Exception as ex:
             raise PluginException(f"Could not load savestate from json {self._savestate_file}: {ex}")
         else:
             del savestate_json
-
-        if savestate.version != dynamic_data.SAVESTATE_VERSION:
-            raise PluginException("Different save state version handling is not implemented yet.")
-
-        if savestate.plugin_info.version != self.info.version:
-            raise PluginException("Different plugin version handling is not implemented yet.")
+        savestate = self._savestate_cls.upgrade(savestate)
 
         if savestate.plugin_info.name != self.info.name:
             raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
@@ -235,7 +238,7 @@ class APlugin(ABC):
                 job_list.append(job)
 
             pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
-                        ncols=100, disable=dynamic_data.DISABLE_TQDM)
+                        ncols=100, disable=self._disable_tqdm)
             for _ in pbar:
                 pass
 
@@ -259,7 +262,7 @@ class APlugin(ABC):
         """
         while folder.joinpath(name).exists():  # TODO: handle already existing files
             self.log.warning('already exists: ' + name)
-            name = name + '_d'
+            name += '_d'
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
@@ -284,7 +287,8 @@ class APlugin(ABC):
         :return: succeeded and failed
         """
         succeed = LinkItemDict(
-            {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()})
+            {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
+        )
         failed = LinkItemDict({link: item for link, item in link_item_dict.items() if link not in succeed})
 
         if failed and log:
@@ -299,15 +303,13 @@ class APlugin(ABC):
 
         :param new_items: new items
         """
+        self._savestate.plugin_info = self.info
+        self._savestate.last_update = self.last_update
         self._savestate.link_items.actualize(new_items)
-        self._savestate = SaveState(dynamic_data.SAVESTATE_VERSION, self.info, self.last_update,
-                                    self._savestate.link_items)
 
     def save_savestate(self):  # TODO: add progressbar
         """
         Save meta data about the downloaded things and the plugin to file.
-
-        :param data_dict: data
         """
         with self._savestate_file.open(mode='w', encoding="utf8") as writer:
             writer.write(json.dumps(self._savestate.to_json()))
@@ -326,8 +328,7 @@ class APlugin(ABC):
         """
         self.clean_up()
         tools.unlink_dir_rec(self._download_path)
-        if self._savestate_file.exists():
-            self._savestate_file.unlink()
+        self._savestate_file.unlink(missing_ok=True)
 
     def _get_options_dict(self, options: List[str]) -> Dict[str, Any]:
         """
@@ -337,8 +338,6 @@ class APlugin(ABC):
         :param options: options given to the plugin.
         :return: dictionary which contains the option key as str related to the option string
         """
-        if options is None:
-            options = []
         plugin_options = {}
         for option in options:
             cur_option = option.split("=")

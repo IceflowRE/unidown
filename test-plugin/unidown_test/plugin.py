@@ -3,6 +3,7 @@ from typing import List
 
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
+from core.settings import Settings
 
 
 class Plugin(APlugin):
@@ -11,8 +12,8 @@ class Plugin(APlugin):
     """
     _info = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
 
-    def __init__(self, options: List[str] = None):
-        super().__init__(options)
+    def __init__(self, settings: Settings, options: List[str] = None):
+        super().__init__(settings, options)
         if 'behaviour' not in self._options:
             self._options['behaviour'] = 'normal'
         if self._options['behaviour'] == 'load_crash':
