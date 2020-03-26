@@ -20,8 +20,8 @@ test_options = [
 
 
 @pytest.mark.parametrize('name,options,result', test_options)
-def test_run(name, options, result):
-    assert manager.run(Settings(), name, options) == result
+def test_run(tmp_path, name, options, result):
+    assert manager.run(Settings(tmp_path), name, options) == result
     if PluginState.EndSuccess == result:
         pass
         #assert tmp_path.joinpath('savestates/test_save.json').exists()

@@ -24,18 +24,18 @@ eg_data = LinkItemDict({
 })
 
 
-def test_equality():
-    plugin = TestPlugin(Settings())
+def test_equality(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     assert False == (plugin == "blub")
     assert True == (plugin != "blub")
-    plugin_b = TestPlugin(Settings())
+    plugin_b = TestPlugin(Settings(tmp_path))
     assert True == (plugin == plugin_b)
     assert False == (plugin != plugin_b)
 
 
-def test_init_without_param():
-    plugin = TestPlugin(Settings())
-    settings = Settings()
+def test_init_without_param(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
+    settings = Settings(tmp_path)
     assert plugin._log is not None
     assert plugin.temp_path.exists() and plugin.temp_path.is_dir()
     assert plugin.download_path.exists() and plugin.download_path.is_dir()
@@ -52,12 +52,12 @@ def test_init_without_param():
     assert plugin.options == {'behaviour': 'normal', 'delay': 0}
 
 
-def test_init_with_param():
-    plugin = TestPlugin(Settings(), ["delay=10.0"])
+def test_init_with_param(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path), ["delay=10.0"])
     assert plugin._options['delay'] == 10.0
 
 
-def test_init_without_info():
+def test_init_without_info(tmp_path):
     class Plugin(APlugin):
         def _create_download_links(self) -> LinkItemDict:
             return LinkItemDict()
@@ -66,31 +66,31 @@ def test_init_without_info():
             return datetime(1999, 9, 9, hour=9, minute=9, second=9)
 
     with pytest.raises(ValueError):
-        Plugin(Settings())
+        Plugin(Settings(tmp_path))
 
 
-def test_update_download_links():
-    plugin = TestPlugin(Settings())
+def test_update_download_links(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     plugin.update_download_links()
     assert all([a == b for a, b in zip(plugin.download_data, eg_data)])
 
 
-def test_update_last_update():
-    plugin = TestPlugin(Settings())
+def test_update_last_update(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     plugin.update_last_update()
     result = datetime(1999, 9, 9, hour=9, minute=9, second=9)
     assert plugin.last_update == result
     assert result == plugin.last_update
 
 
-def test_check_download_empty():
-    plugin = TestPlugin(Settings())
+def test_check_download_empty(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     data = plugin.check_download(LinkItemDict(), plugin._temp_path)
     assert data == (LinkItemDict(), LinkItemDict())
 
 
-def test_check_download():
-    plugin = TestPlugin(Settings())
+def test_check_download(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
 
     create_test_file(plugin._temp_path.joinpath('One'))
     data = plugin.check_download(eg_data, plugin._temp_path)
@@ -103,8 +103,8 @@ def test_check_download():
     assert (succeed, lost) == data
 
 
-def test_clean_up():
-    plugin = TestPlugin(Settings())
+def test_clean_up(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     create_test_file(plugin._temp_path.joinpath('testfile'))
     plugin.clean_up()
 
@@ -112,8 +112,8 @@ def test_clean_up():
     assert not plugin._temp_path.exists()
 
 
-def test_delete_data():
-    plugin = TestPlugin(Settings())
+def test_delete_data(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     create_test_file(plugin._temp_path.joinpath('testfile'))
     create_test_file(plugin.download_path.joinpath('testfile'))
     create_test_file(plugin._savestate_file)
@@ -124,8 +124,8 @@ def test_delete_data():
     assert not plugin._savestate_file.exists()
 
 
-def test_download_as_file():
-    plugin = TestPlugin(Settings())
+def test_download_as_file(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
     plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
     plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
@@ -134,20 +134,20 @@ def test_download_as_file():
     assert plugin._temp_path.joinpath('file_d_d').exists()
 
 
-def test_download():
-    plugin = TestPlugin(Settings())
+def test_download(tmp_path):
+    plugin = TestPlugin(Settings(tmp_path))
     plugin.download(eg_data, plugin._temp_path, 'Down units', 'unit')
 
 
 class TestSaveState:
-    def test_update_savestate(self):
-        plugin = TestPlugin(Settings())
+    def test_update_savestate(self, tmp_path):
+        plugin = TestPlugin(Settings(tmp_path))
         result = SaveState(plugin.info, plugin.last_update, eg_data)
         plugin.update_savestate(eg_data)
         assert result == plugin._savestate
 
-    def test_save_savestate(self):
-        plugin = TestPlugin(Settings())
+    def test_save_savestate(self, tmp_path):
+        plugin = TestPlugin(Settings(tmp_path))
         plugin.update_savestate(eg_data)
         plugin.save_savestate()
         with plugin._savestate_file.open(encoding="utf8") as data_file:
@@ -155,37 +155,37 @@ class TestSaveState:
         assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "One", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "Two", "time": "20020202T020202.000000Z"}}}'
 
     @pytest.mark.parametrize('data', [LinkItemDict(), eg_data])
-    def test_normal(self, data):
-        plugin = TestPlugin(Settings())
+    def test_normal(self, tmp_path, data):
+        plugin = TestPlugin(Settings(tmp_path))
         plugin.update_savestate(data)
         plugin.save_savestate()
         plugin.load_savestate()
         assert plugin._savestate == SaveState(plugin.info, datetime(1970, 1, 1), data)
 
-    def test_diff_plugin_name(self):
-        plugin = TestPlugin(Settings())
+    def test_diff_plugin_name(self, tmp_path):
+        plugin = TestPlugin(Settings(tmp_path))
         plugin.save_savestate()
         plugin._info.name = "different"
         with pytest.raises(PluginException):
             plugin.load_savestate()
 
-    def test_json_error(self):
-        plugin = TestPlugin(Settings())
+    def test_json_error(self, tmp_path):
+        plugin = TestPlugin(Settings(tmp_path))
         create_test_file(plugin._savestate_file)
         with pytest.raises(PluginException):
             plugin.load_savestate()
 
-    def test_json_error_2(self):
-        plugin = TestPlugin(Settings())
+    def test_json_error_2(self, tmp_path):
+        plugin = TestPlugin(Settings(tmp_path))
         with plugin._savestate_file.open('wb') as writer:
             writer.write(str.encode('{}'))
         with pytest.raises(PluginException):
             plugin.load_savestate()
 
 
-def test_get_options_dict(caplog):
-    TestPlugin(Settings(), ["wrongarg"])
-    TestPlugin(Settings(), ["delay=notfloat"])
+def test_get_options_dict(tmp_path, caplog):
+    TestPlugin(Settings(tmp_path), ["wrongarg"])
+    TestPlugin(Settings(tmp_path), ["delay=notfloat"])
     assert caplog.records[0].msg == "'wrongarg' is not valid and will be ignored."
     assert caplog.records[1].msg == "Plugin option 'delay' is missing. Using default."
     assert caplog.records[2].msg == "Plugin option 'delay' is not a float. Using default."
