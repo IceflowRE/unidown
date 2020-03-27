@@ -47,9 +47,9 @@ class APlugin(ABC):
     _info: PluginInfo = None
     _savestate_cls = SaveState
 
-    def __init__(self, settings: Settings, options: List[str] = None):
+    def __init__(self, settings: Settings, options: Dict[str, Any] = None):
         if options is None:
-            options = []
+            options = {}
         if self._info is None:
             raise ValueError("info is not set.")
 
@@ -69,17 +69,20 @@ class APlugin(ABC):
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
+        # cached data
         self._last_update: datetime = datetime(1970, 1, 1)
-        self._unit: str = 'item'
         self._download_data: LinkItemDict = LinkItemDict()
+
+        self._savestate: SaveState = self._savestate_cls(self.info, self.last_update, LinkItemDict())
+
+        self._unit: str = 'item'
         self._downloader: urllib3.HTTPSConnectionPool = urllib3.HTTPSConnectionPool(
             self.info.host, maxsize=self._simul_downloads, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()
         )
 
-        self._savestate: SaveState = self._savestate_cls(self.info, self.last_update, LinkItemDict())
-
         # load options
-        self._options: Dict[str, Any] = self._get_options_dict(options)
+        self._options: Dict[str, Any] = options
+        self._load_default_options()
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -155,9 +158,9 @@ class APlugin(ABC):
             self.log.info("No savestate file found.")
             return
 
-        with self._savestate_file.open(encoding="utf8") as data_file:
+        with self._savestate_file.open(encoding="utf8") as reader:
             try:
-                savestate_json = json.loads(data_file.read())
+                savestate_json = json.loads(reader.read())
             except Exception:
                 raise PluginException(
                     f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
@@ -266,8 +269,8 @@ class APlugin(ABC):
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
-                with folder.joinpath(name).open(mode='wb') as out_file:
-                    out_file.write(reader.data)
+                with folder.joinpath(name).open(mode='wb') as writer:
+                    writer.write(reader.data)
             else:
                 raise HTTPError(f"{url} | {reader.status}")
 
@@ -330,32 +333,16 @@ class APlugin(ABC):
         tools.unlink_dir_rec(self._download_path)
         self._savestate_file.unlink(missing_ok=True)
 
-    def _get_options_dict(self, options: List[str]) -> Dict[str, Any]:
-        """
-        Convert the option list to a dictionary where the key is the option and the value is the related option.
-        Is called in the init.
-
-        :param options: options given to the plugin.
-        :return: dictionary which contains the option key as str related to the option string
-        """
-        plugin_options = {}
-        for option in options:
-            cur_option = option.split("=")
-            if len(cur_option) != 2:
-                self.log.warning(f"'{option}' is not valid and will be ignored.")
-                continue
-            plugin_options[cur_option[0]] = cur_option[1]
-
-        if "delay" in plugin_options:
+    def _load_default_options(self):
+        if "delay" in self._options:
             try:
-                plugin_options['delay'] = float(plugin_options['delay'])
+                self._options['delay'] = float(self._options['delay'])
             except ValueError:
-                plugin_options['delay'] = 0
-                self.log.warning("Plugin option 'delay' is not a float. Using default.")
+                self._options['delay'] = 0
+                self.log.warning("Plugin option 'delay' was not a float. Using default.")
         else:
-            plugin_options['delay'] = 0
+            self._options['delay'] = 0
             self.log.warning("Plugin option 'delay' is missing. Using default.")
-        return plugin_options
 
     @staticmethod
     def get_plugins() -> Dict[str, pkg_resources.EntryPoint]:

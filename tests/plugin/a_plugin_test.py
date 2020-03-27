@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pytest
 from packaging.version import Version
+from unidown.core.manager import get_options
 from unidown_test.plugin import Plugin as TestPlugin
+from unidown_test.savestate import MySaveState
 
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo, SaveState
 from unidown.plugin.link_item_dict import LinkItemDict
@@ -49,11 +51,12 @@ def test_init_without_param(tmp_path):
     assert plugin.last_update == datetime(1970, 1, 1)
     assert plugin.download_data == {}
     assert plugin.unit == "item"
-    assert plugin.options == {'behaviour': 'normal', 'delay': 0}
+    assert plugin.options == {'behaviour': 'normal', 'delay': 0, 'username': ''}
+    assert plugin._username == ''
 
 
 def test_init_with_param(tmp_path):
-    plugin = TestPlugin(Settings(tmp_path), ["delay=10.0"])
+    plugin = TestPlugin(Settings(tmp_path), get_options([["delay=10.0"]]))
     assert plugin._options['delay'] == 10.0
 
 
@@ -142,7 +145,7 @@ def test_download(tmp_path):
 class TestSaveState:
     def test_update_savestate(self, tmp_path):
         plugin = TestPlugin(Settings(tmp_path))
-        result = SaveState(plugin.info, plugin.last_update, eg_data)
+        result = MySaveState(plugin.info, plugin.last_update, eg_data)
         plugin.update_savestate(eg_data)
         assert result == plugin._savestate
 
@@ -150,17 +153,20 @@ class TestSaveState:
         plugin = TestPlugin(Settings(tmp_path))
         plugin.update_savestate(eg_data)
         plugin.save_savestate()
-        with plugin._savestate_file.open(encoding="utf8") as data_file:
-            json_data = data_file.read()
-        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "One", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "Two", "time": "20020202T020202.000000Z"}}}'
+        with plugin._savestate_file.open(encoding="utf8") as reader:
+            json_data = reader.read()
+        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "One", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "Two", "time": "20020202T020202.000000Z"}}, "username": ""}'
 
     @pytest.mark.parametrize('data', [LinkItemDict(), eg_data])
     def test_normal(self, tmp_path, data):
         plugin = TestPlugin(Settings(tmp_path))
+        plugin._username = 'Nasua Nasua'
         plugin.update_savestate(data)
         plugin.save_savestate()
         plugin.load_savestate()
-        assert plugin._savestate == SaveState(plugin.info, datetime(1970, 1, 1), data)
+        result = MySaveState(plugin.info, datetime(1970, 1, 1), data)
+        result.username = "Nasua Nasua"
+        assert plugin._savestate == result
 
     def test_diff_plugin_name(self, tmp_path):
         plugin = TestPlugin(Settings(tmp_path))
@@ -183,12 +189,18 @@ class TestSaveState:
             plugin.load_savestate()
 
 
-def test_get_options_dict(tmp_path, caplog):
-    TestPlugin(Settings(tmp_path), ["wrongarg"])
-    TestPlugin(Settings(tmp_path), ["delay=notfloat"])
-    assert caplog.records[0].msg == "'wrongarg' is not valid and will be ignored."
-    assert caplog.records[1].msg == "Plugin option 'delay' is missing. Using default."
-    assert caplog.records[2].msg == "Plugin option 'delay' is not a float. Using default."
+def test_load_default_options(tmp_path, caplog):
+    plugin = TestPlugin(Settings(tmp_path), {})
+    plugin._load_default_options()
+    plugin = TestPlugin(Settings(tmp_path), {'delay': 'float', 'behaviour': 'normal'})
+    plugin._load_default_options()
+    result = [
+        "Plugin option 'delay' is missing. Using default.",
+        "Plugin option 'behaviour' is missing. Using default.",
+        "Plugin option 'delay' was not a float. Using default."
+    ]
+    for actual, expect in zip(caplog.records, result):
+        assert actual.msg == expect
 
 
 def test_get_plugins():

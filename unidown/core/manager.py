@@ -4,15 +4,15 @@ Manager of the whole program, contains the most important functions as well as t
 import logging
 import multiprocessing
 import platform
-from typing import List
+from typing import List, Dict, Any
 
+from core.settings import Settings
 from unidown import static_data
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
-from core.settings import Settings
 
 
 def init_logging(settings: Settings):
@@ -91,18 +91,21 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_savestate()
 
 
-def run(settings: Settings, plugin_name: str, options: List[str]) -> PluginState:
+def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> PluginState:
     """
     Run a plugin so use the download routine and clean up after.
 
     :param settings: settings to use
     :param plugin_name: name of plugin
-    :param options: parameters which will be send to the plugin initialization
+    :param raw_options: parameters which will be send to the plugin initialization
     :return: success
     """
-    if options is None:
-        options = []
+    if raw_options is None:
+        options = {}
+    else:
+        options = get_options(raw_options)
 
+    print("blub", options)
     available_plugins = APlugin.get_plugins()
     if plugin_name not in available_plugins:
         msg = 'Plugin ' + plugin_name + ' was not found.'
@@ -136,6 +139,26 @@ def run(settings: Settings, plugin_name: str, options: List[str]) -> PluginState
     else:
         logging.info(plugin.name + ' ends without errors.')
         return PluginState.EndSuccess
+
+
+def get_options(options: List[List[str]]) -> Dict[str, Any]:
+    """
+    Convert the option list to a dictionary where the key is the option and the value is the related option.
+    Is called in the init.
+
+    :param options: options given to the plugin.
+    :return: dictionary which contains the option key as str related to the option string
+    """
+    plugin_options = {}
+    for sub_options in options:
+        option = ' '.join(sub_options)
+        option_key, _, option_value = option.partition('=')
+
+        if option_key == '' or option_value == '':
+            logging.warning(f"'{option}' is not valid and will be ignored.")
+            continue
+        plugin_options[option_key] = option_value
+    return plugin_options
 
 
 def check_update():

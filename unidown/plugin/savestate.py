@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
 from datetime import datetime
 
 from packaging.version import InvalidVersion, Version
@@ -43,7 +42,6 @@ class SaveState:
         return not self.__eq__(other)
 
     @classmethod
-    @abstractmethod
     def from_json(cls, data: dict) -> SaveState:
         """
         :param data: json data as dict
@@ -65,7 +63,6 @@ class SaveState:
         return cls(PluginInfo.from_json(data['pluginInfo']),
                    datetime.strptime(data['lastUpdate'], SaveState.time_format), data_dict, version)
 
-    @abstractmethod
     def to_json(self) -> dict:
         """
         Create json data.
@@ -83,7 +80,6 @@ class SaveState:
         return result
 
     @staticmethod
-    @abstractmethod
     def upgrade(savestate) -> SaveState:
         """
         Upgrading current savestate to the latest savestate version.

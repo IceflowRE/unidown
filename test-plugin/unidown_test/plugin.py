@@ -1,9 +1,11 @@
 from datetime import datetime
-from typing import List
+from typing import List, Dict, Any
 
+from unidown_test.savestate import MySaveState
+
+from core.settings import Settings
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
-from core.settings import Settings
 
 
 class Plugin(APlugin):
@@ -11,11 +13,11 @@ class Plugin(APlugin):
     Test plugin.
     """
     _info = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
+    _savestate_cls = MySaveState
 
-    def __init__(self, settings: Settings, options: List[str] = None):
+    def __init__(self, settings: Settings, options: Dict[str, Any] = None):
         super().__init__(settings, options)
-        if 'behaviour' not in self._options:
-            self._options['behaviour'] = 'normal'
+        self._username: str = self._options['username']
         if self._options['behaviour'] == 'load_crash':
             raise Exception("crash")
 
@@ -34,3 +36,21 @@ class Plugin(APlugin):
             raise Exception("crashed")
 
         return datetime(1999, 9, 9, hour=9, minute=9, second=9)
+
+    def _load_default_options(self):
+        super(Plugin, self)._load_default_options()
+        if 'behaviour' not in self._options:
+            self.log.warning("Plugin option 'behaviour' is missing. Using default.")
+            self._options['behaviour'] = 'normal'
+        if 'username' not in self._options:
+            self._options['username'] = ''
+
+    def load_savestate(self):
+        super(Plugin, self).load_savestate()
+        # do not override set username by options
+        if self._username == '':
+            self._username = self.savestate.username
+
+    def update_savestate(self, new_items: LinkItemDict):
+        super(Plugin, self).update_savestate(new_items)
+        self._savestate.username = self._username

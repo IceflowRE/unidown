@@ -7,9 +7,9 @@ import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
-from core.settings import Settings
 from unidown import static_data, tools
 from unidown.core import manager
+from unidown.core.settings import Settings
 from unidown.plugin.a_plugin import APlugin
 
 
@@ -73,6 +73,7 @@ def main(argv=None):
         print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
         sys.exit(1)
     manager.check_update()
+    print(args.options)
     manager.run(settings, args.plugin, args.options)
     manager.shutdown()
     sys.exit(0)
