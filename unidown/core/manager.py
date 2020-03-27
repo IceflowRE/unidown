@@ -6,10 +6,10 @@ import multiprocessing
 import platform
 from typing import List, Dict, Any
 
-from core.settings import Settings
 from unidown import static_data
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
+from unidown.core.settings import Settings
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict

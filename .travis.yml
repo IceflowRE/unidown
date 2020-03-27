@@ -1,16 +1,12 @@
+# staging would be better for the overview but is to damn hard with travis
+
 language: python
 os: linux
+dist: bionic
 
-jobs:
-  include:
-  - python: "3.7"
-    env: PY_VERSION=py37
-  - python: "3.8"
-    env: PY_VERSION=py38
-  - python: "3.9"
-    env: PY_VERSION=py39
-  allow_failures:
-  - python: "3.9"
+python:
+  - 3.7
+  - 3.8
 
 addons:
   apt:
@@ -30,11 +26,12 @@ install:
 script:
   - python setup.py clean --all
   - python setup.py bdist_wheel
+  - prospector --profile ./.prospector.yaml
   - pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml
   - python setup.py check -v -m -s
   - twine check dist/*
   - unidown --version
-  - sphinx-build -b html ./doc/source/ ./build/doc/html/
+  - sphinx-build -b html -j auto -T -E -a ./doc ./build/doc/html/
   - sphinx-build -b linkcheck ./doc/source/ ./build/doc/linkcheck/
 
 after_success:

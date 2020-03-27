@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import certifi
 import pkg_resources
@@ -15,12 +15,12 @@ from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
+from core.settings import Settings
 from unidown import tools
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
 from unidown.plugin.plugin_info import PluginInfo
 from unidown.plugin.savestate import SaveState
-from core.settings import Settings
 
 
 class APlugin(ABC):
@@ -30,8 +30,8 @@ class APlugin(ABC):
     :param options: parameters which can included optional parameters
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
 
-    :ivar _info: information about the plugin **| do not edit**
-    :ivar _savestate_cls: savestate class **| do not edit**
+    :cvar _info: information about the plugin **| do not edit**
+    :cvar _savestate_cls: savestate class **| do not edit**
     :ivar _disable_tqdm: if the tqdm progressbar should be disabled **| do not edit**
     :ivar _log: use this for logging **| do not edit**
     :ivar _simul_downloads: number of simultaneous downloads

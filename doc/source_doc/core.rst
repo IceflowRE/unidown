@@ -12,7 +12,7 @@ unidown.core.plugin_state
     :members:
 
 unidown.core.settings
---------------------
+---------------------
 .. automodule:: unidown.core.settings
     :members:
 

@@ -4,7 +4,7 @@ Code Convention
 Imports
 -------
 
-Inside the code don't use the shortcut import.
+Inside unidown itself don't use the shortcut import.
 
 .. code-block:: python
 

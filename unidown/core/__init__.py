@@ -1,6 +1,3 @@
 """
-Core contains the important modules.
+Package to run the plugins work.
 """
-from unidown.core.plugin_state import PluginState
-
-__all__ = ["PluginState"]

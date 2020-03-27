@@ -18,6 +18,7 @@ class SaveState:
     :param last_update: last udpate time of the referenced data
     :param link_items: data
 
+    :cvar time_format: time format using
     :ivar version: savestate version
     :ivar plugin_info: plugin info
     :ivar last_update: newest udpate time

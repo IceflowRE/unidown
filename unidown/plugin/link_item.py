@@ -12,6 +12,7 @@ class LinkItem:
     :raises ValueError: name cannot be empty or None
     :raises ValueError: time cannot be empty or None
 
+    :cvar time_format: time format using
     :ivar _name: name of the item
     :ivar _time: time of the item
     """
