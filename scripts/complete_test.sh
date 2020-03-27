@@ -8,7 +8,7 @@ cd ..
 python setup.py clean --all
 python setup.py bdist_wheel
 
-flak8 ./unidown
+flake8 ./unidown
 pylint --rcfile=setup.cfg ./unidown/
 pyroma .
 
