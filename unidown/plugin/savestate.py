@@ -61,8 +61,7 @@ class SaveState:
             version = Version(data['meta']['version'])
         except InvalidVersion:
             raise InvalidVersion(f"Savestate version is not PEP440 conform: {data['meta']['version']}")
-        return cls(PluginInfo.from_json(data['pluginInfo']),
-                   datetime.strptime(data['lastUpdate'], SaveState.time_format), data_dict, version)
+        return cls(PluginInfo.from_json(data['pluginInfo']), datetime.strptime(data['lastUpdate'], SaveState.time_format), data_dict, version)
 
     def to_json(self) -> dict:
         """

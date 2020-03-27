@@ -26,7 +26,7 @@ class PluginInfo:
     def __init__(self, name: str, version: str, host: str):
         if name is None or name == "":
             raise ValueError("Plugin name cannot be empty.")
-        elif host is None or host == "":
+        if host is None or host == "":
             raise ValueError("Plugin host cannot be empty.")
         self.name: str = name
         self.host: str = host
@@ -49,9 +49,9 @@ class PluginInfo:
         """
         if 'name' not in data:
             raise ValueError("name is missing")
-        elif 'version' not in data:
+        if 'version' not in data:
             raise ValueError("version is missing")
-        elif 'host' not in data:
+        if 'host' not in data:
             raise ValueError("host is missing")
         return cls(data['name'], data['version'], data['host'])
 

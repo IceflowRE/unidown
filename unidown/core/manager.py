@@ -73,15 +73,15 @@ def download_from_plugin(plugin: APlugin):
     plugin.update_download_links()
     # compare with save state
     new_items = LinkItemDict.get_new_items(plugin.savestate.link_items, plugin.download_data)
-    plugin.log.info('Compared with save state: ' + str(len(plugin.download_data)))
+    plugin.log.info(f"Compared with save state: {str(len(plugin.download_data))}")
     if not new_items:
         plugin.log.info('No new data. Nothing to do.')
         return
     # download new/updated data
     plugin.log.info(f"Download new {plugin.unit}s: {len(new_items)}")
-    plugin.download(new_items, plugin.download_path, 'Download new ' + plugin.unit + 's', plugin.unit)
+    plugin.download(new_items, plugin.download_path, f"Download new {plugin.unit}s", plugin.unit)
     # check which downloads are succeeded
-    succeeded, lost = plugin.check_download(new_items, plugin.download_path)
+    succeeded, _ = plugin.check_download(new_items, plugin.download_path)
     plugin.log.info(f"Downloaded: {len(succeeded)}/{len(new_items)}")
     # update savestate link_item_dict with succeeded downloads dict
     plugin.log.info('Update savestate')
@@ -105,10 +105,9 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
     else:
         options = get_options(raw_options)
 
-    print("blub", options)
     available_plugins = APlugin.get_plugins()
     if plugin_name not in available_plugins:
-        msg = 'Plugin ' + plugin_name + ' was not found.'
+        msg = f"Plugin {plugin_name} was not found."
         logging.error(msg)
         return PluginState.NotFound
 
@@ -116,12 +115,12 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)
     except Exception as ex:
-        msg = 'Plugin ' + plugin_name + ' crashed while loading.'
+        msg = f"Plugin {plugin_name} crashed while loading."
         logging.exception(msg, ex)
-        print(msg + ' Check log for more information.')
+        print(f"{msg} Check log for more information.")
         return PluginState.LoadCrash
     else:
-        logging.info('Loaded plugin: ' + plugin_name)
+        logging.info(f"Loaded plugin: {plugin_name}")
 
     try:
         download_from_plugin(plugin)
@@ -132,12 +131,12 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
         print(msg)
         return PluginState.RunFail
     except Exception as ex:
-        msg = 'Plugin ' + plugin.name + ' crashed.'
+        msg = f"Plugin {plugin.name} crashed."
         logging.exception(msg, ex)
-        print(msg + ' Check log for more information.')
+        print(f"{msg} Check log for more information.")
         return PluginState.RunCrash
     else:
-        logging.info(plugin.name + ' ends without errors.')
+        logging.info(f"{plugin.name} ends without errors.")
         return PluginState.EndSuccess
 
 
@@ -172,8 +171,8 @@ def check_update():
         logging.exception('Check for updates failed.')
         return
     if update:
-        print("!!! UPDATE AVAILABLE !!!\n"
-              "" + static_data.PROJECT_URL + "\n\n")
-        logging.info("Update available: " + static_data.PROJECT_URL)
+        msg = f"Update available! ({static_data.PROJECT_URL})"
+        print(msg)
+        logging.info(msg)
     else:
         logging.info("No update available.")

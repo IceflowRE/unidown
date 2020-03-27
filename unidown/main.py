@@ -43,15 +43,14 @@ def main(argv=None):
 
     parser.add_argument('-p', '--plugin', dest='plugin', default="", type=str, required=True, metavar='name',
                         help='plugin to execute')
-    parser.add_argument('-o', '--options', action='append', nargs='+', dest='options', type=str,
-                        metavar='options passed to the plugin',
+    parser.add_argument('-o', '--options', action='append', nargs='+', dest='options', type=str, metavar='options passed to the plugin',
                         help='plugin to execute with given parameters')
     parser.add_argument('-r', '--root', dest='root_dir', default=None, type=str, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
     parser.add_argument('--logfile', dest='logfile', default=None, type=str, metavar='path',
                         help='log filepath relativ to the main dir (default: %(default)s)')
-    parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
-                        default='INFO', help='set the logging level (default: %(default)s)')
+    parser.add_argument('-l', '--log', dest='log_level', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'], default='INFO',
+                        help='set the logging level (default: %(default)s)')
 
     args = parser.parse_args(argv)
     try:

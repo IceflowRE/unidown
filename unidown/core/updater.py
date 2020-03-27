@@ -33,4 +33,4 @@ def check_for_app_updates() -> bool:
 
     :return: is update available
     """
-    return get_newest_app_version() > Version(static_data.VERSION)  # TODO: catch invalid version
+    return get_newest_app_version() > Version(static_data.VERSION)

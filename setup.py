@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+"""
+Setup.py for unidown.
+"""
+
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -7,13 +11,13 @@ from unidown import static_data
 
 # get long description
 with Path('README.rst').open(mode='r', encoding='UTF-8') as reader:
-    long_description = reader.read()
+    LONG_DESCRIPTION = reader.read()
 
 setup(
     name=static_data.NAME,
     version=static_data.VERSION,
     description=static_data.DESCRIPTION,
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
     author=static_data.AUTHOR,
     author_email=static_data.AUTHOR_EMAIL,
@@ -40,10 +44,11 @@ setup(
     ],
     extras_require={
         'dev': [
-            'prospector[with_everything]==1.2.0',
+            'flake8==3.7.9',
+            'pylint==2.4.4',
+            'pyroma==2.6',
             'pytest==5.4.1',
             'pytest-cov==2.8.1',
-            'coverage==5.0.4',
             'Sphinx==2.4.4',
             'sphinx-autodoc-typehints==1.10.3',
             'sphinx_rtd_theme==0.4.3',

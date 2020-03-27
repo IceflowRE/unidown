@@ -15,8 +15,8 @@ from packaging.version import Version
 from tqdm import tqdm
 from urllib3.exceptions import HTTPError
 
-from core.settings import Settings
 from unidown import tools
+from unidown.core.settings import Settings
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item_dict import LinkItemDict
 from unidown.plugin.plugin_info import PluginInfo
@@ -94,54 +94,93 @@ class APlugin(ABC):
 
     @property
     def log(self) -> logging.Logger:
+        """
+        Plain getter.
+        """
         return self._log
 
     @property
     def simul_downloads(self) -> int:
+        """
+        Plain getter.
+        """
         return self._simul_downloads
 
     @property
     def info(self) -> PluginInfo:
+        """
+        Plain getter.
+        """
         return self._info
 
     @property
     def host(self) -> str:
+        """
+        Plain getter.
+        """
         return self._info.host
 
     @property
     def name(self) -> str:
+        """
+        Plain getter.
+        """
         return self._info.name
 
     @property
     def version(self) -> Version:
+        """
+        Plain getter.
+        """
         return self._info.version
 
     @property
     def temp_path(self) -> Path:
+        """
+        Plain getter.
+        """
         return self._temp_path
 
     @property
     def download_path(self) -> Path:
+        """
+        Plain getter.
+        """
         return self._download_path
 
     @property
     def savestate(self):
+        """
+        Plain getter.
+        """
         return self._savestate
 
     @property
     def last_update(self) -> datetime:
+        """
+        Plain getter.
+        """
         return self._last_update
 
     @property
     def download_data(self) -> LinkItemDict:
+        """
+        Plain getter.
+        """
         return self._download_data
 
     @property
     def unit(self) -> str:
+        """
+        Plain getter.
+        """
         return self._unit
 
     @property
     def options(self) -> Dict[str, Any]:
+        """
+        Plain getter.
+        """
         return self._options
 
     def load_savestate(self):
@@ -162,8 +201,7 @@ class APlugin(ABC):
             try:
                 savestate_json = json.loads(reader.read())
             except Exception:
-                raise PluginException(
-                    f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
+                raise PluginException(f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
 
         try:
             savestate = self._savestate_cls.from_json(savestate_json)
@@ -174,8 +212,8 @@ class APlugin(ABC):
         savestate = self._savestate_cls.upgrade(savestate)
 
         if savestate.plugin_info.name != self.info.name:
-            raise PluginException("Save state plugin ({name}) does not match the current ({cur_name}).".format(
-                name=savestate.plugin_info.name, cur_name=self.name))
+            raise PluginException(
+                "Save state plugin ({name}) does not match the current ({cur_name}).".format(name=savestate.plugin_info.name, cur_name=self.name))
         self._savestate = savestate
 
     @abstractmethod
@@ -228,7 +266,6 @@ class APlugin(ABC):
         :param folder: target download folder
         :param desc: description of the progressbar
         :param unit: unit of the download, shown in the progressbar
-        :param delay: delay between the downloads in seconds
         """
         # TODO: add other optional host?
         if not link_items:
@@ -240,8 +277,7 @@ class APlugin(ABC):
                 job = executor.submit(self.download_as_file, link, folder, item.name, self._options['delay'])
                 job_list.append(job)
 
-            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1,
-                        ncols=100, disable=self._disable_tqdm)
+            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1, ncols=100, disable=self._disable_tqdm)
             for _ in pbar:
                 pass
 
@@ -249,8 +285,7 @@ class APlugin(ABC):
             try:
                 job.result()
             except HTTPError as ex:
-                self.log.warning("Failed to download: " + str(ex))
-                # Todo: connection lost handling (check if the connection to the server itself is lost)
+                self.log.exception(f"Failed to download: {str(ex)}")
 
     def download_as_file(self, url: str, folder: Path, name: str, delay: float = 0) -> str:
         """
@@ -263,8 +298,8 @@ class APlugin(ABC):
         :return: url
         :raises ~urllib3.exceptions.HTTPError: if the connection has an error
         """
-        while folder.joinpath(name).exists():  # TODO: handle already existing files
-            self.log.warning('already exists: ' + name)
+        while folder.joinpath(name).exists():
+            self.log.warning(f"already exists: {name}")
             name += '_d'
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
@@ -279,8 +314,7 @@ class APlugin(ABC):
 
         return url
 
-    def check_download(self, link_item_dict: LinkItemDict, folder: Path, log: bool = True) -> Tuple[
-        LinkItemDict, LinkItemDict]:
+    def check_download(self, link_item_dict: LinkItemDict, folder: Path, log: bool = True) -> Tuple[LinkItemDict, LinkItemDict]:
         """
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
@@ -289,9 +323,7 @@ class APlugin(ABC):
         :param log: if the lost items should be logged
         :return: succeeded and failed
         """
-        succeed = LinkItemDict(
-            {link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()}
-        )
+        succeed = LinkItemDict({link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()})
         failed = LinkItemDict({link: item for link, item in link_item_dict.items() if link not in succeed})
 
         if failed and log:
@@ -310,7 +342,7 @@ class APlugin(ABC):
         self._savestate.last_update = self.last_update
         self._savestate.link_items.actualize(new_items)
 
-    def save_savestate(self):  # TODO: add progressbar
+    def save_savestate(self):
         """
         Save meta data about the downloaded things and the plugin to file.
         """

@@ -18,6 +18,7 @@ before_install:
 
 install:
   - pip install --upgrade -e .[dev]
+  - unidown --version
   - cd test-plugin
   - pip install --upgrade -e .
   - cd ..
@@ -26,11 +27,12 @@ install:
 script:
   - python setup.py clean --all
   - python setup.py bdist_wheel
-  - prospector --profile ./.prospector.yaml
-  - pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml
+  - flak8 ./unidown
+  - pylint --rcfile=setup.cfg ./unidown/
+  - pyroma .
+  - pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml --cov-report html
   - python setup.py check -v -m -s
   - twine check dist/*
-  - unidown --version
   - sphinx-build -b html -j auto -T -E -a ./doc ./build/doc/html/
   - sphinx-build -b linkcheck ./doc/source/ ./build/doc/linkcheck/
 

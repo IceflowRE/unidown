@@ -52,20 +52,32 @@ class LinkItem:
 
     @property
     def name(self) -> str:
+        """
+        Plain getter.
+        """
         return self._name
 
     @name.setter
     def name(self, name: str):
+        """
+        :raises ValueError: name cannot be empty or None
+        """
         if name is None or name == '':
             raise ValueError("name cannot be empty or None.")
         self._name = name
 
     @property
     def time(self) -> datetime:
+        """
+        Plain getter.
+        """
         return self._time
 
     @time.setter
     def time(self, time: datetime):
+        """
+        :raises ValueError: time cannot be None
+        """
         if time is None:
             raise ValueError("time cannot be None.")
         self._time = time

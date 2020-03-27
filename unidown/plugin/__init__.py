@@ -1,6 +1,3 @@
-"""
-Package to provide the plugin.
-"""
 from unidown.plugin.a_plugin import APlugin
 from unidown.plugin.exceptions import PluginException
 from unidown.plugin.link_item import LinkItem
