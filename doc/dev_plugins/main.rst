@@ -6,4 +6,5 @@ Writing plugins
     :maxdepth: 2
 
     overview
+    structure
     hello_world

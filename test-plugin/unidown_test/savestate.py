@@ -12,7 +12,7 @@ class MySaveState(SaveState):
 
     def __init__(self, plugin_info: PluginInfo, last_update: datetime, link_items: LinkItemDict, username: str = ''):
         super().__init__(plugin_info, last_update, link_items)
-        self.username = username
+        self.username: str = username
 
     @classmethod
     def from_json(cls, data: dict) -> SaveState:
@@ -26,6 +26,7 @@ class MySaveState(SaveState):
         data['username'] = self.username
         return data
 
-    @staticmethod
-    def upgrade(savestate) -> SaveState:
-        return savestate
+    def upgrade(self) -> SaveState:
+        new_savestate = super(MySaveState, self).upgrade()
+        new_savestate.username = self.username
+        return new_savestate

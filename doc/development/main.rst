@@ -7,3 +7,4 @@ Development
 
     code_convention
     ci
+    functionality

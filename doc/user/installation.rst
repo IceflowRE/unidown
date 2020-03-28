@@ -4,11 +4,11 @@ Installation
 System Requirements
 -------------------
 
-Python is required in the version 3.7. or higher, it can be downloaded at https://www.python.org/downloads/.
+Python is required with version 3.8. or higher, it can be downloaded at https://www.python.org/downloads/.
 
 During the Windows installation you should make sure that the ``PATH`` / environment variable is set and ``pip`` is installed.
 
-Under Linux it should be ensured that ``pip`` is installed, if this is not done while the standard installation.
+Under Linux it should be ensured that ``pip`` is installed, if this is not done within the standard installation.
 
 Installation
 ------------

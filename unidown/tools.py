@@ -28,7 +28,7 @@ def print_plugin_list(plugins: Dict[str, pkg_resources.EntryPoint]):
     """
     Prints all registered plugins and checks if they can be loaded or not.
 
-    :param plugins: plugins
+    :param plugins: plugins name to entrypoint
     """
     for trigger, entry_point in plugins.items():
         try:

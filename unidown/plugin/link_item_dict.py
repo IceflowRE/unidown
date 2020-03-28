@@ -14,7 +14,7 @@ class LinkItemDict(dict):
         """
         Actualize dictionary like an ~dict.update does. Additionally adds logging support.
 
-        :param new_data: the data used for udpating
+        :param new_data: the data used for updating
         :param log: logger
         """
         if log is not None:

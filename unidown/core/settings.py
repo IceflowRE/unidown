@@ -4,15 +4,15 @@ from pathlib import Path
 
 class Settings:
     """
-    ':ivar _root_dir: root path
-    ':ivar temp_dir: temporary main path, here are the sub folders for every plugin
-    ':ivar download_dir: download main path, here are the sub folders for every plugin
-    ':ivar savestate_dir: savestates main path, here are the sub folders for every plugin
-    ':ivar log_file: log file of the program
-    ':ivar available_plugins: available plugins which are found at starting the program, name -> EntryPoint
-    ':ivar using_cores: how many _cores should be used
-    ':ivar _log_level: log level
-    ':ivar _disable_tqdm: if the console progress bar is disabled
+    :ivar _root_dir: root path
+    :ivar temp_dir: temporary main path, here are the sub folders for every plugin
+    :ivar download_dir: download main path, here are the sub folders for every plugin
+    :ivar savestate_dir: savestates main path, here are the sub folders for every plugin
+    :ivar log_file: log file of the program
+    :ivar available_plugins: available plugins which are found at starting the program, name -> EntryPoint
+    :ivar using_cores: how many _cores should be used
+    :ivar _log_level: log level
+    :ivar _disable_tqdm: if the console progress bar is disabled
 
     :param root_dir: root dir
     :param log_file: log file
@@ -22,7 +22,7 @@ class Settings:
         if root_dir is None:
             root_dir = Path('./')
         if log_file is None:
-            log_file = root_dir.joinpath(Path('UniDown.log'))
+            log_file = root_dir.joinpath(Path('unidown.log'))
         self._root_dir: Path = root_dir
         self._temp_dir: Path = self._root_dir.joinpath(Path('temp/'))
         self._download_dir: Path = self._root_dir.joinpath(Path('downloads/'))

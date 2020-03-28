@@ -3,9 +3,10 @@
 Using UniDown
 =============
 
-The program is a terminal program (yet), so it runs from the terminal.
+The program is a terminal program, so it runs from the terminal.
 
 Calling with:
+
 .. code-block:: none
 
     unidown
@@ -20,17 +21,25 @@ Furthermore, there are additional arguments:
 
     show program's version number and exit
 
-.. option:: -p name [name ...], --plugin name [name ...]
+.. option:: --list-plugins
 
-    list of using plugins
+    show plugin list and exit
 
-.. option:: -m path, --main path
+.. option:: -p name, --plugin name
+
+    plugin to execute
+
+.. option::-r path, --root path  main directory where all files will be created (default: ./)
 
     main directory where all files will be created
 
-.. option:: -o path, --output path
+.. option:: -o option [option ...], --option option [option ...]
 
-    log filepath relativ to the main dir (default: UniDown.log)
+    options passed to the plugin, e.g. `-o username=South American coati -o password=Nasua Nasua`
+
+.. option:: --logfile path
+
+    log filepath relativ to the main dir (default: ./unidown.log)
 
 .. option:: -l {DEBUG,INFO,WARNING,ERROR,CRITICAL}, --log {DEBUG,INFO,WARNING,ERROR,CRITICAL}
 

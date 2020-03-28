@@ -17,8 +17,9 @@ class SaveState:
     :param plugin_info: plugin info
     :param last_update: last udpate time of the referenced data
     :param link_items: data
+    :param version: savestate version
 
-    :cvar time_format: time format using
+    :cvar time_format: time format to use
     :ivar version: savestate version
     :ivar plugin_info: plugin info
     :ivar last_update: newest udpate time
@@ -80,9 +81,10 @@ class SaveState:
             result['linkItems'][key] = link_item.to_json()
         return result
 
-    @staticmethod
-    def upgrade(savestate) -> SaveState:
+    def upgrade(self) -> SaveState:
         """
         Upgrading current savestate to the latest savestate version.
+
+        :return: upgraded savestate
         """
-        return savestate
+        return self

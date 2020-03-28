@@ -18,7 +18,7 @@ class PluginInfo:
     :raises ValueError: host is empty
     :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
 
-    :ivar name: name
+    :ivar name: name of the plugin
     :ivar host: host url of the main data
     :ivar version: plugin version
     """
@@ -42,7 +42,7 @@ class PluginInfo:
         Constructor from json dict.
 
         :param data: json data as dict
-        :return: the PluginInfo
+        :return: the plugin info
         :raises ValueError: name is missing
         :raises ValueError: version is missing
         :raises ValueError: host is missing

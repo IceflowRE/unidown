@@ -48,15 +48,17 @@ def download_from_plugin(plugin: APlugin):
     """
     Download routine.
 
-    1. get newest update time
-    2. load savestate
-    3. compare last update time with savestate time
-    4. get download links
-    5. compare with savestate
-    6. download new/updated data
-    7. check downloads
-    8. update savestate
-    9. write new savestate
+    1. Get plugin from the given name
+    2. Get the last overall update time
+    3. Load the savestate
+    4. Compare last update time with the one from the savestate
+    5. Get the download links
+    6. Compare received links and their times with the savestate
+    7. Download new and newer links
+    8. Check downloaded data
+    9. Update savestate
+    10. Save new savestate to file
+
 
     :param plugin: plugin
     """
@@ -98,7 +100,7 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
     :param settings: settings to use
     :param plugin_name: name of plugin
     :param raw_options: parameters which will be send to the plugin initialization
-    :return: success
+    :return: ending state
     """
     if raw_options is None:
         options = {}
@@ -146,7 +148,7 @@ def get_options(options: List[List[str]]) -> Dict[str, Any]:
     Is called in the init.
 
     :param options: options given to the plugin.
-    :return: dictionary which contains the option key as str related to the option string
+    :return: dictionary which contains the option key and values
     """
     plugin_options = {}
     for sub_options in options:

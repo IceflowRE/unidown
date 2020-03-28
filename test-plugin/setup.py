@@ -8,9 +8,6 @@ setup(
     author="Iceflower S",
     author_email="iceflower@gmx.de",
     license='MIT',
-    classifiers=[
-
-    ],
     packages=find_packages(include=['unidown_test', 'unidown_test.*']),
     python_requires='>=3.7',
     install_requires=[

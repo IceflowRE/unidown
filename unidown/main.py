@@ -43,8 +43,8 @@ def main(argv=None):
 
     parser.add_argument('-p', '--plugin', dest='plugin', default="", type=str, required=True, metavar='name',
                         help='plugin to execute')
-    parser.add_argument('-o', '--options', action='append', nargs='+', dest='options', type=str, metavar='options passed to the plugin',
-                        help='plugin to execute with given parameters')
+    parser.add_argument('-o', '--option', action='append', nargs='+', dest='options', type=str, metavar='option',
+                        help='options passed to the plugin, e.g. `-o username=South American coati -o password=Nasua Nasua`')
     parser.add_argument('-r', '--root', dest='root_dir', default=None, type=str, metavar='path',
                         help='main directory where all files will be created (default: %(default)s)')
     parser.add_argument('--logfile', dest='logfile', default=None, type=str, metavar='path',
@@ -72,7 +72,6 @@ def main(argv=None):
         print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
         sys.exit(1)
     manager.check_update()
-    print(args.options)
     manager.run(settings, args.plugin, args.options)
     manager.shutdown()
     sys.exit(0)

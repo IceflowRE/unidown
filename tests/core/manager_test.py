@@ -8,8 +8,8 @@ from unidown.core.settings import Settings
 
 
 def test_init_logging(tmp_path):
-    manager.init_logging(Settings(tmp_path, tmp_path.joinpath('UniDown.log')))
-    assert tmp_path.joinpath('UniDown.log').is_file()
+    manager.init_logging(Settings(tmp_path, tmp_path.joinpath('unidown.log')))
+    assert tmp_path.joinpath('unidown.log').is_file()
 
 
 def test_get_options_dict(caplog):
@@ -45,7 +45,7 @@ def test_run(tmp_path, name, options, result):
             'pluginInfo': {'name': 'test', 'version': '0.1.0', 'host': 'raw.githubusercontent.com'},
             'lastUpdate': '19990909T090909.000000Z',
             'linkItems': {
-                '/IceflowRE/unidown/master/README.rst': {'name': 'README.rst', 'time': '20000101T010101.000000Z'}
+                '/IceflowRE/unidown/master/README.rst': {'name': 'README.rst', 'time': '20010101T010101.000000Z'}
             },
             'username': 'Nasua Nasua'
         }

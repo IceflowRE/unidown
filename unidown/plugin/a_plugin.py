@@ -30,8 +30,8 @@ class APlugin(ABC):
     :param options: parameters which can included optional parameters
     :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
 
-    :cvar _info: information about the plugin **| do not edit**
-    :cvar _savestate_cls: savestate class **| do not edit**
+    :cvar _info: information about the plugin
+    :cvar _savestate_cls: savestate class to use
     :ivar _disable_tqdm: if the tqdm progressbar should be disabled **| do not edit**
     :ivar _log: use this for logging **| do not edit**
     :ivar _simul_downloads: number of simultaneous downloads
@@ -42,6 +42,7 @@ class APlugin(ABC):
     :ivar _unit: the thing which should be downloaded, may be displayed in the progress bar
     :ivar _download_data: referencing data **| do not edit**
     :ivar _downloader: downloader which will download the data **| do not edit**
+    :ivar _savestate: savestate of the plugin
     :ivar _options: options which the plugin uses internal, should be used for the given options at init
     """
     _info: PluginInfo = None
@@ -366,6 +367,9 @@ class APlugin(ABC):
         self._savestate_file.unlink(missing_ok=True)
 
     def _load_default_options(self):
+        """
+        Loads default options if they were not passed at creation.
+        """
         if "delay" in self._options:
             try:
                 self._options['delay'] = float(self._options['delay'])
