@@ -36,7 +36,7 @@ setup(
     ],
     keywords='modular downloader',
     packages=find_packages(include=['unidown', 'unidown.*']),
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     install_requires=[
         'urllib3[secure]==1.25.8',
         'tqdm==4.35.0',
