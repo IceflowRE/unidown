@@ -1,9 +1,9 @@
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Dict, Any
 
 from unidown_test.savestate import MySaveState
 
-from undiwon.core.settings import Settings
+from unidown.core.settings import Settings
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
 
