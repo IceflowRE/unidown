@@ -28,13 +28,13 @@ script:
   - python setup.py clean --all
   - python setup.py bdist_wheel
   - flake8 ./unidown
-  - pylint --rcfile=setup.cfg ./unidown/
+  - pylint --rcfile=setup.cfg ./unidown/ || true
   - pyroma .
   - pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml --cov-report html
   - python setup.py check -v -m -s
   - twine check dist/*
-  - sphinx-build -b html -j auto -T -E -a ./doc ./build/doc/html/
-  - sphinx-build -b linkcheck ./doc/source/ ./build/doc/linkcheck/
+  - sphinx-build -b html -j auto -T -E -a ./doc/ ./build/doc/html/
+  - sphinx-build -b linkcheck ./doc/ ./build/doc/linkcheck/
 
 after_success:
   - codecov

@@ -2,7 +2,6 @@ from datetime import datetime
 
 import pytest
 
-from unidown.plugin import PluginInfo
 from unidown.plugin.link_item import LinkItem
 
 

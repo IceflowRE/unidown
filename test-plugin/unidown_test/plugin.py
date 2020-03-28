@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 
 from unidown_test.savestate import MySaveState
 
-from core.settings import Settings
+from undiwon.core.settings import Settings
 from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
 

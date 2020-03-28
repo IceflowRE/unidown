@@ -37,7 +37,8 @@ class SaveState:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
             return False
-        return self.plugin_info == other.plugin_info and self.link_items == other.link_items and self.version == other.version and self.last_update == other.last_update
+        return (self.plugin_info == other.plugin_info and self.link_items == other.link_items and self.version == other.version and
+                self.last_update == other.last_update)
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

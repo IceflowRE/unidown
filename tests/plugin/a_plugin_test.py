@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 from packaging.version import Version
-from unidown.core.manager import get_options
 from unidown_test.plugin import Plugin as TestPlugin
 from unidown_test.savestate import MySaveState
 
-from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo, SaveState
+from unidown.core.manager import get_options
+from unidown.core.settings import Settings
+from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
-from core.settings import Settings
 
 
 def create_test_file(file: Path):

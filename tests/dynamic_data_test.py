@@ -1,6 +1,6 @@
 import pytest
 
-from core.settings import Settings
+from unidown.core.settings import Settings
 
 
 def test_check_dirs(tmp_path):
