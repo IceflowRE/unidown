@@ -54,11 +54,11 @@ def download_from_plugin(plugin: APlugin):
     4. Compare last update time with the one from the savestate
     5. Get the download links
     6. Compare received links and their times with the savestate
-    7. Download new and newer links
-    8. Check downloaded data
-    9. Update savestate
-    10. Save new savestate to file
-
+    7. Clean up names, to eliminate duplicated
+    8. Download new and newer links
+    9. Check downloaded data
+    10. Update savestate
+    11. Save new savestate to file
 
     :param plugin: plugin
     """
@@ -79,6 +79,9 @@ def download_from_plugin(plugin: APlugin):
     if not new_items:
         plugin.log.info('No new data. Nothing to do.')
         return
+    # clean up saving names
+    plugin.log.info(f"Clean up names.")
+    new_items.clean_up_names()
     # download new/updated data
     plugin.log.info(f"Download new {plugin.unit}s: {len(new_items)}")
     plugin.download(new_items, plugin.download_path, f"Download new {plugin.unit}s", plugin.unit)

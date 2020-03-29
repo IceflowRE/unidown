@@ -23,7 +23,7 @@ class Plugin(APlugin):
             raise Exception("crash")
 
     def _create_download_links(self) -> LinkItemDict:
-        self.download_as_file('/IceflowRE/unidown/master/tests/item_dict.json', self._temp_path, 'item_dict.json')
+        self.download_as_file('/IceflowRE/unidown/master/tests/item_dict.json', self._temp_path.joinpath('item_dict.json'))
         with self._temp_path.joinpath('item_dict.json').open(encoding='utf8') as reader:
             data = json.loads(reader.read())
         result = LinkItemDict()
@@ -36,7 +36,7 @@ class Plugin(APlugin):
             raise PluginException('failed')
         elif self._options['behaviour'] == "run_crash":
             raise Exception("crashed")
-        self.download_as_file('/IceflowRE/unidown/master/tests/last_update_time.txt', self._temp_path, 'last_update_time.txt')
+        self.download_as_file('/IceflowRE/unidown/master/tests/last_update_time.txt', self._temp_path.joinpath('last_update_time.txt'))
         with self._temp_path.joinpath('last_update_time.txt').open(encoding='utf8') as reader:
             return datetime.strptime(reader.read(), LinkItem.time_format)
 

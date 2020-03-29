@@ -47,6 +47,9 @@ class LinkItem:
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def __str__(self) -> str:
         return '(' + str(self._name) + ', ' + str(self._time) + ')'
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 from tqdm import tqdm
 
@@ -19,9 +20,24 @@ class LinkItemDict(dict):
         """
         if log is not None:
             for link, item in new_data.items():
-                if link in super().keys():
+                if link in self.keys():
                     log.info('Actualize item: ' + link + ' | ' + str(self[link]) + ' -> ' + str(item))
         self.update(new_data)
+
+    def clean_up_names(self):
+        """
+        Rename duplicated names with an additional ``_r``.
+        """
+        for cur_link, cur_item in self.items():
+            restart = True
+            while restart:
+                restart = False
+                for link, item in self.items():
+                    if cur_item.name == item.name and cur_link != link:
+                        tmp = Path(cur_item.name)
+                        cur_item.name = tmp.stem + '_d' + ''.join(tmp.suffixes)
+                        restart = True
+                        break
 
     @staticmethod
     def get_new_items(old_data: LinkItemDict, new_data: LinkItemDict, disable_tqdm: bool = False) -> LinkItemDict:

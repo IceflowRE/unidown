@@ -7,6 +7,7 @@ Functionality
 #. Compare last update time with the one from the savestate
 #. Get the download links
 #. Compare received links and their times with the savestate
+#. Clean up names, to eliminate duplicated
 #. Download new and newer links
 #. Check downloaded data
 #. Update savestate

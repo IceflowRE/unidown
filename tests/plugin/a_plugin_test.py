@@ -19,10 +19,9 @@ def create_test_file(file: Path):
 
 
 eg_data = LinkItemDict({
-    '/IceflowRE/unidown/master/README.rst':
-        LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-    '/IceflowRE/unidown/master/missing':
-        LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+    '/IceflowRE/unidown/master/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    '/IceflowRE/unidown/master/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    '/IceflowRE/unidown/master/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
 })
 
 
@@ -75,7 +74,8 @@ def test_init_without_info(tmp_path):
 def test_update_download_links(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
     plugin.update_download_links()
-    assert all([a == b for a, b in zip(plugin.download_data, eg_data)])
+    print(plugin.download_data.items())
+    assert all([a == b for a, b in zip(plugin.download_data.items(), eg_data.items())])
 
 
 def test_update_last_update(tmp_path):
@@ -95,14 +95,15 @@ def test_check_download_empty(tmp_path):
 def test_check_download(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
 
-    create_test_file(plugin._temp_path.joinpath('One'))
+    create_test_file(plugin._temp_path.joinpath('README.rst'))
     data = plugin.check_download(eg_data, plugin._temp_path)
-    succeed = LinkItemDict(
-        {'/IceflowRE/unidown/master/README.rst': LinkItem('One', datetime(2001, 1, 1, hour=1, minute=1, second=1))}
-    )
-    lost = LinkItemDict(
-        {'/IceflowRE/unidown/master/missing': LinkItem('Two', datetime(2002, 2, 2, hour=2, minute=2, second=2))}
-    )
+    succeed = LinkItemDict({
+        '/IceflowRE/unidown/master/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+        '/IceflowRE/unidown/master/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    })
+    lost = LinkItemDict({
+        '/IceflowRE/unidown/master/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+    })
     assert (succeed, lost) == data
 
 
@@ -129,12 +130,12 @@ def test_delete_data(tmp_path):
 
 def test_download_as_file(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path, 'file')
-    assert plugin._temp_path.joinpath('file').exists()
-    assert plugin._temp_path.joinpath('file_d').exists()
-    assert plugin._temp_path.joinpath('file_d_d').exists()
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
+    assert plugin._temp_path.joinpath('file.test').exists()
+    assert plugin._temp_path.joinpath('file_r.test').exists()
+    assert plugin._temp_path.joinpath('file_r_r.test').exists()
 
 
 def test_download(tmp_path):
@@ -155,7 +156,7 @@ class TestSaveState:
         plugin.save_savestate()
         with plugin._savestate_file.open(encoding="utf8") as reader:
             json_data = reader.read()
-        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "One", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "Two", "time": "20020202T020202.000000Z"}}, "username": ""}'
+        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/LICENSE.md": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "missing", "time": "20020202T020202.000000Z"}}, "username": ""}'
 
     @pytest.mark.parametrize('data', [LinkItemDict(), eg_data])
     def test_normal(self, tmp_path, data):
@@ -195,9 +196,9 @@ def test_load_default_options(tmp_path, caplog):
     plugin = TestPlugin(Settings(tmp_path), {'delay': 'float', 'behaviour': 'normal'})
     plugin._load_default_options()
     result = [
-        "Plugin option 'delay' is missing. Using default.",
+        "Plugin option 'delay' is missing. Using 0s.",
         "Plugin option 'behaviour' is missing. Using default.",
-        "Plugin option 'delay' was not a float. Using default."
+        "Plugin option 'delay' was not a float. Using 0s."
     ]
     for actual, expect in zip(caplog.records, result):
         assert actual.msg == expect

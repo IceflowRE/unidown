@@ -275,10 +275,10 @@ class APlugin(ABC):
         job_list = []
         with ThreadPoolExecutor(max_workers=self._simul_downloads) as executor:
             for link, item in link_items.items():
-                job = executor.submit(self.download_as_file, link, folder, item.name, self._options['delay'])
+                job = executor.submit(self.download_as_file, link, folder.joinpath(item.name), self._options['delay'])
                 job_list.append(job)
 
-            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, leave=True, mininterval=1, ncols=100, disable=self._disable_tqdm)
+            pbar = tqdm(as_completed(job_list), total=len(job_list), desc=desc, unit=unit, mininterval=1, ncols=100, disable=self._disable_tqdm)
             for _ in pbar:
                 pass
 
@@ -288,24 +288,26 @@ class APlugin(ABC):
             except HTTPError as ex:
                 self.log.exception(f"Failed to download: {str(ex)}")
 
-    def download_as_file(self, url: str, folder: Path, name: str, delay: float = 0) -> str:
+    def download_as_file(self, url: str, target_file: Path, delay: float = 0) -> str:
         """
         Download the given url to the given target folder.
 
         :param url: link
-        :param folder: target folder
-        :param name: target file name
-        :param delay: after download wait in seconds
+        :param target_file: target file
+        :param delay: after download wait this much seconds
         :return: url
         :raises ~urllib3.exceptions.HTTPError: if the connection has an error
         """
-        while folder.joinpath(name).exists():
-            self.log.warning(f"already exists: {name}")
-            name += '_d'
+        if target_file.exists():
+            new_name = target_file
+            while new_name.exists():
+                new_name = new_name.with_name(new_name.stem + '_r' + ''.join(new_name.suffixes))
+            target_file.rename(new_name)
+            self.log.critical(f"target file exists! renaming '{target_file}' to '{new_name}'")
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
-                with folder.joinpath(name).open(mode='wb') as writer:
+                with target_file.open(mode='wb') as writer:
                     writer.write(reader.data)
             else:
                 raise HTTPError(f"{url} | {reader.status}")
@@ -370,15 +372,15 @@ class APlugin(ABC):
         """
         Loads default options if they were not passed at creation.
         """
-        if "delay" in self._options:
+        if 'delay' in self._options:
             try:
                 self._options['delay'] = float(self._options['delay'])
             except ValueError:
                 self._options['delay'] = 0
-                self.log.warning("Plugin option 'delay' was not a float. Using default.")
+                self.log.warning(f"Plugin option 'delay' was not a float. Using {self._options['delay']}s.")
         else:
             self._options['delay'] = 0
-            self.log.warning("Plugin option 'delay' is missing. Using default.")
+            self.log.warning(f"Plugin option 'delay' is missing. Using {self._options['delay']}s.")
 
     @staticmethod
     def get_plugins() -> Dict[str, pkg_resources.EntryPoint]:
