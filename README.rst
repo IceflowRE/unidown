@@ -46,6 +46,7 @@ urllib3
     - `Andrey Petrov and contributors <https://github.com/shazow/urllib3/blob/master/CONTRIBUTORS.txt>`__
     - https://github.com/shazow/urllib3
     - `MIT <https://github.com/shazow/urllib3/blob/master/LICENSE.txt>`__
+
 License
 -------
 
