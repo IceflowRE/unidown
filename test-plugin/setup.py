@@ -11,7 +11,7 @@ setup(
     packages=find_packages(include=['unidown_test', 'unidown_test.*']),
     python_requires='>=3.8',
     install_requires=[
-        'unidown==2.0.0.dev7',
+        'unidown',
     ],
     zip_safe=True,
     entry_points={
