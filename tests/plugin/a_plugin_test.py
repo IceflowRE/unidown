@@ -74,7 +74,6 @@ def test_init_without_info(tmp_path):
 def test_update_download_links(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
     plugin.update_download_links()
-    print(plugin.download_data.items())
     assert all([a == b for a, b in zip(plugin.download_data.items(), eg_data.items())])
 
 

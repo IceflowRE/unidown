@@ -64,7 +64,7 @@ class PluginInfo:
         return not self.__eq__(other)
 
     def __str__(self) -> str:
-        return self.name + " - " + str(self.version) + " : " + self.host
+        return f"{self.name} - {self.version} : {self.host}"
 
     def to_json(self) -> dict:
         """

@@ -2,8 +2,8 @@
 Entry into the program.
 """
 import argparse
+import logging
 import sys
-import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 
@@ -38,7 +38,7 @@ def main(argv=None):
         argv = sys.argv[1:]
 
     parser = ArgumentParser(prog=static_data.LONG_NAME, description=static_data.DESCRIPTION)
-    parser.add_argument('-v', '--version', action='version', version=(static_data.NAME + ' ' + static_data.VERSION))
+    parser.add_argument('-v', '--version', action='version', version=f"{static_data.NAME} {static_data.VERSION}")
     parser.add_argument('--list-plugins', action=PluginListAction, help="show plugin list and exit")
 
     parser.add_argument('-p', '--plugin', dest='plugin', default="", type=str, required=True, metavar='name',
@@ -63,13 +63,13 @@ def main(argv=None):
         settings = Settings(root_dir, log_file, args.log_level)
         manager.init_logging(settings)
     except PermissionError:
-        print('Cant create needed folders. Make sure you have write permissions.')
+        logging.critical('Cant create needed folders. Make sure you have write permissions.')
         sys.exit(1)
     except FileExistsError as ex:
-        print(ex)
+        logging.exception(ex)
         sys.exit(1)
     except Exception as ex:
-        print('Something went wrong: ' + traceback.format_exc(ex.__traceback__))
+        logging.exception("Something went wrong", ex)
         sys.exit(1)
     manager.check_update()
     manager.run(settings, args.plugin, args.options)

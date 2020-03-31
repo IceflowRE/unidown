@@ -301,7 +301,7 @@ class APlugin(ABC):
         if target_file.exists():
             new_name = target_file
             while new_name.exists():
-                new_name = new_name.with_name(new_name.stem + '_r' + ''.join(new_name.suffixes))
+                new_name = new_name.with_name(f"{new_name.stem}_r{''.join(new_name.suffixes)}")
             target_file.rename(new_name)
             self.log.critical(f"target file exists! renaming '{target_file}' to '{new_name}'")
 

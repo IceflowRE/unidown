@@ -51,7 +51,7 @@ class LinkItem:
         return self.__str__()
 
     def __str__(self) -> str:
-        return '(' + str(self._name) + ', ' + str(self._time) + ')'
+        return f"{self._name}, {self._time}"
 
     @property
     def name(self) -> str:

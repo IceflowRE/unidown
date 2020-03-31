@@ -22,8 +22,7 @@ def init_logging(settings: Settings):
     :param settings: settings
     """
     logging.basicConfig(filename=str(settings.log_file), filemode='a', level=settings.log_level,
-                        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %('
-                               'message)s', datefmt='%Y.%m.%d %H:%M:%S')
+                        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %(message)s', datefmt='%Y.%m.%d %H:%M:%S')
     logging.captureWarnings(True)
 
     info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
@@ -120,9 +119,7 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)
     except Exception as ex:
-        msg = f"Plugin {plugin_name} crashed while loading."
-        logging.exception(msg, ex)
-        print(f"{msg} Check log for more information.")
+        logging.exception( f"Plugin {plugin_name} crashed while loading.", ex)
         return PluginState.LoadCrash
     else:
         logging.info(f"Loaded plugin: {plugin_name}")
@@ -131,14 +128,10 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
         download_from_plugin(plugin)
         plugin.clean_up()
     except PluginException as ex:
-        msg = f"Plugin {plugin.name} stopped working. Reason: {'unknown' if (ex.msg == '') else ex.msg}"
-        logging.error(msg)
-        print(msg)
+        logging.exception(f"Plugin {plugin.name} stopped working.", ex)
         return PluginState.RunFail
     except Exception as ex:
-        msg = f"Plugin {plugin.name} crashed."
-        logging.exception(msg, ex)
-        print(f"{msg} Check log for more information.")
+        logging.exception(f"Plugin {plugin.name} crashed.", ex)
         return PluginState.RunCrash
     else:
         logging.info(f"{plugin.name} ends without errors.")
@@ -176,8 +169,6 @@ def check_update():
         logging.exception('Check for updates failed.')
         return
     if update:
-        msg = f"Update available! ({static_data.PROJECT_URL})"
-        print(msg)
-        logging.info(msg)
+        logging.info(f"Update available! ({static_data.PROJECT_URL})")
     else:
         logging.info("No update available.")

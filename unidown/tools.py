@@ -30,13 +30,13 @@ def print_plugin_list(plugins: Dict[str, pkg_resources.EntryPoint]):
 
     :param plugins: plugins name to entrypoint
     """
-    for trigger, entry_point in plugins.items():
+    for name, entry_point in plugins.items():
         try:
             plugin_class = entry_point.load()
             version = str(plugin_class._info.version)
             print(
-                f"{trigger} (ok)\n"
+                f"{name} (ok)\n"
                 f"    {version}"
             )
         except Exception:
-            print(f"{trigger} (failed)")
+            print(f"{name} (failed)")
