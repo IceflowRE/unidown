@@ -6,7 +6,7 @@ import multiprocessing
 import platform
 from typing import List, Dict, Any
 
-from unidown import static_data
+from unidown import static_data, tools
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.core.settings import Settings
@@ -71,7 +71,7 @@ def download_from_plugin(plugin: APlugin):
         return
     # get download links
     plugin.log.info('Get download links')
-    plugin.update_download_links()
+    plugin.update_download_data()
     # compare with save state
     new_items = LinkItemDict.get_new_items(plugin.savestate.link_items, plugin.download_data)
     plugin.log.info(f"Compared with save state: {str(len(plugin.download_data))}")
@@ -83,9 +83,9 @@ def download_from_plugin(plugin: APlugin):
     new_items.clean_up_names()
     # download new/updated data
     plugin.log.info(f"Download new {plugin.unit}s: {len(new_items)}")
-    plugin.download(new_items, plugin.download_path, f"Download new {plugin.unit}s", plugin.unit)
+    plugin.download(new_items, plugin.download_dir, f"Download new {plugin.unit}s", plugin.unit)
     # check which downloads are succeeded
-    succeeded, _ = plugin.check_download(new_items, plugin.download_path)
+    succeeded, _ = plugin.check_download(new_items, plugin.download_dir)
     plugin.log.info(f"Downloaded: {len(succeeded)}/{len(new_items)}")
     # update savestate link_item_dict with succeeded downloads dict
     plugin.log.info('Update savestate')
@@ -115,6 +115,8 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
         logging.error(msg)
         return PluginState.NotFound
 
+    # delete temporary directory of the plugin
+    tools.unlink_dir_rec(settings.temp_dir.joinpath(plugin_name))
     try:
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)

@@ -38,15 +38,15 @@ def test_init_without_param(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
     settings = Settings(tmp_path)
     assert plugin._log is not None
-    assert plugin.temp_path.exists() and plugin.temp_path.is_dir()
-    assert plugin.download_path.exists() and plugin.download_path.is_dir()
+    assert plugin.temp_dir.exists() and plugin.temp_dir.is_dir()
+    assert plugin.download_dir.exists() and plugin.download_dir.is_dir()
     assert isinstance(plugin.log, logging.Logger)
     assert plugin.simul_downloads == settings.cores
     assert isinstance(plugin.info, PluginInfo)
     assert plugin.host == 'raw.githubusercontent.com'
     assert plugin.name == 'test'
     assert plugin.version == Version('0.1.0')
-    assert plugin.download_path == settings.download_dir.joinpath(plugin.name)
+    assert plugin.download_dir == settings.download_dir.joinpath(plugin.name)
     assert plugin.last_update == datetime(1970, 1, 1)
     assert plugin.download_data == {}
     assert plugin.unit == "item"
@@ -61,7 +61,7 @@ def test_init_with_param(tmp_path):
 
 def test_init_without_info(tmp_path):
     class Plugin(APlugin):
-        def _create_download_links(self) -> LinkItemDict:
+        def _create_download_data(self) -> LinkItemDict:
             return LinkItemDict()
 
         def _create_last_update_time(self) -> datetime:
@@ -71,9 +71,9 @@ def test_init_without_info(tmp_path):
         Plugin(Settings(tmp_path))
 
 
-def test_update_download_links(tmp_path):
+def test_update_download_data(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    plugin.update_download_links()
+    plugin.update_download_data()
     assert all([a == b for a, b in zip(plugin.download_data.items(), eg_data.items())])
 
 
@@ -87,15 +87,15 @@ def test_update_last_update(tmp_path):
 
 def test_check_download_empty(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    data = plugin.check_download(LinkItemDict(), plugin._temp_path)
+    data = plugin.check_download(LinkItemDict(), plugin._temp_dir)
     assert data == (LinkItemDict(), LinkItemDict())
 
 
 def test_check_download(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
 
-    create_test_file(plugin._temp_path.joinpath('README.rst'))
-    data = plugin.check_download(eg_data, plugin._temp_path)
+    create_test_file(plugin._temp_dir.joinpath('README.rst'))
+    data = plugin.check_download(eg_data, plugin._temp_dir)
     succeed = LinkItemDict({
         '/IceflowRE/unidown/master/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
         '/IceflowRE/unidown/master/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
@@ -108,26 +108,26 @@ def test_check_download(tmp_path):
 
 def test_clean_up(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    create_test_file(plugin._temp_path.joinpath('testfile'))
+    create_test_file(plugin._temp_dir.joinpath('testfile'))
     plugin.clean_up()
 
     assert plugin._downloader.pool is None
-    assert not plugin._temp_path.exists()
+    assert not plugin._temp_dir.exists()
 
 
 def test_download_as_file(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
-    assert plugin._temp_path.joinpath('file.test').exists()
-    assert plugin._temp_path.joinpath('file_r.test').exists()
-    assert plugin._temp_path.joinpath('file_r_r.test').exists()
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
+    assert plugin._temp_dir.joinpath('file.test').exists()
+    assert plugin._temp_dir.joinpath('file_r.test').exists()
+    assert plugin._temp_dir.joinpath('file_r_r.test').exists()
 
 
 def test_download(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    plugin.download(eg_data, plugin._temp_path, 'Down units', 'unit')
+    plugin.download(eg_data, plugin._temp_dir, 'Down units', 'unit')
 
 
 class TestSaveState:

@@ -35,8 +35,8 @@ class APlugin(ABC):
     :ivar _disable_tqdm: if the tqdm progressbar should be disabled **| do not edit**
     :ivar _log: use this for logging **| do not edit**
     :ivar _simul_downloads: number of simultaneous downloads
-    :ivar _temp_path: path where the plugin can place all temporary data **| do not edit**
-    :ivar _download_path: general download path of the plugin **| do not edit**
+    :ivar _temp_dir: path where the plugin can place all temporary data **| do not edit**
+    :ivar _download_dir: general download path of the plugin **| do not edit**
     :ivar _savestate_file: file which contains the latest savestate of the plugin **| do not edit**
     :ivar _last_update: latest update time of the referencing data **| do not edit**
     :ivar _unit: the thing which should be downloaded, may be displayed in the progress bar
@@ -58,15 +58,14 @@ class APlugin(ABC):
         self._log: logging.Logger = logging.getLogger(self._info.name)
         self._simul_downloads: int = settings.cores
 
-        self._temp_path: Path = settings.temp_dir.joinpath(self.name)
-        self._download_path: Path = settings.download_dir.joinpath(self.name)
+        self._temp_dir: Path = settings.temp_dir.joinpath(self.name)
+        self._download_dir: Path = settings.download_dir.joinpath(self.name)
         self._savestate_file: Path = settings.savestate_dir.joinpath(self.name + '_save.json')
 
         try:
-            settings.mkdir()
-            self._temp_path.mkdir(parents=True, exist_ok=True)
-            self._download_path.mkdir(parents=True, exist_ok=True)
-            settings.savestate_dir.mkdir(parents=True, exist_ok=True)
+            self._temp_dir.mkdir(parents=True, exist_ok=True)
+            self._download_dir.mkdir(parents=True, exist_ok=True)
+            self._savestate_file.parent.mkdir(parents=True, exist_ok=True)
         except PermissionError:
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
@@ -136,18 +135,18 @@ class APlugin(ABC):
         return self._info.version
 
     @property
-    def temp_path(self) -> Path:
+    def temp_dir(self) -> Path:
         """
         Plain getter.
         """
-        return self._temp_path
+        return self._temp_dir
 
     @property
-    def download_path(self) -> Path:
+    def download_dir(self) -> Path:
         """
         Plain getter.
         """
-        return self._download_path
+        return self._download_dir
 
     @property
     def savestate(self):
@@ -234,7 +233,7 @@ class APlugin(ABC):
         self._last_update = self._create_last_update_time()
 
     @abstractmethod
-    def _create_download_links(self) -> LinkItemDict:
+    def _create_download_data(self) -> LinkItemDict:
         """
         Get the download links in a specific format.
         **Has to be implemented inside Plugins.**
@@ -243,11 +242,11 @@ class APlugin(ABC):
         """
         raise NotImplementedError
 
-    def update_download_links(self):
+    def update_download_data(self):
         """
-        Update the download links. Calls :func:`~unidown.plugin.a_plugin.APlugin._create_download_links`.
+        Update the download links. Calls :func:`~unidown.plugin.a_plugin.APlugin._create_download_data`.
         """
-        self._download_data = self._create_download_links()
+        self._download_data = self._create_download_data()
 
     def download(self, link_items: LinkItemDict, folder: Path, desc: str, unit: str):
         """
@@ -307,6 +306,7 @@ class APlugin(ABC):
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
+                print(target_file.parent.exists())
                 with target_file.open(mode='wb') as writer:
                     writer.write(reader.data)
             else:
@@ -355,10 +355,10 @@ class APlugin(ABC):
     def clean_up(self):
         """
         Default clean up for a module.
-        Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_path`.
+        Deletes :attr:`~unidown.plugin.a_plugin.APlugin._temp_dir`.
         """
         self._downloader.close()
-        tools.unlink_dir_rec(self._temp_path)
+        tools.unlink_dir_rec(self._temp_dir)
 
     def _load_default_options(self):
         """

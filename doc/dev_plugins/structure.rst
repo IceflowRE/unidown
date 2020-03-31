@@ -26,7 +26,7 @@ _create_last_update_time
     returns the update time of the complete data e.g. the newest item in the collection
     If for some reasons its not easily collectable or not available or want to check the links every time, return the current time.
 
-_create_download_links
+_create_download_data
     returns a LinkItemDict, with links and their update time
 
 _load_default_options
