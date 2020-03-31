@@ -49,9 +49,9 @@ class LinkItemDict(dict):
         :param disable_tqdm: disables tqdm progressbar
         :return: new and updated link items
         """
-        if not old_data:
+        if len(old_data) == 0:
             return new_data
-        if not new_data:
+        if len(new_data) == 0:
             return LinkItemDict()
 
         updated_data = LinkItemDict()

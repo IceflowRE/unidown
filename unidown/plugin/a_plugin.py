@@ -269,7 +269,7 @@ class APlugin(ABC):
         :param unit: unit of the download, shown in the progressbar
         """
         # TODO: add other optional host?
-        if not link_items:
+        if len(link_items) == 0:
             return
 
         job_list = []

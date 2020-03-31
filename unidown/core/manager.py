@@ -75,7 +75,7 @@ def download_from_plugin(plugin: APlugin):
     # compare with save state
     new_items = LinkItemDict.get_new_items(plugin.savestate.link_items, plugin.download_data)
     plugin.log.info(f"Compared with save state: {str(len(plugin.download_data))}")
-    if not new_items:
+    if len(new_items) == 0:
         plugin.log.info('No new data. Nothing to do.')
         return
     # clean up saving names
