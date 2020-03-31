@@ -360,14 +360,6 @@ class APlugin(ABC):
         self._downloader.close()
         tools.unlink_dir_rec(self._temp_path)
 
-    def delete_data(self):
-        """
-        Delete everything which is related to the plugin. **Do not use if you do not know what you do!**
-        """
-        self.clean_up()
-        tools.unlink_dir_rec(self._download_path)
-        self._savestate_file.unlink(missing_ok=True)
-
     def _load_default_options(self):
         """
         Loads default options if they were not passed at creation.

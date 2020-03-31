@@ -115,18 +115,6 @@ def test_clean_up(tmp_path):
     assert not plugin._temp_path.exists()
 
 
-def test_delete_data(tmp_path):
-    plugin = TestPlugin(Settings(tmp_path))
-    create_test_file(plugin._temp_path.joinpath('testfile'))
-    create_test_file(plugin.download_path.joinpath('testfile'))
-    create_test_file(plugin._savestate_file)
-
-    plugin.delete_data()
-    assert not plugin._temp_path.exists()
-    assert not plugin.download_path.exists()
-    assert not plugin._savestate_file.exists()
-
-
 def test_download_as_file(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
     plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_path.joinpath('file.test'))
