@@ -28,10 +28,10 @@ def init_logging(settings: Settings):
         datefmt='%Y.%m.%d %H:%M:%S'
     )
     logging.captureWarnings(True)
-    ch = logging.StreamHandler()
-    ch.setFormatter(logging.Formatter('%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(message)s', datefmt='%Y.%m.%d %H:%M:%S'))
-    ch.setLevel(settings.log_level)
-    logging.getLogger().addHandler(ch)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(message)s', datefmt='%Y.%m.%d %H:%M:%S'))
+    console_handler.setLevel(settings.log_level)
+    logging.getLogger().addHandler(console_handler)
 
     info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
            f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores\n" \
