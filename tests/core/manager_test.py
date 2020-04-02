@@ -1,4 +1,5 @@
 import json
+import logging
 
 import pytest
 
@@ -7,17 +8,13 @@ from unidown.core.plugin_state import PluginState
 from unidown.core.settings import Settings
 
 
-def test_init_logging(tmp_path):
-    manager.init_logging(Settings(tmp_path, tmp_path.joinpath('unidown.log')))
-    assert tmp_path.joinpath('unidown.log').is_file()
-
-
 def test_get_options_dict(caplog):
     options = manager.get_options([["username=Nasua", "Nasua"], ["wrongArg="], ["=wrongArg2"]])
     result = [
         "'wrongArg=' is not valid and will be ignored.",
         "'=wrongArg2' is not valid and will be ignored.",
     ]
+    assert len(caplog.records) == len(result)
     for actual, expect in zip(caplog.records, result):
         assert actual.msg == expect
     assert options == {'username': "Nasua Nasua"}

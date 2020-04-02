@@ -12,7 +12,7 @@ flake8 ./unidown
 pylint --rcfile=setup.cfg ./unidown/ || true
 pyroma .
 
-pytest -v --cov-config=.coveragerc --cov=unidown --cov-report=xml --cov-report html
+pytest -v --cov-config=setup.cfg --cov=cmt --cov-report term --cov-report=xml --cov-report html
 python setup.py check -v -m -s
 twine check dist/*
 

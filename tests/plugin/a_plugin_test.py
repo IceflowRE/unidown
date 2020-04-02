@@ -187,6 +187,7 @@ def test_load_default_options(tmp_path, caplog):
         "Plugin option 'behaviour' is missing. Using default.",
         "Plugin option 'delay' was not a float. Using 0s."
     ]
+    assert len(caplog.records) == len(result)
     for actual, expect in zip(caplog.records, result):
         assert actual.msg == expect
 

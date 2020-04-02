@@ -61,15 +61,16 @@ def main(argv=None):
         if args.logfile is not None:
             log_file = Path(args.logfile)
         settings = Settings(root_dir, log_file, args.log_level)
+        settings.mkdir()
         manager.init_logging(settings)
     except PermissionError:
         logging.critical('Cant create needed folders. Make sure you have write permissions.')
         sys.exit(1)
-    except FileExistsError as ex:
-        logging.exception(ex)
+    except FileExistsError:
+        logging.exception("")
         sys.exit(1)
-    except Exception as ex:
-        logging.exception("Something went wrong", ex)
+    except Exception:
+        logging.exception("Something went wrong")
         sys.exit(1)
     manager.check_update()
     manager.run(settings, args.plugin, args.options)

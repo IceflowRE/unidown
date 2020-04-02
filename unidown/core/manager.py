@@ -21,19 +21,25 @@ def init_logging(settings: Settings):
 
     :param settings: settings
     """
-    logging.basicConfig(filename=str(settings.log_file), filemode='a', level=settings.log_level,
-                        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %(message)s', datefmt='%Y.%m.%d %H:%M:%S')
+    settings.log_file.parent.mkdir(parents=True, exist_ok=True)
+    logging.basicConfig(
+        filename=str(settings.log_file), filemode='a', level='DEBUG',
+        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %(message)s',
+        datefmt='%Y.%m.%d %H:%M:%S'
+    )
     logging.captureWarnings(True)
+    ch = logging.StreamHandler()
+    ch.setFormatter(logging.Formatter('%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(message)s', datefmt='%Y.%m.%d %H:%M:%S'))
+    ch.setLevel(settings.log_level)
+    logging.getLogger().addHandler(ch)
 
     info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
            f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores\n" \
            f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
            f"Arguments: main={settings.root_dir.resolve()} | logfile={settings.log_file} | loglevel={settings.log_level}\n" \
-           f"Using cores: {settings.cores}\n\n"
+           f"Using cores: {settings.cores}\n"
 
-    settings.log_file.parent.mkdir(parents=True, exist_ok=True)
-    with settings.log_file.open(mode='w', encoding="utf8") as writer:
-        writer.write(info)
+    logging.debug(info)
 
 
 def shutdown():
@@ -120,8 +126,8 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
     try:
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)
-    except Exception as ex:
-        logging.exception( f"Plugin {plugin_name} crashed while loading.", ex)
+    except Exception:
+        logging.exception(f"Plugin {plugin_name} crashed while loading.")
         return PluginState.LoadCrash
     else:
         logging.info(f"Loaded plugin: {plugin_name}")
@@ -129,11 +135,11 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
     try:
         download_from_plugin(plugin)
         plugin.clean_up()
-    except PluginException as ex:
-        logging.exception(f"Plugin {plugin.name} stopped working.", ex)
+    except PluginException:
+        logging.exception(f"Plugin {plugin.name} stopped working.")
         return PluginState.RunFail
-    except Exception as ex:
-        logging.exception(f"Plugin {plugin.name} crashed.", ex)
+    except Exception:
+        logging.exception(f"Plugin {plugin.name} crashed.")
         return PluginState.RunCrash
     else:
         logging.info(f"{plugin.name} ends without errors.")

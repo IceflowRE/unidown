@@ -13,7 +13,8 @@ class LinkItemDict(dict):
 
     def actualize(self, new_data: LinkItemDict, log: logging.Logger = None):
         """
-        Actualize dictionary like an ~dict.update does. Additionally adds logging support.
+        Actualize dictionary like an ~dict.update does.
+        If a logger is passed it will log updated items, **not** new one.
 
         :param new_data: the data used for updating
         :param log: logger

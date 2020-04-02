@@ -285,7 +285,7 @@ class APlugin(ABC):
             try:
                 job.result()
             except HTTPError as ex:
-                self.log.exception(f"Failed to download: {str(ex)}")
+                self.log.warning(f"Failed to download: {str(ex)}")
 
     def download_as_file(self, url: str, target_file: Path, delay: float = 0) -> str:
         """
@@ -306,7 +306,6 @@ class APlugin(ABC):
 
         with self._downloader.request('GET', url, preload_content=False, retries=urllib3.util.retry.Retry(3)) as reader:
             if reader.status == 200:
-                print(target_file.parent.exists())
                 with target_file.open(mode='wb') as writer:
                     writer.write(reader.data)
             else:
@@ -317,7 +316,7 @@ class APlugin(ABC):
 
         return url
 
-    def check_download(self, link_item_dict: LinkItemDict, folder: Path, log: bool = True) -> Tuple[LinkItemDict, LinkItemDict]:
+    def check_download(self, link_item_dict: LinkItemDict, folder: Path, log: bool = False) -> Tuple[LinkItemDict, LinkItemDict]:
         """
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
@@ -331,7 +330,7 @@ class APlugin(ABC):
 
         if failed and log:
             for link, item in failed.items():
-                self.log.error(f"Not downloaded: {self.info.host + link} - {item.name}")
+                self.log.warning(f"Not downloaded: {self.info.host + link} - {item.name}")
 
         return succeed, failed
 
