@@ -30,8 +30,8 @@ Plugins
 =======
 
 mr_de
-    - https://github.com/IceflowRE/unidown-mr_de
     - Crawl through german ebooks from Mobileread.
+    - https://github.com/IceflowRE/unidown-mr_de
 
 Credits
 =======
