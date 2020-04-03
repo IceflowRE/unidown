@@ -39,7 +39,7 @@ setup(
     python_requires='>=3.8',
     install_requires=[
         'urllib3[secure]==1.25.8',
-        'tqdm==4.44.0',
+        'tqdm==4.45.0',
         'packaging==20.3',
     ],
     extras_require={

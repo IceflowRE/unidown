@@ -9,13 +9,15 @@ Universal Downloader
 
 ----
 
-``<Description English>``
-
-``<Description German>``
+unidown manages downloads and will only download items again when they are newer or not downloaded yet.
 
 ----
 
-`Nothing here yet.`
+unidown is written with the main aspect on plugins. unidown itself can only manage the produced data from 3rd party plugins.
+
+unidown saves all downloaded files with their modifications time and and will only download updated or not already downloaded files.
+
+Find more information in the documentation at `Read the Docs <https://unidown.readthedocs.io/en/latest/index.html>`__.
 
 ----
 
@@ -23,6 +25,13 @@ Web
 ===
 
 https://github.com/IceflowRE/unidown
+
+Plugins
+=======
+
+mr_de
+    - https://github.com/IceflowRE/unidown-mr_de
+    - Crawl through german ebooks from Mobileread.
 
 Credits
 =======
