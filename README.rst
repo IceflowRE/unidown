@@ -3,7 +3,7 @@ Universal Downloader
 ********************
 |maintained| |programming language| |license|
 
-|travis| |readthedocs| |requirements| |codacy| |codecov|
+|github actions| |readthedocs| |requirements| |codacy| |codecov|
 
 |pypi|
 
@@ -71,6 +71,8 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. Badges.
 
+[![Actions Status](https://github.com/{owner}/{repo}/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+
 .. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
 
 .. |programming language| image:: https://img.shields.io/badge/language-Python_3.8-orange.svg
@@ -79,8 +81,8 @@ You should have received a copy of the GNU General Public License along with thi
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
 
-.. |travis| image:: https://img.shields.io/travis/com/IceflowRE/unidown/master.svg?label=Travis%20CI
-   :target: https://travis-ci.com/IceflowRE/unidown
+.. |github actions| image:: https://github.com/IceflowRE/unidown/workflows/Build/badge.svg
+   :target: https://github.com/IceflowRE/unidown/actions
 
 .. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
    :target: https://unidown.readthedocs.io/en/latest/index.html
