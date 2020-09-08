@@ -8,7 +8,7 @@ NAME = "unidown"
 #: long name of this program
 LONG_NAME = "Universal Downloader"
 #: version in PEP440 format
-VERSION = '2.0.1'
+VERSION = '2.0.2'
 #: url to the unidown pypi json
 PYPI_JSON_URL = 'https://pypi.org/pypi/unidown/json'
 #: author
