@@ -85,7 +85,7 @@ def download_from_plugin(plugin: APlugin):
         plugin.log.info('No new data. Nothing to do.')
         return
     # clean up saving names
-    plugin.log.info(f"Clean up names.")
+    plugin.log.info("Clean up names.")
     new_items.clean_up_names()
     # download new/updated data
     plugin.log.info(f"Download new {plugin.unit}s: {len(new_items)}")
