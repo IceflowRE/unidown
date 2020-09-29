@@ -42,8 +42,8 @@ def test_run(tmp_path, name, options, result):
             'pluginInfo': {'name': 'test', 'version': '0.1.0', 'host': 'raw.githubusercontent.com'},
             'lastUpdate': '19990909T090909.000000Z',
             'linkItems': {
-                '/IceflowRE/unidown/master/README.rst': {'name': 'README_d.rst', 'time': '20010101T010101.000000Z'},
-                '/IceflowRE/unidown/master/LICENSE.md': {'name': 'README.rst', 'time': '20010101T010101.000000Z'}
+                '/IceflowRE/unidown/main/README.rst': {'name': 'README_d.rst', 'time': '20010101T010101.000000Z'},
+                '/IceflowRE/unidown/main/LICENSE.md': {'name': 'README.rst', 'time': '20010101T010101.000000Z'}
             },
             'username': 'Nasua Nasua'
         }

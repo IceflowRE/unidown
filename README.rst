@@ -88,11 +88,11 @@ You should have received a copy of the GNU General Public License along with thi
 .. |pypi| image:: https://img.shields.io/pypi/v/unidown.svg
    :target: https://pypi.org/project/unidown/
 
-.. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=master
-   :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=master
+.. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=main
+   :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=main
 
 .. |codacy| image:: https://api.codacy.com/project/badge/Grade/7783e0b9e3734ee6ab43e142b43e9663
    :target: https://app.codacy.com/project/IceflowRE/unidown/dashboard
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/unidown/master.svg?label=coverage
+.. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/unidown/main.svg?label=coverage
    :target: https://codecov.io/gh/IceflowRE/unidown

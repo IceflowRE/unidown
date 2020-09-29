@@ -19,9 +19,9 @@ def create_test_file(file: Path):
 
 
 eg_data = LinkItemDict({
-    '/IceflowRE/unidown/master/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-    '/IceflowRE/unidown/master/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-    '/IceflowRE/unidown/master/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+    '/IceflowRE/unidown/main/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    '/IceflowRE/unidown/main/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+    '/IceflowRE/unidown/main/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
 })
 
 
@@ -97,11 +97,11 @@ def test_check_download(tmp_path):
     create_test_file(plugin._temp_dir.joinpath('README.rst'))
     data = plugin.check_download(eg_data, plugin._temp_dir)
     succeed = LinkItemDict({
-        '/IceflowRE/unidown/master/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
-        '/IceflowRE/unidown/master/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+        '/IceflowRE/unidown/main/README.rst': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
+        '/IceflowRE/unidown/main/LICENSE.md': LinkItem('README.rst', datetime(2001, 1, 1, hour=1, minute=1, second=1)),
     })
     lost = LinkItemDict({
-        '/IceflowRE/unidown/master/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
+        '/IceflowRE/unidown/main/missing': LinkItem('missing', datetime(2002, 2, 2, hour=2, minute=2, second=2))
     })
     assert (succeed, lost) == data
 
@@ -117,9 +117,9 @@ def test_clean_up(tmp_path):
 
 def test_download_as_file(tmp_path):
     plugin = TestPlugin(Settings(tmp_path))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
-    plugin.download_as_file('/IceflowRE/unidown/master/README.rst', plugin._temp_dir.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/main/README.rst', plugin._temp_dir.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/main/README.rst', plugin._temp_dir.joinpath('file.test'))
+    plugin.download_as_file('/IceflowRE/unidown/main/README.rst', plugin._temp_dir.joinpath('file.test'))
     assert plugin._temp_dir.joinpath('file.test').exists()
     assert plugin._temp_dir.joinpath('file_r.test').exists()
     assert plugin._temp_dir.joinpath('file_r_r.test').exists()
@@ -143,7 +143,7 @@ class TestSaveState:
         plugin.save_savestate()
         with plugin._savestate_file.open(encoding="utf8") as reader:
             json_data = reader.read()
-        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/master/README.rst": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/LICENSE.md": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/master/missing": {"name": "missing", "time": "20020202T020202.000000Z"}}, "username": ""}'
+        assert json_data == '{"meta": {"version": "1"}, "pluginInfo": {"name": "test", "version": "0.1.0", "host": "raw.githubusercontent.com"}, "lastUpdate": "19700101T000000.000000Z", "linkItems": {"/IceflowRE/unidown/main/README.rst": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/main/LICENSE.md": {"name": "README.rst", "time": "20010101T010101.000000Z"}, "/IceflowRE/unidown/main/missing": {"name": "missing", "time": "20020202T020202.000000Z"}}, "username": ""}'
 
     @pytest.mark.parametrize('data', [LinkItemDict(), eg_data])
     def test_normal(self, tmp_path, data):
