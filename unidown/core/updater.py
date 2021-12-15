@@ -14,7 +14,7 @@ def get_newest_app_version() -> Version:
     """
     Download the version tag from remote.
 
-    :return: version from remote
+    :return: Version from remote.
     """
     with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
         pypi_json = p_man.urlopen('GET', meta.PYPI_JSON_URL).data.decode('utf-8')
@@ -31,6 +31,6 @@ def check_for_app_updates() -> bool:
     """
     Check for updates.
 
-    :return: is update available
+    :return: Is update available.
     """
     return get_newest_app_version() > Version(meta.VERSION)

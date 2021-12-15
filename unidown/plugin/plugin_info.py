@@ -9,18 +9,14 @@ class PluginInfo:
 
         Parameters may change in the future.
 
-    Information about the module. Those information will be saved into the save files as well.
+    Information about the module. This information will be saved into the save files as well.
 
-    :param name: the name of the plugin
-    :param version: version, PEP440 conform
-    :param host: host url of the main data
-    :raises ValueError: name is empty
-    :raises ValueError: host is empty
-    :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
-
-    :ivar name: name of the plugin
-    :ivar host: host url of the main data
-    :ivar version: plugin version
+    :param name: Name of the plugin.
+    :param version: Version, PEP440 conform.
+    :param host: Host url of the main data.
+    :raises ValueError: Name is empty.
+    :raises ValueError: Host is empty.
+    :raises ~packaging.version.InvalidVersion: Version is not PEP440 conform.
     """
 
     def __init__(self, name: str, version: str, host: str):
@@ -28,10 +24,13 @@ class PluginInfo:
             raise ValueError("Plugin name cannot be empty.")
         if host is None or host == "":
             raise ValueError("Plugin host cannot be empty.")
+        #: Name of the plugin.
         self.name: str = name
+        #: Host url of the main data.
         self.host: str = host
 
         try:
+            #: Plugin version.
             self.version: Version = Version(version)
         except InvalidVersion:
             raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}")
@@ -41,11 +40,11 @@ class PluginInfo:
         """
         Constructor from json dict.
 
-        :param data: json data as dict
-        :return: the plugin info
-        :raises ValueError: name is missing
-        :raises ValueError: version is missing
-        :raises ValueError: host is missing
+        :param data: Json data as dict.
+        :return: Plugin info.
+        :raises ValueError: Name is missing.
+        :raises ValueError: Version is missing.
+        :raises ValueError: Host is missing.
         """
         if 'name' not in data:
             raise ValueError("name is missing")
@@ -70,6 +69,6 @@ class PluginInfo:
         """
         Create json data.
 
-        :return: json dictionary
+        :return: Json dictionary.
         """
         return {'name': self.name, 'version': str(self.version), 'host': self.host}

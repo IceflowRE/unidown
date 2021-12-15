@@ -15,7 +15,7 @@ from unidown.plugin.a_plugin import APlugin
 
 class PluginListAction(argparse.Action):
     """
-    Lists all plugins which are available. Extension for the argparser.
+    Lists all plugins which are available. Extension for :class:`~argparse.ArgumentParser`.
     """
 
     def __init__(self, option_strings, dest, **kwargs):

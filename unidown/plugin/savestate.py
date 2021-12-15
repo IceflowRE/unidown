@@ -13,26 +13,24 @@ class SaveState:
     """
     Savestate of a plugin.
 
-    :param version: savestate version
-    :param plugin_info: plugin info
-    :param last_update: last udpate time of the referenced data
-    :param link_items: data
-    :param version: savestate version
-
-    :cvar time_format: time format to use
-    :ivar version: savestate version
-    :ivar plugin_info: plugin info
-    :ivar last_update: newest udpate time
-    :ivar link_items: data
+    :param version: Savestate version.
+    :param plugin_info: Plugin info.
+    :param last_update: Last udpate time of the referenced data.
+    :param link_items: Data.
+    :param version: Savestate version.
     """
     # current savestate version which will be used
-    time_format: str = "%Y%m%dT%H%M%S.%fZ"
+    TIME_FORMAT: str = "%Y%m%dT%H%M%S.%fZ"
 
     def __init__(self, plugin_info: PluginInfo, last_update: datetime, link_items: LinkItemDict,
                  version: Version = Version('1')):
+        #: Savestate version.
         self.version: Version = version
+        #: Plugin info.
         self.plugin_info: PluginInfo = plugin_info
+        #: Newest update time.
         self.last_update: datetime = last_update
+        #: Data.
         self.link_items: LinkItemDict = link_items
 
     def __eq__(self, other: object) -> bool:
@@ -47,10 +45,10 @@ class SaveState:
     @classmethod
     def from_json(cls, data: dict) -> SaveState:
         """
-        :param data: json data as dict
-        :return: the SaveState
-        :raises ValueError: version of SaveState does not exist or is empty
-        :raises ~packaging.version.InvalidVersion: version is not PEP440 conform
+        :param data: Json data as dict.
+        :return: SaveState.
+        :raises ValueError: Version of SaveState does not exist or is empty.
+        :raises ~packaging.version.InvalidVersion: Version is not PEP440 conform.
         """
         data_dict = LinkItemDict()
         if 'linkItems' not in data:
@@ -63,18 +61,18 @@ class SaveState:
             version = Version(data['meta']['version'])
         except InvalidVersion:
             raise InvalidVersion(f"Savestate version is not PEP440 conform: {data['meta']['version']}")
-        return cls(PluginInfo.from_json(data['pluginInfo']), datetime.strptime(data['lastUpdate'], SaveState.time_format), data_dict, version)
+        return cls(PluginInfo.from_json(data['pluginInfo']), datetime.strptime(data['lastUpdate'], SaveState.TIME_FORMAT), data_dict, version)
 
     def to_json(self) -> dict:
         """
         Create json data.
 
-        :return: json dictionary
+        :return: Json dictionary.
         """
         result = {
             'meta': {'version': str(self.version)},
             'pluginInfo': self.plugin_info.to_json(),
-            'lastUpdate': self.last_update.strftime(SaveState.time_format),
+            'lastUpdate': self.last_update.strftime(SaveState.TIME_FORMAT),
             'linkItems': {},
         }
         for key, link_item in self.link_items.items():
@@ -85,6 +83,6 @@ class SaveState:
         """
         Upgrading current savestate to the latest savestate version.
 
-        :return: upgraded savestate
+        :return: Upgraded savestate.
         """
         return self

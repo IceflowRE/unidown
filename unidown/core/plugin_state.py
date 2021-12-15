@@ -5,8 +5,13 @@ class PluginState(IntEnum):
     """
     State of a plugin, after it ended or was not found.
     """
-    EndSuccess = 0  #: successfully end
-    RunFail = 1  #: raised an ~unidown.plugin.exceptions.PluginException
-    RunCrash = 2  #: raised an exception but ~unidown.plugin.exceptions.PluginException
-    LoadCrash = 3  #: raised an exception while loading/ initializing
-    NotFound = 4  #: plugin was not found
+    #: successfully end
+    EndSuccess = 0
+    #: :class:`~unidown.plugin.exceptions.PluginException` was raised.
+    RunFail = 1
+    #: Exception was raised but not :class:`~unidown.plugin.exceptions.PluginException`.
+    RunCrash = 2
+    #: Exception was raised while loading/ initializing.
+    LoadCrash = 3
+    #: Plugin was not found.
+    NotFound = 4

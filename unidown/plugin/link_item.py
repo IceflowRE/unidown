@@ -11,15 +11,14 @@ class LinkItem:
     :param time: update time
     :raises ValueError: name cannot be empty or None
     :raises ValueError: time cannot be empty or None
-
-    :cvar time_format: time format to use
-    :ivar _name: name of the item
-    :ivar _time: time of the item
     """
-    time_format: str = "%Y%m%dT%H%M%S.%fZ"
+    #: Time format to use.
+    TIME_FORMAT: str = "%Y%m%dT%H%M%S.%fZ"
 
     def __init__(self, name: str, time: datetime):
+        #: Name of the item.
         self._name: str = ""
+        #: Time of the item.
         self._time: datetime = datetime(1970, 1, 1)
         self.name = name
         self.time = time
@@ -29,15 +28,15 @@ class LinkItem:
         """
         Constructor from json dict.
 
-        :param data: json data as dict
-        :return: the LinkItem
-        :raises ValueError: missing parameter
+        :param data: Json data as dict.
+        :return: LinkItem.
+        :raises ValueError: Missing parameter.
         """
         if 'name' not in data:
             raise ValueError("name is missing")
         if 'time' not in data:
             raise ValueError("time is missing")
-        return cls(data['name'], datetime.strptime(data['time'], LinkItem.time_format))
+        return cls(data['name'], datetime.strptime(data['time'], LinkItem.TIME_FORMAT))
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, self.__class__):
@@ -63,7 +62,7 @@ class LinkItem:
     @name.setter
     def name(self, name: str):
         """
-        :raises ValueError: name cannot be empty or None
+        :raises ValueError: Name cannot be empty or None.
         """
         if name is None or name == '':
             raise ValueError("name cannot be empty or None.")
@@ -79,7 +78,7 @@ class LinkItem:
     @time.setter
     def time(self, time: datetime):
         """
-        :raises ValueError: time cannot be None
+        :raises ValueError: Time cannot be None.
         """
         if time is None:
             raise ValueError("time cannot be None.")
@@ -89,6 +88,6 @@ class LinkItem:
         """
         Create json data.
 
-        :return: json dictionary
+        :return: Json dictionary.
         """
-        return {'name': self._name, 'time': self._time.strftime(LinkItem.time_format)}
+        return {'name': self._name, 'time': self._time.strftime(LinkItem.TIME_FORMAT)}

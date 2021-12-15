@@ -159,7 +159,7 @@ class TestSaveState:
     def test_diff_plugin_name(self, tmp_path):
         plugin = TestPlugin(Settings(tmp_path))
         plugin.save_savestate()
-        plugin._info.name = "different"
+        plugin._INFO.name = "different"
         with pytest.raises(PluginException):
             plugin.load_savestate()
 

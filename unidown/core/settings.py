@@ -4,16 +4,6 @@ from pathlib import Path
 
 class Settings:
     """
-    :ivar _root_dir: root path
-    :ivar temp_dir: temporary main path, here are the sub folders for every plugin
-    :ivar download_dir: download main path, here are the sub folders for every plugin
-    :ivar savestate_dir: savestates main path, here are the sub folders for every plugin
-    :ivar log_file: log file of the program
-    :ivar available_plugins: available plugins which are found at starting the program, name -> EntryPoint
-    :ivar using_cores: how many _cores should be used
-    :ivar _log_level: log level
-    :ivar _disable_tqdm: if the console progress bar is disabled
-
     :param root_dir: root dir
     :param log_file: log file
     """
@@ -23,13 +13,21 @@ class Settings:
             root_dir = Path('./')
         if log_file is None:
             log_file = root_dir.joinpath(Path('unidown.log'))
+        #: Root path.
         self._root_dir: Path = root_dir
+        #: Temporary main path, here are the sub folders for every plugin.
         self._temp_dir: Path = self._root_dir.joinpath(Path('temp/'))
+        #: Download main path, here are the sub folders for every plugin.
         self._download_dir: Path = self._root_dir.joinpath(Path('downloads/'))
+        #: Savestates main path, here are the sub folders for every plugin.
         self._savestate_dir: Path = self._root_dir.joinpath(Path('savestates/'))
+        #: Log file of the program.
         self._log_file: Path = log_file
+        #: Number of cores to be used.
         self._cores = min(4, max(1, multiprocessing.cpu_count() - 1))
+        #: Log level.
         self._log_level = log_level
+        #: Disable console progress bar.
         self._disable_tqdm = False
 
     def mkdir(self):

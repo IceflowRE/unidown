@@ -13,11 +13,11 @@ class LinkItemDict(dict):
 
     def actualize(self, new_data: LinkItemDict, log: logging.Logger = None):
         """
-        Actualize dictionary like an ~dict.update does.
+        Actualize dictionary like ~dict.update does.
         If a logger is passed it will log updated items, **not** new one.
 
-        :param new_data: the data used for updating
-        :param log: logger
+        :param new_data: Data used for updating.
+        :param log: Logger.
         """
         if log is not None:
             for link, item in new_data.items():
@@ -45,10 +45,10 @@ class LinkItemDict(dict):
         """
         Get the new items which are not existing or are newer as in the old data set.
 
-        :param old_data: old data
-        :param new_data: new data
-        :param disable_tqdm: disables tqdm progressbar
-        :return: new and updated link items
+        :param old_data: Old data.
+        :param new_data: New data.
+        :param disable_tqdm: Disable tqdm progressbar.
+        :return: New and updated link items.
         """
         if len(old_data) == 0:
             return new_data

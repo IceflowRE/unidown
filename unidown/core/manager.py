@@ -19,7 +19,7 @@ def init_logging(settings: Settings):
     """
     Initialize the _downloader.
 
-    :param settings: settings
+    :param settings: Settings.
     """
     settings.log_file.parent.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(
@@ -65,7 +65,7 @@ def download_from_plugin(plugin: APlugin):
     10. Update savestate
     11. Save new savestate to file
 
-    :param plugin: plugin
+    :param plugin: Plugin.
     """
     # get last update date
     plugin.log.info('Get last update')
@@ -105,10 +105,10 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
     """
     Run a plugin so use the download routine and clean up after.
 
-    :param settings: settings to use
-    :param plugin_name: name of plugin
-    :param raw_options: parameters which will be send to the plugin initialization
-    :return: ending state
+    :param settings: Settings to use.
+    :param plugin_name: Name of plugin.
+    :param raw_options: Parameters which will be sent to the plugin initialization.
+    :return: Ending state.
     """
     if raw_options is None:
         options = {}
@@ -151,8 +151,8 @@ def get_options(options: List[List[str]]) -> Dict[str, Any]:
     Convert the option list to a dictionary where the key is the option and the value is the related option.
     Is called in the init.
 
-    :param options: options given to the plugin.
-    :return: dictionary which contains the option key and values
+    :param options: Options given to the plugin.
+    :return: Dictionary which contains the option key and values.
     """
     plugin_options = {}
     for sub_options in options:

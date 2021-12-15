@@ -27,39 +27,32 @@ class APlugin(ABC):
     """
     Abstract class of a plugin. Provides all needed variables and methods.
 
-    :param options: parameters which can included optional parameters
-    :raises ~unidown.plugin.exceptions.PluginException: can not create default plugin paths
-
-    :cvar _info: information about the plugin
-    :cvar _savestate_cls: savestate class to use
-    :ivar _disable_tqdm: if the tqdm progressbar should be disabled **| do not edit**
-    :ivar _log: use this for logging **| do not edit**
-    :ivar _simul_downloads: number of simultaneous downloads
-    :ivar _temp_dir: path where the plugin can place all temporary data **| do not edit**
-    :ivar _download_dir: general download path of the plugin **| do not edit**
-    :ivar _savestate_file: file which contains the latest savestate of the plugin **| do not edit**
-    :ivar _last_update: latest update time of the referencing data **| do not edit**
-    :ivar _unit: the thing which should be downloaded, may be displayed in the progress bar
-    :ivar _download_data: referencing data **| do not edit**
-    :ivar _downloader: downloader which will download the data **| do not edit**
-    :ivar _savestate: savestate of the plugin
-    :ivar _options: options which the plugin uses internal, should be used for the given options at init
+    :param options: Parameters which can include optional parameters.
+    :raises ~unidown.plugin.exceptions.PluginException: Can not create default plugin paths.
     """
-    _info: PluginInfo = None
-    _savestate_cls = SaveState
+    #: Meta information about the plugin.
+    _INFO: PluginInfo = None
+    #: Savestate class to use.
+    _SAVESTATE_CLS: type = SaveState
 
     def __init__(self, settings: Settings, options: Dict[str, Any] = None):
         if options is None:
             options = {}
-        if self._info is None:
+        if self._INFO is None:
             raise ValueError("info is not set.")
 
-        self._disable_tqdm = settings.disable_tqdm
-        self._log: logging.Logger = logging.getLogger(self._info.name)
+        #: If the tqdm progressbar should be disabled.
+        self._disable_tqdm: bool = settings.disable_tqdm
+        #: Use this for logging.
+        self._log: logging.Logger = logging.getLogger(self._INFO.name)
+        #: Number of simultaneous downloads.
         self._simul_downloads: int = settings.cores
 
+        #: Path where the plugin can place all temporary data.
         self._temp_dir: Path = settings.temp_dir.joinpath(self.name)
+        #: General download path of the plugin.
         self._download_dir: Path = settings.download_dir.joinpath(self.name)
+        #: File which contains the latest savestate of the plugin.
         self._savestate_file: Path = settings.savestate_dir.joinpath(self.name + '_save.json')
 
         try:
@@ -70,17 +63,23 @@ class APlugin(ABC):
             raise PluginException('Can not create default plugin paths, due to a permission error.')
 
         # cached data
+        #: Latest update time of the referencing data.
         self._last_update: datetime = datetime(1970, 1, 1)
+        #: Referencing data.
         self._download_data: LinkItemDict = LinkItemDict()
 
-        self._savestate: SaveState = self._savestate_cls(self.info, self.last_update, LinkItemDict())
+        #: Savestate of the plugin.
+        self._savestate: SaveState = self._SAVESTATE_CLS(self.info, self.last_update, LinkItemDict())
 
+        #: The unit which will be displayed in the progress bar.
         self._unit: str = 'item'
+        #: Downloader which will download the data.
         self._downloader: urllib3.HTTPSConnectionPool = urllib3.HTTPSConnectionPool(
             self.info.host, maxsize=self._simul_downloads, cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()
         )
 
         # load options
+        #: Options which the plugin uses internally, should be used for the given options at initialization.
         self._options: Dict[str, Any] = options
         self._load_default_options()
 
@@ -111,28 +110,28 @@ class APlugin(ABC):
         """
         Plain getter.
         """
-        return self._info
+        return self._INFO
 
     @property
     def host(self) -> str:
         """
         Plain getter.
         """
-        return self._info.host
+        return self._INFO.host
 
     @property
     def name(self) -> str:
         """
         Plain getter.
         """
-        return self._info.name
+        return self._INFO.name
 
     @property
     def version(self) -> Version:
         """
         Plain getter.
         """
-        return self._info.version
+        return self._INFO.version
 
     @property
     def temp_dir(self) -> Path:
@@ -187,11 +186,11 @@ class APlugin(ABC):
         """
         Load the save of the plugin.
 
-        :raises ~unidown.plugin.exceptions.PluginException: broken savestate json
-        :raises ~unidown.plugin.exceptions.PluginException: different savestate versions
-        :raises ~unidown.plugin.exceptions.PluginException: different plugin versions
-        :raises ~unidown.plugin.exceptions.PluginException: different plugin names
-        :raises ~unidown.plugin.exceptions.PluginException: could not parse the json
+        :raises ~unidown.plugin.exceptions.PluginException: Broken savestate json.
+        :raises ~unidown.plugin.exceptions.PluginException: Different savestate versions.
+        :raises ~unidown.plugin.exceptions.PluginException: Different plugin versions.
+        :raises ~unidown.plugin.exceptions.PluginException: Different plugin names.
+        :raises ~unidown.plugin.exceptions.PluginException: Could not parse the json.
         """
         if not self._savestate_file.exists():
             self.log.info("No savestate file found.")
@@ -204,12 +203,12 @@ class APlugin(ABC):
                 raise PluginException(f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}")
 
         try:
-            savestate = self._savestate_cls.from_json(savestate_json)
+            savestate = self._SAVESTATE_CLS.from_json(savestate_json)
         except Exception as ex:
             raise PluginException(f"Could not load savestate from json {self._savestate_file}: {ex}")
         else:
             del savestate_json
-        savestate = self._savestate_cls.upgrade(savestate)
+        savestate = self._SAVESTATE_CLS.upgrade(savestate)
 
         if savestate.plugin_info.name != self.info.name:
             raise PluginException(
@@ -220,9 +219,10 @@ class APlugin(ABC):
     def _create_last_update_time(self) -> datetime:
         """
         Get the newest update time from the referencing data.
-        **Has to be implemented inside Plugins.**
 
-        :raises NotImplementedError: abstract method
+        .. note:: Has to be implemented inside Plugin.
+
+        :raises NotImplementedError: Abstract method.
         """
         raise NotImplementedError
 
@@ -236,9 +236,10 @@ class APlugin(ABC):
     def _create_download_data(self) -> LinkItemDict:
         """
         Get the download links in a specific format.
-        **Has to be implemented inside Plugins.**
 
-        :raises NotImplementedError: abstract method
+        .. note:: Has to be implemented inside Plugins.
+
+        :raise NotImplementedError: Abstract method.
         """
         raise NotImplementedError
 
@@ -256,16 +257,16 @@ class APlugin(ABC):
 
         Download the given LinkItem dict from the plugins host, to the given path. Proceeded with multiple connections
         :attr:`~unidown.plugin.a_plugin.APlugin._simul_downloads`. After
-        :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommend.
+        :func:`~unidown.plugin.a_plugin.APlugin.check_download` is recommended.
 
         This function don't use an internal `link_item_dict`, `delay` or `folder` directly set in options or instance
         vars, because it can be used aside of the normal download routine inside the plugin itself for own things.
         As of this it still needs access to the logger, so a staticmethod is not possible.
 
-        :param link_items: data which gets downloaded
-        :param folder: target download folder
-        :param desc: description of the progressbar
-        :param unit: unit of the download, shown in the progressbar
+        :param link_items: Data which gets downloaded.
+        :param folder: Target download folder.
+        :param desc: Description of the progressbar.
+        :param unit: Unit of the download, shown in the progressbar.
         """
         # TODO: add other optional host?
         if len(link_items) == 0:
@@ -291,11 +292,11 @@ class APlugin(ABC):
         """
         Download the given url to the given target folder.
 
-        :param url: link
-        :param target_file: target file
-        :param delay: after download wait this much seconds
-        :return: url
-        :raises ~urllib3.exceptions.HTTPError: if the connection has an error
+        :param url: Link.
+        :param target_file: Target file.
+        :param delay: Delay after each download. Delay is in seconds.
+        :return: Url.
+        :raises ~urllib3.exceptions.HTTPError: Connection had an error.
         """
         if target_file.exists():
             new_name = target_file
@@ -320,10 +321,10 @@ class APlugin(ABC):
         """
         Check if the download of the given dict was successful. No proving if the content of the file is correct too.
 
-        :param link_item_dict: dict which to check
-        :param folder: folder where the downloads are saved
-        :param log: if the lost items should be logged
-        :return: succeeded and failed
+        :param link_item_dict: Items to check.
+        :param folder: Folder where the downloads are saved.
+        :param log: Log lost items.
+        :return: Succeed.
         """
         succeed = LinkItemDict({link: item for link, item in link_item_dict.items() if folder.joinpath(item.name).is_file()})
         failed = LinkItemDict({link: item for link, item in link_item_dict.items() if link not in succeed})
@@ -338,7 +339,7 @@ class APlugin(ABC):
         """
         Update savestate.
 
-        :param new_items: new items
+        :param new_items: New items.
         """
         self._savestate.plugin_info = self.info
         self._savestate.last_update = self.last_update
@@ -346,7 +347,7 @@ class APlugin(ABC):
 
     def save_savestate(self):
         """
-        Save meta data about the downloaded things and the plugin to file.
+        Save meta data about the downloaded things and the plugin to a file.
         """
         with self._savestate_file.open(mode='w', encoding="utf8") as writer:
             writer.write(json.dumps(self._savestate.to_json()))
@@ -361,7 +362,7 @@ class APlugin(ABC):
 
     def _load_default_options(self):
         """
-        Loads default options if they were not passed at creation.
+        Load default options if they were not passed at creation.
         """
         if 'delay' in self._options:
             try:
@@ -378,6 +379,6 @@ class APlugin(ABC):
         """
         Get all available plugins for unidown.
 
-        :return: plugin name list
+        :return: Plugin name list.
         """
         return {entry.name: entry for entry in pkg_resources.iter_entry_points('unidown.plugin')}

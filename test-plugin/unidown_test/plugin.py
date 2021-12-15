@@ -13,8 +13,8 @@ class Plugin(APlugin):
     """
     Test plugin.
     """
-    _info = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
-    _savestate_cls = MySaveState
+    _INFO = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
+    _SAVESTATE_CLS = MySaveState
 
     def __init__(self, settings: Settings, options: Dict[str, Any] = None):
         super().__init__(settings, options)
@@ -28,7 +28,7 @@ class Plugin(APlugin):
             data = json.loads(reader.read())
         result = LinkItemDict()
         for link, item in data.items():
-            result[link] = LinkItem(item['name'], datetime.strptime(item['time'], LinkItem.time_format))
+            result[link] = LinkItem(item['name'], datetime.strptime(item['time'], LinkItem.TIME_FORMAT))
         return result
 
     def _create_last_update_time(self) -> datetime:
@@ -38,7 +38,7 @@ class Plugin(APlugin):
             raise Exception("crashed")
         self.download_as_file('/IceflowRE/unidown/main/tests/last_update_time.txt', self._temp_dir.joinpath('last_update_time.txt'))
         with self._temp_dir.joinpath('last_update_time.txt').open(encoding='utf8') as reader:
-            return datetime.strptime(reader.read(), LinkItem.time_format)
+            return datetime.strptime(reader.read(), LinkItem.TIME_FORMAT)
 
     def _load_default_options(self):
         super(Plugin, self)._load_default_options()

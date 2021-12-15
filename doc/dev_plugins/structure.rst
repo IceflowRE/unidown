@@ -4,10 +4,10 @@ Structure
 Variables
 ---------
 
-_info
+_INFO
     information about the plugin, must be set everytime
 
-_savestate_cls
+_SAVESTATE_CLS
     must be set if a custom SaveState format is in use
 
 _simul_downloads
