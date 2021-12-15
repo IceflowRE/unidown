@@ -6,7 +6,7 @@ import multiprocessing
 import platform
 from typing import List, Dict, Any
 
-from unidown import static_data, tools
+from unidown import meta, tools
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.core.settings import Settings
@@ -33,7 +33,7 @@ def init_logging(settings: Settings):
     console_handler.setLevel(settings.log_level)
     logging.getLogger().addHandler(console_handler)
 
-    info = f"{static_data.NAME} {static_data.VERSION}\n\n" \
+    info = f"{meta.NAME} {meta.VERSION}\n\n" \
            f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores\n" \
            f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
            f"Arguments: main={settings.root_dir.resolve()} | logfile={settings.log_file} | loglevel={settings.log_level}\n" \
@@ -177,6 +177,6 @@ def check_update():
         logging.exception('Check for updates failed.')
         return
     if update:
-        logging.info(f"Update available! ({static_data.PROJECT_URL})")
+        logging.info(f"Update available! ({meta.PROJECT_URL})")
     else:
         logging.info("No update available.")

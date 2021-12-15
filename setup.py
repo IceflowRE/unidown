@@ -7,22 +7,22 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
-from unidown import static_data
+from unidown import meta
 
 # get long description
 with Path('README.rst').open(mode='r', encoding='UTF-8') as reader:
     LONG_DESCRIPTION = reader.read()
 
 setup(
-    name=static_data.NAME,
-    version=static_data.VERSION,
-    description=static_data.DESCRIPTION,
+    name=meta.NAME,
+    version=meta.VERSION,
+    description=meta.DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
-    author=static_data.AUTHOR,
-    author_email=static_data.AUTHOR_EMAIL,
+    author=meta.AUTHOR,
+    author_email=meta.AUTHOR_EMAIL,
     license='GPLv3',
-    url=static_data.PROJECT_URL,
+    url=meta.PROJECT_URL,
     classifiers=[
         'Programming Language :: Python :: 3.8',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

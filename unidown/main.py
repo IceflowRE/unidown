@@ -7,7 +7,7 @@ import sys
 from argparse import ArgumentParser
 from pathlib import Path
 
-from unidown import static_data, tools
+from unidown import meta, tools
 from unidown.core import manager
 from unidown.core.settings import Settings
 from unidown.plugin.a_plugin import APlugin
@@ -37,8 +37,8 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
-    parser = ArgumentParser(prog=static_data.LONG_NAME, description=static_data.DESCRIPTION)
-    parser.add_argument('-v', '--version', action='version', version=f"{static_data.NAME} {static_data.VERSION}")
+    parser = ArgumentParser(prog=meta.LONG_NAME, description=meta.DESCRIPTION)
+    parser.add_argument('-v', '--version', action='version', version=f"{meta.NAME} {meta.VERSION}")
     parser.add_argument('--list-plugins', action=PluginListAction, help="show plugin list and exit")
 
     parser.add_argument('-p', '--plugin', dest='plugin', default="", type=str, required=True, metavar='name',

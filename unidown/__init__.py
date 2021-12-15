@@ -1,4 +1,4 @@
 # pylint: disable=missing-module-docstring
-from unidown import static_data
+from unidown import meta
 
-__version__ = static_data.VERSION
+__version__ = meta.VERSION

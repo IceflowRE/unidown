@@ -7,7 +7,7 @@ import certifi
 import urllib3
 from packaging.version import Version
 
-from unidown import static_data
+from unidown import meta
 
 
 def get_newest_app_version() -> Version:
@@ -17,7 +17,7 @@ def get_newest_app_version() -> Version:
     :return: version from remote
     """
     with urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where()) as p_man:
-        pypi_json = p_man.urlopen('GET', static_data.PYPI_JSON_URL).data.decode('utf-8')
+        pypi_json = p_man.urlopen('GET', meta.PYPI_JSON_URL).data.decode('utf-8')
     releases = json.loads(pypi_json).get('releases', [])
     online_version = Version('0.0.0')
     for release in releases:
@@ -33,4 +33,4 @@ def check_for_app_updates() -> bool:
 
     :return: is update available
     """
-    return get_newest_app_version() > Version(static_data.VERSION)
+    return get_newest_app_version() > Version(meta.VERSION)
