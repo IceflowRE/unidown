@@ -38,9 +38,9 @@ setup(
     packages=find_packages(include=['unidown', 'unidown.*']),
     python_requires='>=3.8',
     install_requires=[
-        'urllib3[secure]==1.26.7',
-        'tqdm==4.62.3',
-        'packaging==21.0',
+        'urllib3[secure]>=1.26.7',
+        'tqdm>=4.62.3',
+        'packaging>=21.0',
     ],
     extras_require={
         'dev': [
@@ -50,11 +50,11 @@ setup(
             'pytest>=6.2.5',
             'pytest-cov>=2.12.1',
             'setuptools>=58.2.0',
-            'Sphinx>=4.2.0',
-            'sphinx-autodoc-typehints>=1.12.0',
-            'sphinx_rtd_theme>=1.0.0',
             'twine>=3.4.2',
             'wheel>=0.37.0',
+            'Sphinx==4.3.0',
+            'sphinx-autodoc-typehints==1.12.0',
+            'sphinx_rtd_theme==1.0.0',
         ],
     },
     zip_safe=True,
