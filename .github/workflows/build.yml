@@ -26,6 +26,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --upgrade -e .[dev]
           pip install codecov
+          pip install ./tools/flake8-pylint-ext/
           unidown --version
 
       - name: Install test plugin
@@ -44,9 +45,9 @@ jobs:
       - name: Code style check
         shell: bash
         run: |
-          flake8 ./unidown
-          pylint --rcfile=setup.cfg ./unidown/ || true
-          pyroma .
+          flake8 ./unidown || true
+          pyroma . || true
+          mypy ./unidown || true
 
       - name: Testing
         shell: bash
