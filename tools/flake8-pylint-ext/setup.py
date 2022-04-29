@@ -20,7 +20,7 @@ setup(
     ],
     keywords='flake8 plugin extension pylint introspection linter',
     packages=find_packages(include=['flake8_pylint_ext', 'flake8_pylint_ext.*']),
-    python_requires='>=3.10',
+    python_requires='>=3.8',
     install_requires=[
         'flake8',
         'pylint',
