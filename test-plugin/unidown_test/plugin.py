@@ -1,11 +1,11 @@
 import json
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Optional
 
 from unidown_test.savestate import MySaveState
 
 from unidown.core.settings import Settings
-from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
+from unidown.plugin import APlugin, LinkItem, PluginError, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
 
 
@@ -16,7 +16,7 @@ class Plugin(APlugin):
     _INFO = PluginInfo('test', '0.1.0', 'raw.githubusercontent.com')
     _SAVESTATE_CLS = MySaveState
 
-    def __init__(self, settings: Settings, options: Dict[str, Any] = None):
+    def __init__(self, settings: Settings, options: Optional[dict[str, Any]] = None):
         super().__init__(settings, options)
         self._username: str = self._options['username']
         if self._options['behaviour'] == 'load_crash':
@@ -33,7 +33,7 @@ class Plugin(APlugin):
 
     def _create_last_update_time(self) -> datetime:
         if self._options['behaviour'] == "run_fail":
-            raise PluginException('failed')
+            raise PluginError('failed')
         elif self._options['behaviour'] == "run_crash":
             raise Exception("crashed")
         self.download_as_file('/IceflowRE/unidown/main/tests/last_update_time.txt', self._temp_dir.joinpath('last_update_time.txt'))

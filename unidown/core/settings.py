@@ -4,11 +4,13 @@ from pathlib import Path
 
 class Settings:
     """
+    Settings.
+
     :param root_dir: root dir
     :param log_file: log file
     """
 
-    def __init__(self, root_dir: Path = None, log_file: Path = None, log_level: str = 'INFO'):
+    def __init__(self, root_dir: Path = None, log_file: Path = None, log_level: str = 'INFO') -> None:
         if root_dir is None:
             root_dir = Path('./')
         if log_file is None:
@@ -30,7 +32,7 @@ class Settings:
         #: Disable console progress bar.
         self._disable_tqdm = False
 
-    def mkdir(self):
+    def mkdir(self) -> None:
         """
         Create all base directories.
         """
@@ -39,7 +41,7 @@ class Settings:
         self._download_dir.mkdir(parents=True, exist_ok=True)
         self._savestate_dir.mkdir(parents=True, exist_ok=True)
 
-    def check_dirs(self):
+    def check_dirs(self) -> None:
         """
         Check the directories if they exist.
 
@@ -48,7 +50,7 @@ class Settings:
         dirs = [self._root_dir, self._temp_dir, self._download_dir, self._savestate_dir]
         for directory in dirs:
             if directory.exists() and not directory.is_dir():
-                raise FileExistsError(str(directory.resolve()) + " cannot be used as a directory.")
+                raise FileExistsError(f"{directory.resolve()} cannot be used as a directory.")
 
     @property
     def root_dir(self) -> Path:

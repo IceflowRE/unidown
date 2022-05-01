@@ -2,16 +2,17 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import Optional
 
 from tqdm import tqdm
 
 
-class LinkItemDict(dict):
+class LinkItemDict(dict):  # noqa: WPS600
     """
     LinkItem dictionary, acts as a wrapper for special methods and functions.
     """
 
-    def actualize(self, new_data: LinkItemDict, log: logging.Logger = None):
+    def actualize(self, new_data: LinkItemDict, log: Optional[logging.Logger] = None) -> None:
         """
         Actualize dictionary like ~dict.update does.
         If a logger is passed it will log updated items, **not** new one.
@@ -21,11 +22,11 @@ class LinkItemDict(dict):
         """
         if log is not None:
             for link, item in new_data.items():
-                if link in self.keys():
-                    log.info(f"Actualize item: {link} | {self[link]} -> {item}")
+                if link in self:
+                    log.info(f"Actualize item: {link} | {self.get(link)} -> {item}")
         self.update(new_data)
 
-    def clean_up_names(self):
+    def clean_up_names(self) -> None:
         """
         Rename duplicated names with an additional ``_r``.
         """
@@ -50,9 +51,9 @@ class LinkItemDict(dict):
         :param disable_tqdm: Disable tqdm progressbar.
         :return: New and updated link items.
         """
-        if len(old_data) == 0:
+        if not old_data:
             return new_data
-        if len(new_data) == 0:
+        if not new_data:
             return LinkItemDict()
 
         updated_data = LinkItemDict()

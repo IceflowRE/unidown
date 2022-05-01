@@ -9,7 +9,7 @@ from unidown_test.savestate import MySaveState
 
 from unidown.core.manager import get_options
 from unidown.core.settings import Settings
-from unidown.plugin import APlugin, LinkItem, PluginException, PluginInfo
+from unidown.plugin import APlugin, LinkItem, PluginError, PluginInfo
 from unidown.plugin.link_item_dict import LinkItemDict
 
 
@@ -160,20 +160,20 @@ class TestSaveState:
         plugin = TestPlugin(Settings(tmp_path))
         plugin.save_savestate()
         plugin._INFO.name = "different"
-        with pytest.raises(PluginException):
+        with pytest.raises(PluginError):
             plugin.load_savestate()
 
     def test_json_error(self, tmp_path):
         plugin = TestPlugin(Settings(tmp_path))
         create_test_file(plugin._savestate_file)
-        with pytest.raises(PluginException):
+        with pytest.raises(PluginError):
             plugin.load_savestate()
 
     def test_json_error_2(self, tmp_path):
         plugin = TestPlugin(Settings(tmp_path))
         with plugin._savestate_file.open('wb') as writer:
             writer.write(str.encode('{}'))
-        with pytest.raises(PluginException):
+        with pytest.raises(PluginError):
             plugin.load_savestate()
 
 

@@ -3,12 +3,11 @@ Different tools.
 """
 
 from pathlib import Path
-from typing import Dict
 
 import pkg_resources
 
 
-def unlink_dir_rec(path: Path):
+def unlink_dir_rec(path: Path) -> None:
     """
     Delete a folder recursive.
 
@@ -24,19 +23,16 @@ def unlink_dir_rec(path: Path):
     path.rmdir()
 
 
-def print_plugin_list(plugins: Dict[str, pkg_resources.EntryPoint]):
+def print_plugin_list(plugins: dict[str, pkg_resources.EntryPoint]) -> None:
     """
-    Prints all registered plugins and checks if they can be loaded or not.
+    Print all registered plugins and checks if they can be loaded or not.
 
     :param plugins: Plugins name to entrypoint.
     """
     for name, entry_point in plugins.items():
         try:
             plugin_class = entry_point.load()
-            version = str(plugin_class._INFO.version)
-            print(
-                f"{name} (ok)\n"
-                f"    {version}"
-            )
-        except Exception:
-            print(f"{name} (failed)")
+            version = str(plugin_class._INFO.version)  # noqa: PLW0212, WPS437
+            print(f"{name} (ok)\n    {version}")  # noqa: WPS421
+        except Exception:  # noqa: PLW0703
+            print(f"{name} (failed)")  # noqa: WPS421

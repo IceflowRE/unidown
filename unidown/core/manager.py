@@ -4,52 +4,56 @@ Manager of the whole program, contains the most important functions as well as t
 import logging
 import multiprocessing
 import platform
-from typing import List, Dict, Any
+from typing import Any
 
 from unidown import meta, tools
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.core.settings import Settings
 from unidown.plugin.a_plugin import APlugin
-from unidown.plugin.exceptions import PluginException
+from unidown.plugin.exceptions import PluginError
 from unidown.plugin.link_item_dict import LinkItemDict
 
 
-def init_logging(settings: Settings):
+def init_logging(settings: Settings) -> None:
     """
     Initialize the _downloader.
 
     :param settings: Settings.
     """
     settings.log_file.parent.mkdir(parents=True, exist_ok=True)
-    logging.basicConfig(
+    logging.basicConfig(  # noqa: WPS317
         filename=str(settings.log_file), filemode='a', level='DEBUG',
-        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %(message)s',
-        datefmt='%Y.%m.%d %H:%M:%S'
+        format='%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(module)s.%(funcName)s: %(message)s',  # noqa: WPS323
+        datefmt='%Y.%m.%d %H:%M:%S'  # noqa: WPS323
     )
     logging.captureWarnings(True)
     console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter('%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(message)s', datefmt='%Y.%m.%d %H:%M:%S'))
+    console_handler.setFormatter(
+        logging.Formatter('%(asctime)s.%(msecs)03d | %(levelname)s - %(name)s | %(message)s', datefmt='%Y.%m.%d %H:%M:%S')  # noqa: WPS323
+    )
     console_handler.setLevel(settings.log_level)
     logging.getLogger().addHandler(console_handler)
 
-    info = f"{meta.NAME} {meta.VERSION}\n\n" \
-           f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores\n" \
-           f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}\n" \
-           f"Arguments: main={settings.root_dir.resolve()} | logfile={settings.log_file} | loglevel={settings.log_level}\n" \
-           f"Using cores: {settings.cores}\n"
+    info = "\n".join([
+        f"{meta.NAME} {meta.VERSION}\n",
+        f"System: {platform.system()} - {platform.version()} - {platform.machine()} - {multiprocessing.cpu_count()} cores",
+        f"Python: {platform.python_version()} - {' - '.join(platform.python_build())}",
+        f"Arguments: main={settings.root_dir.resolve()} | logfile={settings.log_file} | loglevel={settings.log_level}",
+        f"Using cores: {settings.cores}"
+    ])
 
     logging.debug(info)
 
 
-def shutdown():
+def shutdown() -> None:
     """
     Close and exit important things.
     """
     logging.shutdown()
 
 
-def download_from_plugin(plugin: APlugin):
+def download_from_plugin(plugin: APlugin) -> None:
     """
     Download routine.
 
@@ -81,7 +85,7 @@ def download_from_plugin(plugin: APlugin):
     # compare with save state
     new_items = LinkItemDict.get_new_items(plugin.savestate.link_items, plugin.download_data)
     plugin.log.info(f"Compared with save state: {str(len(plugin.download_data))}")
-    if len(new_items) == 0:
+    if not new_items:
         plugin.log.info('No new data. Nothing to do.')
         return
     # clean up saving names
@@ -101,7 +105,7 @@ def download_from_plugin(plugin: APlugin):
     plugin.save_savestate()
 
 
-def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> PluginState:
+def run(settings: Settings, plugin_name: str, raw_options: list[list[str]]) -> PluginState:
     """
     Run a plugin so use the download routine and clean up after.
 
@@ -117,36 +121,34 @@ def run(settings: Settings, plugin_name: str, raw_options: List[List[str]]) -> P
 
     available_plugins = APlugin.get_plugins()
     if plugin_name not in available_plugins:
-        msg = f"Plugin {plugin_name} was not found."
-        logging.error(msg)
-        return PluginState.NotFound
+        logging.error("Plugin %s was not found.", plugin_name)
+        return PluginState.NOT_FOUND
 
     # delete temporary directory of the plugin
     tools.unlink_dir_rec(settings.temp_dir.joinpath(plugin_name))
     try:
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)
-    except Exception:
-        logging.exception(f"Plugin {plugin_name} crashed while loading.")
-        return PluginState.LoadCrash
+    except Exception:  # noqa: PLW070
+        logging.exception("Plugin %s crashed while loading.", plugin_name)
+        return PluginState.LOAD_CRASH
     else:
-        logging.info(f"Loaded plugin: {plugin_name}")
+        logging.info("Loaded plugin: %s", plugin_name)
 
     try:
         download_from_plugin(plugin)
         plugin.clean_up()
-    except PluginException:
-        logging.exception(f"Plugin {plugin.name} stopped working.")
-        return PluginState.RunFail
-    except Exception:
-        logging.exception(f"Plugin {plugin.name} crashed.")
-        return PluginState.RunCrash
-    else:
-        logging.info(f"{plugin.name} ends without errors.")
-        return PluginState.EndSuccess
+    except PluginError:
+        logging.exception("Plugin %s stopped working.", plugin.name)
+        return PluginState.RUN_FAIL
+    except Exception:  # noqa: PLW070
+        logging.exception("Plugin %s crashed.", plugin.name)
+        return PluginState.RUN_CRASH
+    logging.info("%s ends without errors.", plugin.name)
+    return PluginState.END_SUCCESS
 
 
-def get_options(options: List[List[str]]) -> Dict[str, Any]:
+def get_options(options: list[list[str]]) -> dict[str, Any]:
     """
     Convert the option list to a dictionary where the key is the option and the value is the related option.
     Is called in the init.
@@ -159,24 +161,24 @@ def get_options(options: List[List[str]]) -> Dict[str, Any]:
         option = ' '.join(sub_options)
         option_key, _, option_value = option.partition('=')
 
-        if option_key == '' or option_value == '':
-            logging.warning(f"'{option}' is not valid and will be ignored.")
+        if not option_key or not option_value:
+            logging.warning("'%s' is not valid and will be ignored.", option)
             continue
         plugin_options[option_key] = option_value
     return plugin_options
 
 
-def check_update():
+def check_update() -> None:
     """
     Check for app updates and print/log them.
     """
     logging.info('Check for app updates.')
     try:
         update = updater.check_for_app_updates()
-    except Exception:
+    except Exception:  # noqa: PLW0703
         logging.exception('Check for updates failed.')
         return
     if update:
-        logging.info(f"Update available! ({meta.PROJECT_URL})")
+        logging.info("Update available! (%s)", meta.PROJECT_URL)
     else:
         logging.info("No update available.")

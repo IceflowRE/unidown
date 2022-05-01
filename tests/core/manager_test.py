@@ -21,18 +21,18 @@ def test_get_options_dict(caplog):
 
 
 test_options = [
-    ('not_existing_plugin', [[]], PluginState.NotFound),
-    ('test', [["behaviour=load_crash"]], PluginState.LoadCrash),
-    ('test', [["behaviour=run_fail"]], PluginState.RunFail),
-    ('test', [["behaviour=run_crash"]], PluginState.RunCrash),
-    ('test', [["behaviour=normal"], ["username=Nasua", "Nasua"]], PluginState.EndSuccess),
+    ('not_existing_plugin', [[]], PluginState.NOT_FOUND),
+    ('test', [["behaviour=load_crash"]], PluginState.LOAD_CRASH),
+    ('test', [["behaviour=run_fail"]], PluginState.RUN_FAIL),
+    ('test', [["behaviour=run_crash"]], PluginState.RUN_CRASH),
+    ('test', [["behaviour=normal"], ["username=Nasua", "Nasua"]], PluginState.END_SUCCESS),
 ]
 
 
 @pytest.mark.parametrize('name,options,result', test_options)
 def test_run(tmp_path, name, options, result):
     assert manager.run(Settings(tmp_path), name, options) == result
-    if PluginState.EndSuccess == result:
+    if PluginState.END_SUCCESS == result:
         savestate_file = tmp_path.joinpath('savestates/test_save.json')
         assert savestate_file.exists()
         with savestate_file.open(encoding="utf8") as reader:

@@ -5,11 +5,11 @@ from packaging.version import InvalidVersion, Version
 
 class PluginInfo:
     """
+    Information about the module. This information will be saved into the save files as well.
+
     .. warning:
 
         Parameters may change in the future.
-
-    Information about the module. This information will be saved into the save files as well.
 
     :param name: Name of the plugin.
     :param version: Version, PEP440 conform.
@@ -19,11 +19,11 @@ class PluginInfo:
     :raises ~packaging.version.InvalidVersion: Version is not PEP440 conform.
     """
 
-    def __init__(self, name: str, version: str, host: str):
-        if name is None or name == "":
-            raise ValueError("Plugin name cannot be empty.")
-        if host is None or host == "":
-            raise ValueError("Plugin host cannot be empty.")
+    def __init__(self, name: str, version: str, host: str) -> None:
+        if name is None or not name:
+            raise ValueError("Plugin parameter 'name' cannot be empty.")
+        if host is None or not host:
+            raise ValueError("Plugin parameter 'host' cannot be empty.")
         #: Name of the plugin.
         self.name: str = name
         #: Host url of the main data.
@@ -33,12 +33,12 @@ class PluginInfo:
             #: Plugin version.
             self.version: Version = Version(version)
         except InvalidVersion:
-            raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}")
+            raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}")  # noqa: PLW0707
 
     @classmethod
     def from_json(cls, data: dict) -> PluginInfo:
         """
-        Constructor from json dict.
+        Construct from json dict.
 
         :param data: Json data as dict.
         :return: Plugin info.
@@ -54,15 +54,18 @@ class PluginInfo:
             raise ValueError("host is missing")
         return cls(data['name'], data['version'], data['host'])
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: object) -> bool:  # noqa: D105
         if not isinstance(other, self.__class__):
             return False
         return self.name == other.name and self.host == other.host and self.version == other.version
 
-    def __ne__(self, other: object) -> bool:
+    def __ne__(self, other: object) -> bool:  # noqa: D105
         return not self.__eq__(other)
 
-    def __str__(self) -> str:
+    def __hash__(self) -> int:  # noqa: D105
+        return hash((self.name, self.host, self.version))
+
+    def __str__(self) -> str:  # noqa: D105
         return f"{self.name} - {self.version} : {self.host}"
 
     def to_json(self) -> dict:

@@ -1,6 +1,5 @@
 """
-Static and important data which is needed by the program and do not need any third party libraries. (this is important
-because it is used inside the setup.py **| do not edit**.
+Metadata about the application.
 """
 
 #: name of this program
