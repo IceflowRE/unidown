@@ -75,3 +75,6 @@ class PluginInfo:
         :return: Json dictionary.
         """
         return {'name': self.name, 'version': str(self.version), 'host': self.host}
+
+
+PLUGIN_INFO_EMPTY: PluginInfo = PluginInfo("empty", "0.0.0", "")

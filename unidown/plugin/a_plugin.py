@@ -18,7 +18,7 @@ from unidown import tools
 from unidown.core.settings import Settings
 from unidown.plugin.exceptions import PluginError
 from unidown.plugin.link_item_dict import LinkItemDict
-from unidown.plugin.plugin_info import PluginInfo
+from unidown.plugin.plugin_info import PLUGIN_INFO_EMPTY, PluginInfo
 from unidown.plugin.savestate import SaveState
 
 
@@ -31,14 +31,14 @@ class APlugin(ABC):  # noqa: PLR0904
     """
 
     #: Meta information about the plugin.
-    _INFO: Optional[PluginInfo] = None
+    _INFO: PluginInfo = PLUGIN_INFO_EMPTY
     #: Savestate class to use.
     _SAVESTATE_CLS: type[SaveState] = SaveState
 
     def __init__(self, settings: Settings, options: Optional[dict[str, Any]] = None) -> None:
         if options is None:
             options = {}
-        if self._INFO is None:
+        if self._INFO == PLUGIN_INFO_EMPTY:
             raise ValueError("info is not set.")
 
         #: If the tqdm progressbar should be disabled.
