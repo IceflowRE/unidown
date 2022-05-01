@@ -31,9 +31,9 @@ def test_actualize(caplog, base, new_data, result, log_result):
     logging.getLogger().setLevel('INFO')
 
     base.actualize(new_data, logging.getLogger())
-    assert len(caplog.records) == len(log_result)
+    assert len([msg.getMessage() for msg in caplog.records]) == len(log_result)
     for actual, expect in zip(caplog.records, log_result):
-        assert actual.msg == expect
+        assert actual.getMessage() == expect
 
 
 test_data = [

@@ -5,9 +5,9 @@ from unidown.plugin import PluginInfo
 
 
 def test_init():
-    with pytest.raises(ValueError, match=r"Plugin name cannot be empty."):
+    with pytest.raises(ValueError, match=r"Plugin parameter 'name' cannot be empty."):
         PluginInfo("", '1.0.0', 'host')
-    with pytest.raises(ValueError, match=r"Plugin host cannot be empty."):
+    with pytest.raises(ValueError, match=r"Plugin parameter 'host' cannot be empty."):
         PluginInfo("name", '1.0.0', '')
     with pytest.raises(InvalidVersion):
         PluginInfo("name", '', 'host')

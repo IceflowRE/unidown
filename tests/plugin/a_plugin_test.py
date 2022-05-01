@@ -7,6 +7,7 @@ from packaging.version import Version
 from unidown_test.plugin import Plugin as TestPlugin
 from unidown_test.savestate import MySaveState
 
+from plugin.a_plugin import get_plugins
 from unidown.core.manager import get_options
 from unidown.core.settings import Settings
 from unidown.plugin import APlugin, LinkItem, PluginError, PluginInfo
@@ -183,14 +184,14 @@ def test_load_default_options(tmp_path, caplog):
     plugin = TestPlugin(Settings(tmp_path), {'delay': 'float', 'behaviour': 'normal'})
     plugin._load_default_options()
     result = [
-        "Plugin option 'delay' is missing. Using 0s.",
+        "Plugin option 'delay' is missing. Using no delay.",
         "Plugin option 'behaviour' is missing. Using default.",
-        "Plugin option 'delay' was not a float. Using 0s."
+        "Plugin option 'delay' was not a float. Using no delay."
     ]
     assert len(caplog.records) == len(result)
     for actual, expect in zip(caplog.records, result):
-        assert actual.msg == expect
+        assert actual.getMessage() == expect
 
 
 def test_get_plugins():
-    assert 'test' in APlugin.get_plugins()
+    assert 'test' in get_plugins()

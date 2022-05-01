@@ -31,7 +31,7 @@ class APlugin(ABC):  # noqa: PLR0904
     """
 
     #: Meta information about the plugin.
-    _INFO: PluginInfo
+    _INFO: Optional[PluginInfo] = None
     #: Savestate class to use.
     _SAVESTATE_CLS: type[SaveState] = SaveState
 
@@ -371,15 +371,15 @@ class APlugin(ABC):  # noqa: PLR0904
         Load default options if they were not passed at creation.
         """
         delay: Any = self._options.get('delay')
-        if delay is not float:
+        if delay is None:
+            self._options['delay'] = 0
+            self.log.warning("Plugin option 'delay' is missing. Using no delay.")
+        elif not isinstance(delay, float):
             try:
                 self._options['delay'] = float(delay)
             except ValueError:
                 self._options['delay'] = 0
                 self.log.warning("Plugin option 'delay' was not a float. Using no delay.")
-        else:
-            self._options['delay'] = 0
-            self.log.warning("Plugin option 'delay' is missing. Using no delay.")
 
 
 def get_plugins() -> dict[str, pkg_resources.EntryPoint]:

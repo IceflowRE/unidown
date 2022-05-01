@@ -16,7 +16,7 @@ def test_get_options_dict(caplog):
     ]
     assert len(caplog.records) == len(result)
     for actual, expect in zip(caplog.records, result):
-        assert actual.msg == expect
+        assert actual.getMessage() == expect
     assert options == {'username': "Nasua Nasua"}
 
 

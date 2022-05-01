@@ -41,7 +41,7 @@ class Plugin(APlugin):
             return datetime.strptime(reader.read(), LinkItem.TIME_FORMAT)
 
     def _load_default_options(self):
-        super(Plugin, self)._load_default_options()
+        super()._load_default_options()
         if 'behaviour' not in self._options:
             self.log.warning("Plugin option 'behaviour' is missing. Using default.")
             self._options['behaviour'] = 'normal'
@@ -49,11 +49,11 @@ class Plugin(APlugin):
             self._options['username'] = ''
 
     def load_savestate(self):
-        super(Plugin, self).load_savestate()
+        super().load_savestate()
         # do not override set username by options
         if self._username == '':
             self._username = self.savestate.username
 
     def update_savestate(self, new_items: LinkItemDict):
-        super(Plugin, self).update_savestate(new_items)
+        super().update_savestate(new_items)
         self._savestate.username = self._username
