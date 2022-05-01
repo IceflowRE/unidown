@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Type
+from typing import Any, Optional
 
 import certifi
 import pkg_resources
@@ -33,7 +33,7 @@ class APlugin(ABC):  # noqa: PLR0904
     #: Meta information about the plugin.
     _INFO: PluginInfo
     #: Savestate class to use.
-    _SAVESTATE_CLS: Type[SaveState] = SaveState
+    _SAVESTATE_CLS: type[SaveState] = SaveState
 
     def __init__(self, settings: Settings, options: Optional[dict[str, Any]] = None) -> None:
         if options is None:

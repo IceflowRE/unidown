@@ -11,7 +11,7 @@ from typing import Any, Optional
 from unidown import meta, tools
 from unidown.core import manager
 from unidown.core.settings import Settings
-from unidown.plugin.a_plugin import APlugin, get_plugins
+from unidown.plugin.a_plugin import get_plugins
 
 
 class PluginListAction(argparse.Action):

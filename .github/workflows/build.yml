@@ -47,7 +47,7 @@ jobs:
         run: |
           flake8 ./unidown
           pyroma .
-          mypy ./unidown || true
+          mypy ./unidown
 
       - name: Testing
         shell: bash
