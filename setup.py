@@ -24,7 +24,7 @@ setup(
     license='GPLv3',
     url=meta.PROJECT_URL,
     classifiers=[
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Development Status :: 5 - Production/Stable',
         'Operating System :: OS Independent',
@@ -36,7 +36,7 @@ setup(
     ],
     keywords='modular downloader',
     packages=find_packages(include=['unidown', 'unidown.*']),
-    python_requires='>=3.8',
+    python_requires='>=3.10',
     install_requires=[
         'urllib3[secure]>=1.26.7',
         'tqdm>=4.62.3',

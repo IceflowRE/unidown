@@ -73,7 +73,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
 
-.. |programming language| image:: https://img.shields.io/badge/language-Python_3.8-orange.svg
+.. |programming language| image:: https://img.shields.io/badge/language-Python_3.10-orange.svg
    :target: https://www.python.org/
 
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg

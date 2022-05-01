@@ -31,8 +31,8 @@ def main(argv=None):
     Entry point into the program. Gets the arguments from the console and proceed them with :class:`~argparse.ArgumentParser`.
     Returns if its success successful 0 else 1.
     """
-    if sys.version_info[0] < 3 or sys.version_info[1] < 8:
-        sys.exit('Only Python 3.8 or greater is supported. You are using:' + sys.version)
+    if sys.version_info < (3, 10):
+        sys.exit('Only Python 3.10 or greater is supported. You are using:' + sys.version)  # noqa: WPS336
 
     if argv is None:
         argv = sys.argv[1:]
