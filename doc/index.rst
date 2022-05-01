@@ -11,6 +11,7 @@ Documentation
     :hidden:
 
     user/main
+    changelog/main
     dev_plugins/main
     development/main
     source_code/main
