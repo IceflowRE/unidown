@@ -11,7 +11,7 @@ from typing import Any, Optional
 from unidown import meta, tools
 from unidown.core import manager
 from unidown.core.settings import Settings
-from unidown.plugin.a_plugin import APlugin
+from unidown.plugin.a_plugin import APlugin, get_plugins
 
 
 class PluginListAction(argparse.Action):
@@ -25,7 +25,7 @@ class PluginListAction(argparse.Action):
     def __call__(  # noqa: D102
             self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: str | Sequence[Any] | None, option_string: str | None = None
     ) -> None:
-        tools.print_plugin_list(APlugin.get_plugins())
+        tools.print_plugin_list(get_plugins())
         parser.exit()
 
 

@@ -10,7 +10,7 @@ from unidown import meta, tools
 from unidown.core import updater
 from unidown.core.plugin_state import PluginState
 from unidown.core.settings import Settings
-from unidown.plugin.a_plugin import APlugin
+from unidown.plugin.a_plugin import APlugin, get_plugins
 from unidown.plugin.exceptions import PluginError
 from unidown.plugin.link_item_dict import LinkItemDict
 
@@ -119,7 +119,7 @@ def run(settings: Settings, plugin_name: str, raw_options: list[list[str]]) -> P
     else:
         options = get_options(raw_options)
 
-    available_plugins = APlugin.get_plugins()
+    available_plugins = get_plugins()
     if plugin_name not in available_plugins:
         logging.error("Plugin %s was not found.", plugin_name)
         return PluginState.NOT_FOUND

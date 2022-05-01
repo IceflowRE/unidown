@@ -75,7 +75,7 @@ class SaveState:
 
         :return: Json dictionary.
         """
-        result = {
+        result: dict = {
             'meta': {'version': str(self.version)},
             'pluginInfo': self.plugin_info.to_json(),
             'lastUpdate': self.last_update.strftime(SaveState.TIME_FORMAT),

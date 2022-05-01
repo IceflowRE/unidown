@@ -1,5 +1,6 @@
 import multiprocessing
 from pathlib import Path
+from typing import Optional
 
 
 class Settings:
@@ -10,7 +11,7 @@ class Settings:
     :param log_file: log file
     """
 
-    def __init__(self, root_dir: Path = None, log_file: Path = None, log_level: str = 'INFO') -> None:
+    def __init__(self, root_dir: Optional[Path] = None, log_file: Optional[Path] = None, log_level: str = 'INFO') -> None:
         if root_dir is None:
             root_dir = Path('./')
         if log_file is None:

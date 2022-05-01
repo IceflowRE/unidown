@@ -62,6 +62,9 @@ setup(
             'flake8-simplify',
             # flake8 extensions end
             'mypy',
+            'types-certifi',
+            'types-urllib3',
+            'types-setuptools',
             'pylint',
             'pyroma',
             'pytest>=7.1.2',
