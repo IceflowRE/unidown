@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Self
 
 from unidown.plugin.link_item_dict import LinkItemDict
 from unidown.plugin.plugin_info import PluginInfo
@@ -15,7 +16,7 @@ class MySaveState(SaveState):
         self.username: str = username
 
     @classmethod
-    def from_json(cls, data: dict) -> SaveState:
+    def from_json(cls, data: dict) -> Self:
         savestate = super(MySaveState, cls).from_json(data)
         if 'username' in data:
             savestate.username = data['username']
@@ -26,7 +27,7 @@ class MySaveState(SaveState):
         data['username'] = self.username
         return data
 
-    def upgrade(self) -> SaveState:
+    def upgrade(self) -> Self:
         new_savestate = super(MySaveState, self).upgrade()
         new_savestate.username = self.username
         return new_savestate

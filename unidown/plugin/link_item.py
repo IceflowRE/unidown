@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Self
 
 
 class LinkItem:
@@ -25,7 +26,7 @@ class LinkItem:
         self.time = time
 
     @classmethod
-    def from_json(cls, data: dict) -> LinkItem:
+    def from_json(cls, data: dict) -> Self:
         """
         Construct from json dict.
 

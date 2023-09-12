@@ -3,7 +3,7 @@ Universal Downloader
 ********************
 |maintained| |programming language| |license|
 
-|github actions| |readthedocs| |requirements| |codecov|
+|github actions| |readthedocs| |codecov|
 
 |pypi|
 
@@ -73,13 +73,13 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
 
-.. |programming language| image:: https://img.shields.io/badge/language-Python_3.10-orange.svg
+.. |programming language| image:: https://img.shields.io/badge/language-Python_3.11-orange.svg
    :target: https://www.python.org/
 
 .. |license| image:: https://img.shields.io/badge/License-GPL%20v3-blue.svg
    :target: https://www.gnu.org/licenses/gpl-3.0
 
-.. |github actions| image:: https://github.com/IceflowRE/unidown/workflows/Build/badge.svg
+.. |github actions| image:: https://img.shields.io/github/actions/workflow/status/IceflowRE/unidown/build.yml
    :target: https://github.com/IceflowRE/unidown/actions
 
 .. |readthedocs| image:: https://readthedocs.org/projects/unidown/badge/?version=latest
@@ -87,9 +87,6 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. |pypi| image:: https://img.shields.io/pypi/v/unidown.svg
    :target: https://pypi.org/project/unidown/
-
-.. |requirements| image:: https://requires.io/github/IceflowRE/unidown/requirements.svg?branch=main
-   :target: https://requires.io/github/IceflowRE/unidown/requirements/?branch=main
 
 .. |codecov| image:: https://img.shields.io/codecov/c/github/IceflowRE/unidown/main.svg?label=coverage
    :target: https://codecov.io/gh/IceflowRE/unidown

@@ -1,4 +1,5 @@
 import json
+import typing
 from datetime import datetime
 from typing import Any, Optional
 
@@ -40,7 +41,7 @@ class Plugin(APlugin):
         with self._temp_dir.joinpath('last_update_time.txt').open(encoding='utf8') as reader:
             return datetime.strptime(reader.read(), LinkItem.TIME_FORMAT)
 
-    def _load_default_options(self):
+    def _load_default_options(self) -> None:
         super()._load_default_options()
         if 'behaviour' not in self._options:
             self.log.warning("Plugin option 'behaviour' is missing. Using default.")
@@ -48,12 +49,12 @@ class Plugin(APlugin):
         if 'username' not in self._options:
             self._options['username'] = ''
 
-    def load_savestate(self):
+    def load_savestate(self) -> None:
         super().load_savestate()
         # do not override set username by options
         if self._username == '':
-            self._username = self.savestate.username
+            self._username = typing.cast(MySaveState, self.savestate).username
 
-    def update_savestate(self, new_items: LinkItemDict):
+    def update_savestate(self, new_items: LinkItemDict) -> None:
         super().update_savestate(new_items)
         self._savestate.username = self._username

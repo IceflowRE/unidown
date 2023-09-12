@@ -32,7 +32,8 @@ def print_plugin_list(plugins: dict[str, pkg_resources.EntryPoint]) -> None:
     for name, entry_point in plugins.items():
         try:
             plugin_class = entry_point.load()
-            version = str(plugin_class._INFO.version)  # noqa: PLW0212, WPS437
+            # pylint: disable=W0212
+            version = str(plugin_class._INFO.version)  # noqa: WPS437
             print(f"{name} (ok)\n    {version}")  # noqa: WPS421
-        except Exception:  # noqa: PLW0703
+        except Exception:  # pylint: disable=W0718
             print(f"{name} (failed)")  # noqa: WPS421

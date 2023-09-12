@@ -78,7 +78,7 @@ def main(argv: Optional[list[str]] = None) -> None:  # noqa: WPS213
     except FileExistsError:
         logging.exception("")
         sys.exit(1)
-    except Exception:  # noqa: PLW0703
+    except Exception:  # pylint: disable=W0718
         logging.exception("Something went wrong")
         sys.exit(1)
     manager.check_update()

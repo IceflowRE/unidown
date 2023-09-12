@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Self
+
 from packaging.version import InvalidVersion, Version
 
 
@@ -32,11 +34,11 @@ class PluginInfo:
         try:
             #: Plugin version.
             self.version: Version = Version(version)
-        except InvalidVersion:
-            raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}")  # noqa: PLW0707
+        except InvalidVersion as ex:
+            raise InvalidVersion(f"Plugin version is not PEP440 conform: {version}") from ex
 
     @classmethod
-    def from_json(cls, data: dict) -> PluginInfo:
+    def from_json(cls, data: dict) -> Self:
         """
         Construct from json dict.
 

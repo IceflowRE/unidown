@@ -22,6 +22,7 @@ from unidown.plugin.plugin_info import PLUGIN_INFO_EMPTY, PluginInfo
 from unidown.plugin.savestate import SaveState
 
 
+# pylint: disable=R0904
 class APlugin(ABC):  # noqa: PLR0904
     """
     Abstract class of a plugin. Provides all needed variables and methods.
@@ -59,8 +60,8 @@ class APlugin(ABC):  # noqa: PLR0904
             self._temp_dir.mkdir(parents=True, exist_ok=True)
             self._download_dir.mkdir(parents=True, exist_ok=True)
             self._savestate_file.parent.mkdir(parents=True, exist_ok=True)
-        except PermissionError:
-            raise PluginError('Can not create default plugin paths, due to a permission error.')  # noqa: PLW0707
+        except PermissionError as ex:
+            raise PluginError('Can not create default plugin paths, due to a permission error.') from ex
 
         # cached data
         #: Latest update time of the referencing data.
@@ -205,17 +206,16 @@ class APlugin(ABC):  # noqa: PLR0904
         with self._savestate_file.open(encoding="utf8") as reader:
             try:
                 savestate_json = json.loads(reader.read())
-            except Exception:
+            except Exception as ex:
                 raise PluginError(  # noqa: PLW0707
                     f"Broken savestate json. Please fix or delete this file (you may lose data in this case): {self._savestate_file}"
-                )
+                ) from ex
 
         try:
             savestate = self._SAVESTATE_CLS.from_json(savestate_json)
-        except Exception as ex:
-            raise PluginError(f"Could not load savestate from json {self._savestate_file}: {ex}")  # noqa: PLW0707
-        else:
-            del savestate_json  # noqa: WPS420
+        except Exception as ex2:
+            raise PluginError(f"Could not load savestate from json {self._savestate_file}") from ex2
+        del savestate_json  # noqa: WPS420
         savestate = self._SAVESTATE_CLS.upgrade(savestate)
 
         if savestate.plugin_info.name != self.info.name:

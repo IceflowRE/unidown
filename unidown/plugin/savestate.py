@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Self
 
 from packaging.version import InvalidVersion, Version
 
@@ -49,7 +50,7 @@ class SaveState:
         return hash((self.last_update, self.link_items, self.plugin_info, self.version))
 
     @classmethod
-    def from_json(cls, data: dict) -> SaveState:
+    def from_json(cls, data: dict) -> Self:
         """
         :param data: Json data as dict.
         :return: SaveState.
@@ -65,8 +66,8 @@ class SaveState:
             raise ValueError("version of SaveState does not exist or is empty.")
         try:
             version = Version(data['meta']['version'])
-        except InvalidVersion:
-            raise InvalidVersion(f"Savestate version is not PEP440 conform: {data['meta']['version']}")  # noqa: PLW0707
+        except InvalidVersion as ex:
+            raise InvalidVersion(f"Savestate version is not PEP440 conform: {data['meta']['version']}") from ex
         return cls(PluginInfo.from_json(data['pluginInfo']), datetime.strptime(data['lastUpdate'], SaveState.TIME_FORMAT), data_dict, version)
 
     def to_json(self) -> dict:
@@ -85,7 +86,7 @@ class SaveState:
             result['linkItems'][key] = link_item.to_json()
         return result
 
-    def upgrade(self) -> SaveState:
+    def upgrade(self) -> Self:
         """
         Upgrading current savestate to the latest savestate version.
 

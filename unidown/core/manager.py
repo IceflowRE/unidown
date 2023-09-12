@@ -129,11 +129,11 @@ def run(settings: Settings, plugin_name: str, raw_options: list[list[str]]) -> P
     try:
         plugin_class = available_plugins[plugin_name].load()
         plugin = plugin_class(settings, options)
+    # pylint: disable=W0718
     except Exception:  # noqa: PLW070
         logging.exception("Plugin %s crashed while loading.", plugin_name)
         return PluginState.LOAD_CRASH
-    else:
-        logging.info("Loaded plugin: %s", plugin_name)
+    logging.info("Loaded plugin: %s", plugin_name)
 
     try:
         download_from_plugin(plugin)
@@ -141,7 +141,8 @@ def run(settings: Settings, plugin_name: str, raw_options: list[list[str]]) -> P
     except PluginError:
         logging.exception("Plugin %s stopped working.", plugin.name)
         return PluginState.RUN_FAIL
-    except Exception:  # noqa: PLW070
+    # pylint: disable=W0718
+    except Exception:  # pylint: disable=W0718
         logging.exception("Plugin %s crashed.", plugin.name)
         return PluginState.RUN_CRASH
     logging.info("%s ends without errors.", plugin.name)
@@ -175,6 +176,7 @@ def check_update() -> None:
     logging.info('Check for app updates.')
     try:
         update = updater.check_for_app_updates()
+    # pylint: disable=W0718
     except Exception:  # noqa: PLW0703
         logging.exception('Check for updates failed.')
         return
