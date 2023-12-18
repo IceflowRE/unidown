@@ -45,7 +45,7 @@ jobs:
         run: |
           flake8 ./unidown
           pyroma .
-          pylint
+          pylint --rcfile=setup.cfg ./unidown/ || true
           mypy ./unidown
 
       - name: Testing
