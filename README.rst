@@ -1,7 +1,7 @@
 ********************
 Universal Downloader
 ********************
-|maintained| |programming language| |license|
+|status| |programming language| |license|
 
 |github actions| |readthedocs| |codecov|
 
@@ -71,7 +71,7 @@ You should have received a copy of the GNU General Public License along with thi
 
 .. Badges.
 
-.. |maintained| image:: https://img.shields.io/badge/maintained-yes-brightgreen.svg
+.. |status| image:: https://img.shields.io/badge/status-archived-red.svg
 
 .. |programming language| image:: https://img.shields.io/badge/language-Python_3.11-orange.svg
    :target: https://www.python.org/
